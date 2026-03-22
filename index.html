@@ -1,1 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Pinkerton's Dilemma</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #1c1917; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeIn 0.25s ease-out; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
 
+  <script type="text/babel">
+    const { useState } = React;
+
+    /* ------------------------------------------------------------------ */
+    /* ICON STUBS  (replaces lucide-react)                                  */
+    /* ------------------------------------------------------------------ */
+    const mkIc = (ch) => ({ size = 16, className = '' }) => (
+      <span
+        className={className}
+        aria-hidden="true"
+        style={{
+          fontSize: Math.round(size * 0.72) + 'px',
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          width: size, height: size, lineHeight: 1, userSelect: 'none', flexShrink: 0,
+        }}
+      >{ch}</span>
+    );
+
+    const Search        = mkIc('🔍');
+    const MessageCircle = mkIc('💬');
+    const DoorOpen      = mkIc('🚪');
+    const Map           = mkIc('🗺');
+    const Briefcase     = mkIc('💼');
+    const FileText      = mkIc('📄');
+    const User          = mkIc('👤');
+    const Settings      = mkIc('⚙️');
+    const Book          = mkIc('📖');
+    const Eye           = mkIc('👁');
+    const Home          = mkIc('🏠');
+    const CheckCircle   = mkIc('✓');
+    const ChevronRight  = mkIc('›');
+
+    /* ------------------------------------------------------------------ */
+    /* GAME DATA                                                            */
+    /* ------------------------------------------------------------------ */
+
+    const SCENES = {
+      OFFICE: {
+        id: 'OFFICE',
+        name: "Sterling's Office",
+        description: "Plush velvet and mahogany. A stark contrast to the smoke outside.",
+        bg: "bg-stone-900",
+        pattern: "radial-gradient(circle at 50% 50%, #3a3028 0%, #1c1917 100%)",
+        hotspots: [
+          { id: 'sterling',     type: 'character', x: 50, y: 40, label: 'Mr. Sterling',  icon: User,    color: 'text-amber-200' },
+          { id: 'door_factory', type: 'transit',   x: 80, y: 65, label: 'Factory Floor', icon: DoorOpen, target: 'FACTORY', reqFlag: 'briefed' },
+          { id: 'ledger',       type: 'examine',   x: 20, y: 65, label: 'Ledger',        icon: Book },
+        ],
+      },
+      FACTORY: {
+        id: 'FACTORY',
+        name: "Factory Floor",
+        description: "Deafening noise. The air is thick with cotton dust.",
+        bg: "bg-neutral-900",
+        pattern: "linear-gradient(0deg, #171717 0%, #262626 100%)",
+        hotspots: [
+          { id: 'elias',         type: 'character', x: 50, y: 55, label: 'Elias (Worker)', icon: User,     color: 'text-neutral-400' },
+          { id: 'loom',          type: 'examine',   x: 25, y: 35, label: 'Broken Loom',    icon: Settings },
+          { id: 'desk',          type: 'examine',   x: 75, y: 35, label: "Foreman's Desk", icon: Briefcase },
+          { id: 'door_office',   type: 'transit',   x: 15, y: 80, label: 'Back to Office', icon: DoorOpen,  target: 'OFFICE' },
+          { id: 'door_quarters', type: 'transit',   x: 85, y: 80, label: "Workers' Qtrs",  icon: Home,      target: 'QUARTERS', reqFlag: 'heard_of_quarters' },
+        ],
+      },
+      QUARTERS: {
+        id: 'QUARTERS',
+        name: "Workers' Quarters",
+        description: "Cramped and freezing. Dozens share a single room.",
+        bg: "bg-zinc-900",
+        pattern: "linear-gradient(45deg, #18181b 0%, #27272a 100%)",
+        hotspots: [
+          { id: 'clara',        type: 'character', x: 50, y: 45, label: 'Clara',          icon: User,     color: 'text-zinc-400' },
+          { id: 'table',        type: 'examine',   x: 80, y: 70, label: 'Table',          icon: Search },
+          { id: 'door_factory', type: 'transit',   x: 20, y: 70, label: 'Factory Floor',  icon: DoorOpen,  target: 'FACTORY' },
+        ],
+      },
+    };
+
+    const EXAMINE_TEXT = {
+      ledger: "Sterling's ledger. Profits are up 400% this quarter. Wages have remained stagnant for three years.",
+      loom:   "The main drive belt snapped. Upon closer inspection, it wasn't cut with a knife. It's frayed from months of severe neglect. An accident waiting to happen.",
+      desk:   "You rifle through the foreman's papers. You find a 'Medical Log'. Three lost limbs and one death this month alone. 'No compensation authorized by Mr. Sterling' is stamped on each.",
+      table:  "Underneath a stale loaf of bread, you find a hidden pamphlet. 'BROTHERS AND SISTERS. A fair wage for a fair day! Safe looms or no looms!' It's a unionizing tract, not an anarchist manifesto.",
+    };
+
+    const EXAMINE_CLUE = {
+      loom:   { id: 'frayed_belt', text: 'Loom broke from severe neglect — not sabotage.' },
+      desk:   { id: 'medical_log', text: 'Medical log: severe injuries, zero compensation.' },
+      table:  { id: 'pamphlet',    text: 'Pamphlet: workers are planning a peaceful strike.' },
+      ledger: { id: 'ledger',      text: 'Ledger: profits up 400%, wages stagnant three years.' },
+    };
+
+    const EXAMINE_FLAG = {
+      desk:  'has_medical_log',
+      table: 'has_pamphlet',
+      loom:  'seen_broken_loom',
+    };
+
+    const DIALOGUE = {
+      sterling: {
+        start: (flags) => {
+          if (flags.ready_to_confront) return 'finale';
+          if (flags.briefed)           return 'impatient';
+          return 'intro';
+        },
+        nodes: {
+          intro: {
+            text: "Ah, Pendelton. The Pinkertons sent their best, I hope. My factory is bleeding money. Someone is sabotaging the looms. Anarchists, agitators\u2026 I want them found and removed. By any means.",
+            choices: [
+              { text: "I\u2019ll find your saboteurs, Mr. Sterling.", next: 'intro_2',        setFlag: 'briefed' },
+              { text: "Any suspects?",                                next: 'intro_suspects' },
+            ],
+          },
+          intro_suspects: {
+            text: "All of them. They are ungrateful beasts. Start on the factory floor. Find the ringleaders.",
+            choices: [
+              { text: "I\u2019m on it.", next: 'intro_2', setFlag: 'briefed' },
+            ],
+          },
+          intro_2: {
+            text: "Good. Report back when you have names. The door to the factory is behind you.",
+            choices: [{ text: "[Leave]", next: null }],
+          },
+          impatient: {
+            text: "Have you found the rats yet, Pendelton? Time is money, and my looms are silent.",
+            choices: [{ text: "Still investigating.", next: null }],
+          },
+          finale: {
+            text: "You\u2019re back. Tell me you have the names of the saboteurs.",
+            choices: [
+              { text: "There are no saboteurs. Just exhausted people wanting safe machines.",       next: 'finale_pro_worker' },
+              { text: "Elias and Clara are organizing a union. Here is their pamphlet.",            next: 'finale_pro_sterling' },
+            ],
+          },
+          finale_pro_worker: {
+            text: "Excuse me? I didn\u2019t hire a Pinkerton to grow a conscience! I hired you to break a strike! If you won\u2019t do it, I\u2019ll hire thugs who will.",
+            choices: [
+              { text: "I found your medical log and ledger. Call them off, or this goes to the press.", next: 'ending_strike' },
+            ],
+          },
+          finale_pro_sterling: {
+            text: "Excellent work, Pendelton. I\u2019ll have the police clear them out tonight. Here is your fee. The Pinkertons always deliver.",
+            choices: [
+              { text: "[Take the money and leave]", next: 'ending_pinkerton' },
+            ],
+          },
+        },
+      },
+      elias: {
+        start: (flags) => {
+          if (flags.elias_friendly)  return 'friendly';
+          if (flags.has_medical_log) return 'has_evidence';
+          return 'intro';
+        },
+        nodes: {
+          intro: {
+            text: "Watch your coat, stranger. The gears like to grab \u2019em. Wait\u2026 I know those boots. You\u2019re a Pinkerton hound, ain\u2019t ya? Here to sniff out Sterling\u2019s \u2018saboteurs\u2019?",
+            choices: [
+              { text: "I\u2019m just asking questions. Who broke the loom?",          next: 'hostile' },
+              { text: "I investigate facts. The fact is a machine is broken.",        next: 'hostile' },
+            ],
+          },
+          hostile: {
+            text: "The machine broke itself! Sterling hasn\u2019t paid for maintenance in a year. Get out of my face, hound. We have nothing to say to you.",
+            choices: [{ text: "[Leave]", next: null }],
+          },
+          has_evidence: {
+            text: "You again. What do you want?",
+            choices: [
+              { text: "I found the medical log. People are dying here. Why are you still working?", next: 'breakthrough' },
+            ],
+          },
+          breakthrough: {
+            text: "(Elias holds up his right hand. Two fingers are missing.) Because if we don\u2019t work, we starve. We aren\u2019t breaking machines, Pendelton. We\u2019re breaking ourselves. Go to the Workers\u2019 Quarters. Talk to Clara.",
+            choices: [
+              { text: "I\u2019ll go see her.", next: null, setFlag: ['elias_friendly', 'heard_of_quarters'] },
+            ],
+          },
+          friendly: {
+            text: "Talk to Clara in the Quarters. She\u2019ll tell you the truth.",
+            choices: [{ text: "[Leave]", next: null }],
+          },
+        },
+      },
+      clara: {
+        start: (flags) => {
+          if (flags.has_pamphlet) return 'confront_pamphlet';
+          return 'intro';
+        },
+        nodes: {
+          intro: {
+            text: "Please, sir, we don\u2019t want any trouble. My children are sleeping. Are you one of Mr. Sterling\u2019s men?",
+            choices: [
+              { text: "I\u2019m investigating the factory disruptions.", next: 'sad' },
+            ],
+          },
+          sad: {
+            text: "Disruptions? My husband was a \u2018disruption\u2019 when the loom caught his arm. He bled to death on the floor. Now I work 14 hours a day so we don\u2019t freeze. That\u2019s all we are to him.",
+            choices: [{ text: "[Leave]", next: null }],
+          },
+          confront_pamphlet: {
+            text: "You\u2026 you found it. Are you going to arrest me? For wanting a safe loom? For wanting enough bread so my daughter stops coughing?",
+            choices: [
+              { text: "You\u2019re organizing a strike.", next: 'truth' },
+            ],
+          },
+          truth: {
+            text: "Yes. We\u2019re stopping the machines tomorrow. Not with bombs, but by sitting down. If you turn us in, Sterling will bring in scabs and the police. What kind of man are you, Detective?",
+            choices: [
+              { text: "I need to go talk to Sterling.", next: null, setFlag: 'ready_to_confront' },
+            ],
+          },
+        },
+      },
+    };
+
+    /* ------------------------------------------------------------------ */
+    /* APP                                                                  */
+    /* ------------------------------------------------------------------ */
+
+    function App() {
+      const [gameState,      setGameState]      = useState('TITLE');
+      const [currentScene,   setCurrentScene]   = useState('OFFICE');
+      const [flags,          setFlags]          = useState({});
+      const [clues,          setClues]          = useState([]);
+      const [activeDialogue, setActiveDialogue] = useState(null);
+      const [examineText,    setExamineText]    = useState(null);
+
+      const applyFlags = (flagVal) => {
+        if (!flagVal) return;
+        setFlags(prev => {
+          const next = { ...prev };
+          if (Array.isArray(flagVal)) flagVal.forEach(f => { next[f] = true; });
+          else next[flagVal] = true;
+          return next;
+        });
+      };
+
+      const addClue = (clue) => {
+        if (!clue) return;
+        setClues(prev => prev.find(c => c.id === clue.id) ? prev : [...prev, clue]);
+      };
+
+      const handleHotspotClick = (hs) => {
+        if (activeDialogue) return;
+        if (hs.reqFlag && !flags[hs.reqFlag]) {
+          setExamineText("I have no reason to go there just yet.");
+          return;
+        }
+        setExamineText(null);
+        if (hs.type === 'transit') {
+          setCurrentScene(hs.target);
+        } else if (hs.type === 'examine') {
+          setExamineText(EXAMINE_TEXT[hs.id]);
+          if (EXAMINE_FLAG[hs.id]) applyFlags(EXAMINE_FLAG[hs.id]);
+          addClue(EXAMINE_CLUE[hs.id]);
+        } else if (hs.type === 'character') {
+          const startNode = DIALOGUE[hs.id].start(flags);
+          setActiveDialogue({ charId: hs.id, node: startNode });
+        }
+      };
+
+      const handleDialogueChoice = (choice) => {
+        if (choice.setFlag) applyFlags(choice.setFlag);
+        if (choice.next === 'ending_strike')    { setGameState('ENDING_STRIKE');    setActiveDialogue(null); return; }
+        if (choice.next === 'ending_pinkerton') { setGameState('ENDING_PINKERTON'); setActiveDialogue(null); return; }
+        if (choice.next) setActiveDialogue({ charId: activeDialogue.charId, node: choice.next });
+        else             setActiveDialogue(null);
+      };
+
+      const startGame = () => {
+        setGameState('PLAY');
+        setCurrentScene('OFFICE');
+        setFlags({});
+        setClues([]);
+        setActiveDialogue(null);
+        setExamineText(null);
+      };
+
+      /* ---- TITLE ---- */
+      if (gameState === 'TITLE') {
+        return (
+          <div className="min-h-screen bg-stone-950 flex flex-col items-center justify-center text-stone-200 font-serif p-6">
+            <div className="w-full max-w-md border p-8 border-stone-700 bg-stone-900 shadow-2xl rounded-sm">
+              <div className="text-center mb-6">
+                <h1 className="text-4xl sm:text-5xl font-bold tracking-widest text-amber-100 leading-tight">
+                  THE PINKERTON'S
+                </h1>
+                <h2 className="text-2xl sm:text-3xl font-light text-amber-600 mt-1">
+                  DILEMMA
+                </h2>
+                <p className="text-sm text-stone-400 mt-4 italic">
+                  "We never sleep. But sometimes, we must choose what we wake up to."
+                </p>
+              </div>
+              <div className="text-sm text-stone-300 space-y-3 border-t border-stone-700 pt-6 mb-8">
+                <p>You are <strong className="text-amber-200">Arthur Pendelton</strong>, an agent of the National Detective Agency — the Pinkertons.</p>
+                <p>A wealthy industrialist has hired you to root out "saboteurs" disrupting his factory.</p>
+                <p>Click people and objects to investigate. Build your case file. Then choose where your loyalties lie.</p>
+              </div>
+              <button
+                onClick={startGame}
+                className="w-full py-4 bg-stone-800 border border-stone-600 uppercase tracking-widest rounded shadow-md text-amber-50 font-bold text-sm transition-colors hover:bg-amber-950 active:bg-amber-900"
+              >
+                Begin Investigation
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      /* ---- ENDINGS ---- */
+      if (gameState === 'ENDING_STRIKE' || gameState === 'ENDING_PINKERTON') {
+        const isStrike = gameState === 'ENDING_STRIKE';
+        return (
+          <div className="min-h-screen bg-black flex flex-col items-center justify-center text-stone-200 font-serif p-6">
+            <div className="w-full max-w-lg">
+              <h1 className="text-3xl sm:text-4xl font-bold text-amber-600 border-b border-amber-800 pb-4 text-center tracking-widest mb-8">
+                {isStrike ? "THE BLACKLIST" : "THE COMPANY MAN"}
+              </h1>
+              {isStrike ? (
+                <div className="space-y-4 text-base sm:text-lg text-stone-300 leading-relaxed">
+                  <p>You lay the ledger and medical logs on Sterling's desk. The threat is unmistakable.</p>
+                  <p>Sterling backs down, canceling the police raid to avoid a public scandal.</p>
+                  <p>The next day, the workers sit down at their looms. The strike holds, and over weeks, small concessions are won: a ten-hour cap, no children under twelve.</p>
+                  <p>As for you — the Pinkerton Agency dismisses you for breach of contract. You are blacklisted from the detective business.</p>
+                  <p className="text-amber-200 pt-4 text-center font-bold text-xl">You lost your career. You kept your soul.</p>
+                </div>
+              ) : (
+                <div className="space-y-4 text-base sm:text-lg text-stone-300 leading-relaxed">
+                  <p>You hand over the pamphlet and the names. Sterling smiles, sliding a heavy envelope across the desk.</p>
+                  <p>That night, armed men descend on the Workers' Quarters. Elias, Clara, and dozens of others are evicted and blacklisted from every mill in the county.</p>
+                  <p>The factory is running again by Tuesday. With new, more desperate workers. At lower wages.</p>
+                  <p>Your reputation at the Agency soars. You are the man who gets results.</p>
+                  <p className="text-amber-200 pt-4 text-center font-bold text-xl">You kept your career. The blood on the factory floor is yours, too.</p>
+                </div>
+              )}
+              <button
+                onClick={startGame}
+                className="mt-10 w-full py-4 bg-stone-900 border border-stone-600 uppercase tracking-wider text-sm font-bold rounded text-stone-200 hover:bg-stone-800 active:bg-stone-700 transition-colors"
+              >
+                Play Again
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      /* ---- MAIN GAME ---- */
+      const scene = SCENES[currentScene];
+      const dialogue = activeDialogue
+        ? DIALOGUE[activeDialogue.charId].nodes[activeDialogue.node]
+        : null;
+
+      return (
+        <div className="min-h-screen bg-stone-950 flex flex-col items-center p-2 sm:p-4 font-serif text-stone-200 pb-6">
+          <div className="w-full max-w-3xl flex flex-col gap-3">
+
+            {/* Header */}
+            <header className="bg-stone-900 border border-stone-800 p-3 sm:p-4 rounded shadow-md flex justify-between items-center">
+              <div>
+                <h1 className="text-base sm:text-xl font-bold text-amber-100 tracking-wide">
+                  The Pinkerton's Dilemma
+                </h1>
+                <div className="text-xs sm:text-sm text-amber-600 flex items-center gap-1 mt-0.5">
+                  <Map size={14} />
+                  <span>{scene.name}</span>
+                </div>
+              </div>
+              <div className="text-right text-xs text-stone-500">
+                {clues.length} clue{clues.length !== 1 ? 's' : ''} found
+              </div>
+            </header>
+
+            {/* Scene Viewport */}
+            <div
+              className={`relative w-full border-2 border-stone-700 rounded shadow-inner overflow-hidden ${scene.bg}`}
+              style={{ height: 'clamp(260px, 42vw, 400px)', backgroundImage: scene.pattern }}
+            >
+              <div className="absolute top-2 left-2 right-2 text-center text-stone-400 italic text-xs sm:text-sm pointer-events-none bg-black/50 py-1.5 px-3 rounded backdrop-blur-sm">
+                {scene.description}
+              </div>
+
+              {scene.hotspots.map((hs, idx) => {
+                const HsIcon = hs.icon;
+                const locked = hs.reqFlag && !flags[hs.reqFlag];
+                const typeStyle =
+                  hs.type === 'transit'   ? 'bg-amber-900/80 border-amber-600'  :
+                  hs.type === 'character' ? 'bg-blue-900/80  border-blue-500'   :
+                                            'bg-stone-800/90 border-stone-400';
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleHotspotClick(hs)}
+                    disabled={!!activeDialogue}
+                    className="absolute flex flex-col items-center"
+                    style={{
+                      left: `${hs.x}%`, top: `${hs.y}%`,
+                      transform: 'translate(-50%, -50%)',
+                      opacity: locked ? 0.3 : 1,
+                      cursor: locked ? 'default' : 'pointer',
+                    }}
+                  >
+                    <div className={`p-2.5 sm:p-3.5 rounded-full border-2 shadow-lg backdrop-blur-sm transition-transform hover:scale-110 active:scale-95 ${typeStyle}`}>
+                      <HsIcon size={22} className={hs.color || 'text-stone-100'} />
+                    </div>
+                    <span className="mt-1 text-[9px] sm:text-[11px] font-bold tracking-wider bg-black/80 px-1.5 py-0.5 rounded text-stone-200 shadow-md whitespace-nowrap">
+                      {hs.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Interaction Panel */}
+            <div className="bg-stone-900 border border-stone-800 rounded p-4 shadow-md" style={{ minHeight: 200 }}>
+              {dialogue ? (
+                <div className="fade-in flex flex-col gap-4">
+                  <div>
+                    <div className="text-amber-600 font-bold uppercase tracking-widest text-xs flex items-center gap-1.5 mb-2">
+                      <MessageCircle size={14} />
+                      <span>{activeDialogue.charId}</span>
+                    </div>
+                    <p className="text-sm sm:text-base leading-relaxed text-stone-100 italic">
+                      "{dialogue.text}"
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    {dialogue.choices.map((choice, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleDialogueChoice(choice)}
+                        className="w-full text-left p-2.5 sm:p-3 rounded bg-stone-950 border border-stone-800 text-amber-50 text-xs sm:text-sm flex items-start gap-2 hover:bg-stone-800 hover:border-amber-800 active:bg-stone-700 transition-colors"
+                      >
+                        <ChevronRight size={16} className="text-stone-500 mt-0.5 shrink-0" />
+                        <span>{choice.text}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : examineText ? (
+                <div className="fade-in flex flex-col items-center justify-center text-center gap-4 py-4">
+                  <Eye size={28} className="text-amber-700 opacity-70" />
+                  <p className="text-sm sm:text-base text-amber-50 italic leading-relaxed max-w-lg">
+                    {examineText}
+                  </p>
+                  <button
+                    onClick={() => setExamineText(null)}
+                    className="px-6 py-2 bg-stone-800 border border-stone-600 rounded text-xs sm:text-sm text-stone-200 hover:bg-stone-700 active:bg-stone-600 transition-colors"
+                  >
+                    Continue
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center text-stone-600 italic text-xs sm:text-sm text-center py-8">
+                  Tap a person or object in the scene above to investigate.
+                </div>
+              )}
+            </div>
+
+            {/* Case File */}
+            <div className="bg-stone-900 border border-stone-800 rounded p-4 shadow-md">
+              <h3 className="font-bold text-amber-600 mb-3 border-b border-stone-700 pb-2 flex items-center gap-2 text-xs sm:text-sm uppercase tracking-wider">
+                <FileText size={16} /> Case File — Collected Evidence
+              </h3>
+              {clues.length === 0 ? (
+                <p className="text-xs sm:text-sm text-stone-600 italic">No hard evidence collected yet.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {clues.map((clue, idx) => (
+                    <li key={idx} className="fade-in text-xs sm:text-sm text-stone-300 bg-stone-950 p-2.5 border-l-2 border-amber-700 rounded-r flex items-start gap-2">
+                      <CheckCircle size={14} className="text-amber-700 mt-0.5 shrink-0" />
+                      <span>{clue.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {flags.ready_to_confront && !activeDialogue && (
+                <div className="fade-in mt-3 p-3 bg-amber-950/60 border border-amber-800 rounded text-xs sm:text-sm text-amber-200 italic">
+                  You have everything you need. Return to Sterling's Office and make your choice.
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+
+    /* ------------------------------------------------------------------ */
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
