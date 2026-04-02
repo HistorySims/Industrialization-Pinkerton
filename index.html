@@ -1,1 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>The Pinkerton File</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #0a0908;
+  font-family: 'Libre Baskerville', serif;
+}
+
+/* VIEWPORT & PANORAMA */
+#game-viewport {
+  position: fixed; inset: 0;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#game-viewport.dragging { cursor: grabbing; }
+
+#panorama-container {
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  will-change: transform;
+}
+
+#scene-image {
+  height: 100%;
+  width: auto;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+#hotspot-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* HOTSPOTS */
+.hotspot {
+  position: absolute;
+  width: 26px; height: 26px;
+  transform: translate(-50%, -50%);
+  pointer-events: all;
+  cursor: pointer;
+  z-index: 10;
+}
+.hotspot-glow {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,185,55,0.95) 0%, rgba(255,140,20,0.45) 55%, transparent 100%);
+  animation: hotspot-pulse 2.5s ease-in-out infinite;
+  transition: transform 0.2s ease, opacity 0.3s;
+}
+.hotspot:hover .hotspot-glow {
+  transform: scale(1.5);
+  animation-play-state: paused;
+  opacity: 1;
+}
+.hotspot.found .hotspot-glow {
+  background: radial-gradient(circle, rgba(90,130,95,0.65) 0%, rgba(70,110,75,0.25) 55%, transparent 100%);
+  animation-duration: 5s;
+}
+@keyframes hotspot-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%       { opacity: 0.75; transform: scale(1.15); }
+}
+
+/* VIGNETTE */
+#vignette {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 140px rgba(0,0,0,0.72), inset 0 0 50px rgba(0,0,0,0.45);
+  z-index: 20;
+}
+
+/* LOCATION LABEL */
+#location-label {
+  position: fixed;
+  top: 18px; left: 22px;
+  z-index: 30;
+  pointer-events: none;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+}
+#loc-name {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  font-variant: small-caps;
+  letter-spacing: 2.5px;
+  color: #d4c4a0;
+  line-height: 1.5;
+}
+#loc-sub {
+  display: block;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 10px;
+  color: rgba(212,196,160,0.55);
+  letter-spacing: 1.2px;
+  font-style: italic;
+}
+#loc-act {
+  display: block;
+  margin-top: 5px;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(212,196,160,0.38);
+}
+
+/* CHEVRONS */
+.chevron {
+  position: fixed;
+  top: 50%; transform: translateY(-50%);
+  z-index: 30;
+  background: none; border: none;
+  color: rgba(212,196,160,0.4);
+  font-size: 52px;
+  cursor: pointer;
+  padding: 10px 14px;
+  line-height: 1;
+  transition: color 0.25s, opacity 0.4s;
+  font-family: serif;
+  min-height: 44px; min-width: 44px;
+}
+.chevron:hover { color: rgba(212,196,160,0.85); }
+#chev-left  { left: 2px; }
+#chev-right { right: 2px; }
+.chevron.edge { opacity: 0; pointer-events: none; }
+
+/* SCROLL INDICATOR */
+#scroll-wrap {
+  position: fixed;
+  bottom: 14px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  width: 180px;
+  pointer-events: none;
+}
+#scroll-track {
+  height: 2px;
+  background: rgba(212,196,160,0.18);
+  border-radius: 1px;
+  position: relative;
+}
+#scroll-thumb {
+  height: 100%;
+  background: rgba(212,196,160,0.55);
+  border-radius: 1px;
+  position: absolute; top: 0;
+  transition: left 0.05s linear;
+}
+
+/* EVIDENCE CARD OVERLAY */
+#card-overlay {
+  position: fixed; inset: 0;
+  z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  pointer-events: none;
+  background: rgba(0,0,0,0);
+  transition: background 0.3s;
+}
+#card-overlay.open {
+  background: rgba(0,0,0,0.76);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  pointer-events: all;
+}
+
+#evidence-card {
+  position: relative;
+  max-width: 540px; width: 100%;
+  max-height: 88vh; overflow-y: auto;
+  padding: 28px 32px 24px;
+  border-radius: 2px;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+  box-shadow: 0 10px 50px rgba(0,0,0,0.65), 0 2px 8px rgba(0,0,0,0.4);
+}
+#card-overlay.open #evidence-card { opacity: 1; transform: translateY(0); }
+
+#evidence-card.type-dialogue {
+  background: radial-gradient(ellipse at 15% 85%, rgba(160,110,50,0.09) 0%, transparent 55%), #f5ebce;
+}
+#evidence-card.type-document {
+  background: radial-gradient(ellipse at 85% 15%, rgba(100,90,70,0.07) 0%, transparent 55%), #f0edd8;
+}
+#evidence-card.type-object {
+  background: radial-gradient(ellipse at 50% 90%, rgba(140,100,50,0.09) 0%, transparent 55%), #f5edd6;
+}
+
+#card-close {
+  position: absolute; top: 10px; right: 12px;
+  background: none; border: none;
+  font-size: 24px; color: #9a7a5a;
+  cursor: pointer; line-height: 1;
+  padding: 4px 8px; min-width: 32px; min-height: 32px;
+  transition: color 0.2s;
+}
+#card-close:hover { color: #3a2a1a; }
+
+.card-type-tag {
+  display: block;
+  font-size: 9px; letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #9a7850; font-family: 'Libre Baskerville', serif;
+  margin-bottom: 7px;
+}
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 700;
+  color: #251508; line-height: 1.3;
+  margin-bottom: 4px;
+}
+.card-desc {
+  font-style: italic; font-size: 13px;
+  color: #6a4828; margin-bottom: 14px; line-height: 1.55;
+  font-family: 'Libre Baskerville', serif;
+}
+.card-rule {
+  border: none; border-top: 1px solid rgba(100,70,35,0.22);
+  margin: 0 0 14px;
+}
+.card-line {
+  font-size: 14.5px; color: #3a2a1a;
+  line-height: 1.75; margin-bottom: 10px;
+  font-style: italic;
+  font-family: 'Libre Baskerville', serif;
+}
+.card-line:last-of-type { margin-bottom: 0; }
+.card-body {
+  font-size: 13.5px; color: #3a2a1a;
+  line-height: 1.82; white-space: pre-line;
+  font-family: 'Libre Baskerville', serif;
+}
+
+#card-added {
+  margin-top: 18px;
+  font-size: 11.5px; color: #5a7a5a;
+  font-style: italic; letter-spacing: 0.5px;
+  opacity: 0; transition: opacity 0.5s 0.25s;
+  font-family: 'Libre Baskerville', serif;
+}
+#card-added.show { opacity: 1; }
+
+/* NOTEBOOK SIDEBAR */
+#notebook {
+  position: fixed; top: 0; right: -380px;
+  width: 360px; height: 100%;
+  background: #14110e;
+  border-left: 1px solid rgba(212,196,160,0.1);
+  z-index: 200;
+  display: flex; flex-direction: column;
+  transition: right 0.32s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+#notebook.open { right: 0; }
+
+#nb-header {
+  padding: 18px 18px 15px;
+  border-bottom: 1px solid rgba(212,196,160,0.12);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+#nb-header span {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px; font-variant: small-caps;
+  letter-spacing: 1.8px; color: #d4c4a0;
+}
+#nb-close {
+  background: none; border: none;
+  color: rgba(212,196,160,0.45); font-size: 22px;
+  cursor: pointer; padding: 4px 8px;
+  min-width: 36px; min-height: 36px;
+  transition: color 0.2s;
+}
+#nb-close:hover { color: #d4c4a0; }
+
+#nb-loc {
+  padding: 14px 18px 6px;
+  font-size: 9px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: rgba(212,196,160,0.35);
+  font-family: 'Libre Baskerville', serif;
+  flex-shrink: 0;
+}
+
+#nb-entries {
+  flex: 1; overflow-y: auto; padding: 4px 0 16px;
+}
+
+.nb-entry {
+  padding: 11px 18px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(212,196,160,0.06);
+  display: flex; align-items: center; gap: 11px;
+  transition: background 0.18s;
+}
+.nb-entry:hover { background: rgba(212,196,160,0.05); }
+
+.nb-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.nb-dot.dialogue { background: rgba(200,160,80,0.6); }
+.nb-dot.document { background: rgba(130,110,170,0.55); }
+.nb-dot.object   { background: rgba(100,160,105,0.55); }
+
+.nb-info {}
+.nb-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 12.5px; color: rgba(212,196,160,0.8);
+  line-height: 1.4;
+}
+.nb-type {
+  font-size: 9px; color: rgba(212,196,160,0.3);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin-top: 1px;
+  font-family: 'Libre Baskerville', serif;
+}
+
+#nb-empty {
+  padding: 24px 18px;
+  font-size: 12px; font-style: italic;
+  color: rgba(212,196,160,0.28);
+  font-family: 'Libre Baskerville', serif;
+}
+
+/* NOTEBOOK TOGGLE */
+#nb-toggle {
+  position: fixed; top: 18px; right: 18px;
+  z-index: 150;
+  background: rgba(24,18,11,0.92);
+  border: 1px solid rgba(212,196,160,0.22);
+  color: #d4c4a0;
+  padding: 8px 13px;
+  cursor: pointer;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 11px; letter-spacing: 1px;
+  display: flex; align-items: center; gap: 7px;
+  min-height: 44px; border-radius: 1px;
+  transition: background 0.2s, border-color 0.2s;
+}
+#nb-toggle:hover {
+  background: rgba(38,28,16,0.96);
+  border-color: rgba(212,196,160,0.45);
+}
+#nb-badge {
+  background: rgba(212,196,160,0.14);
+  border-radius: 50%;
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10.5px; color: #d4c4a0;
+}
+
+/* PROGRESSION BUTTON */
+#progress-btn {
+  position: fixed; bottom: 34px; left: 50%;
+  transform: translateX(-50%) translateY(22px);
+  z-index: 50;
+  background: linear-gradient(180deg, #594618 0%, #382c0e 100%);
+  border: 1px solid #897035;
+  color: #d4c4a0;
+  padding: 13px 30px;
+  font-family: 'Playfair Display', serif;
+  font-size: 14px; letter-spacing: 1px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.55s ease, transform 0.55s ease;
+  min-height: 44px; border-radius: 1px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,215,100,0.1);
+  pointer-events: none;
+}
+#progress-btn.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: all;
+}
+#progress-btn:hover {
+  background: linear-gradient(180deg, #6a5520 0%, #463a14 100%);
+  border-color: #a09040;
+}
+
+/* TRANSITION SCREEN */
+#transition {
+  position: fixed; inset: 0;
+  background: #0a0908;
+  z-index: 500;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.7s;
+  display: flex; align-items: center; justify-content: center;
+}
+#transition.on { opacity: 1; pointer-events: all; }
+#trans-inner { text-align: center; opacity: 0; transition: opacity 0.5s 0.55s; }
+#transition.on #trans-inner { opacity: 1; }
+.trans-act {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 11px; letter-spacing: 3px;
+  text-transform: uppercase; color: rgba(212,196,160,0.45);
+  margin-bottom: 14px;
+}
+.trans-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px; color: #d4c4a0; margin-bottom: 8px;
+}
+.trans-sub {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 13px; font-style: italic;
+  color: rgba(212,196,160,0.5);
+}
+
+/* SCROLLBARS */
+#nb-entries::-webkit-scrollbar,
+#evidence-card::-webkit-scrollbar { width: 3px; }
+#nb-entries::-webkit-scrollbar-track,
+#evidence-card::-webkit-scrollbar-track { background: transparent; }
+#nb-entries::-webkit-scrollbar-thumb,
+#evidence-card::-webkit-scrollbar-thumb {
+  background: rgba(212,196,160,0.2); border-radius: 2px;
+}
+
+/* MOBILE */
+@media (max-width: 500px) {
+  #notebook { width: 100%; right: -100%; }
+  #evidence-card { padding: 20px 18px; }
+  .card-title { font-size: 17px; }
+  .card-body, .card-line { font-size: 13px; }
+  #nb-toggle { top: 14px; right: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div id="game-viewport">
+  <div id="panorama-container">
+    <img id="scene-image" alt="">
+    <div id="hotspot-layer"></div>
+  </div>
+  <div id="vignette"></div>
+  <div id="location-label">
+    <span id="loc-name"></span>
+    <span id="loc-sub"></span>
+    <span id="loc-act"></span>
+  </div>
+  <button class="chevron" id="chev-left"  aria-label="Pan left">&#8249;</button>
+  <button class="chevron" id="chev-right" aria-label="Pan right">&#8250;</button>
+  <div id="scroll-wrap">
+    <div id="scroll-track"><div id="scroll-thumb"></div></div>
+  </div>
+</div>
+
+<div id="card-overlay" role="dialog" aria-modal="true" aria-label="Evidence">
+  <div id="evidence-card">
+    <button id="card-close" aria-label="Close">&#215;</button>
+    <div id="card-inner"></div>
+    <div id="card-added">&#10003; Added to notebook</div>
+  </div>
+</div>
+
+<div id="notebook" role="complementary" aria-label="Case Notebook">
+  <div id="nb-header">
+    <span>Case Notebook</span>
+    <button id="nb-close" aria-label="Close notebook">&#215;</button>
+  </div>
+  <div id="nb-loc"></div>
+  <div id="nb-entries"><div id="nb-empty">Your notebook is empty.</div></div>
+</div>
+
+<button id="nb-toggle" aria-label="Open notebook">
+  <span>&#9997; Notebook</span>
+  <span id="nb-badge">0</span>
+</button>
+
+<button id="progress-btn"></button>
+
+<div id="transition">
+  <div id="trans-inner">
+    <div class="trans-act"></div>
+    <div class="trans-title"></div>
+    <div class="trans-sub"></div>
+  </div>
+</div>
+
+<script>
+// =============================================================
+// GAME DATA — add future scenes here; engine reads generically
+// =============================================================
+const GAME_DATA = {
+
+  sceneOrder: ['pinkerton_office', 'town_map_day'],
+
+  scenes: {
+
+    pinkerton_office: {
+      id:       'pinkerton_office',
+      name:     'Pinkerton National Detective Agency',
+      subtitle: 'Philadelphia, Pennsylvania',
+      actLabel: 'Act I — The Assignment',
+      image:    'IMG_5471.jpeg',
+
+      hotspots: [
+        {
+          id: 'badge',
+          label: 'Pinkerton Badge',
+          x: 0.03, y: 0.22,
+          type: 'object',
+          required: false,
+          content: {
+            title: 'Pinkerton Badge',
+            text:  "Pinkerton National Detective Agency — 'We Never Sleep.' The famous open eye.\n\nYou've been with the agency three years. Good work in Pittsburgh. This should be straightforward."
+          }
+        },
+        {
+          id: 'harding',
+          label: 'Superintendent Harding',
+          x: 0.14, y: 0.45,
+          type: 'dialogue',
+          required: true,
+          content: {
+            title: 'Superintendent Harding',
+            desc:  "A sharp-eyed man behind a heavy desk. He doesn't waste words.",
+            lines: [
+              "Sit down. Bennington Mills — textile operation, company town, been running thirty years. Owner says his workers are organizing. Wants it stopped before it becomes a strike.",
+              "This should be straightforward. Go up there, talk to the owner, talk to the workers, find out who's stirring the pot. Write me a report with names and a recommendation.",
+              "Aldrich is a good client. Don't embarrass the agency."
+            ]
+          }
+        },
+        {
+          id: 'safe',
+          label: 'The Safe',
+          x: 0.08, y: 0.32,
+          type: 'object',
+          required: false,
+          content: {
+            title: 'The Safe',
+            text:  "Case files from previous jobs line the shelves. You notice labels — other company names, other towns. This isn't the first time the agency has done this kind of work."
+          }
+        },
+        {
+          id: 'bryce',
+          label: 'Agent Bryce',
+          x: 0.38, y: 0.43,
+          type: 'dialogue',
+          required: false,
+          content: {
+            title: 'Agent Bryce',
+            desc:  "A broad man in a flat cap. He doesn't look up.",
+            lines: [
+              "Bennington? I did a job in a town like that last year. Coal town, same kind of bellyaching. You know what worked? Find the loudest mouth, get him fired, the rest fall in line.",
+              "Don't overthink it."
+            ]
+          }
+        },
+        {
+          id: 'homestead_file',
+          label: 'Homestead File',
+          x: 0.36, y: 0.58,
+          type: 'document',
+          required: false,
+          content: {
+            title: 'Homestead File — 1892',
+            text:  "A case file sits open on Bryce's desk.\n\nHOMESTEAD, PA — 1892. Client: Carnegie Steel Co. Action: 300 Pinkerton agents deployed by barge to secure Homestead Steel Works during labor dispute. Outcome: Armed confrontation with workers. 10 killed (7 workers, 3 agents). Strike broken. Public reaction: Negative. Congressional investigation followed.\n\nNOTE: Agency no longer accepts armed deployment contracts.\n\nSix years ago. Ten people dead. And they still call it a success in the file because the strike was broken."
+          }
+        },
+        {
+          id: 'case_file',
+          label: 'Your Desk — Case File',
+          x: 0.52, y: 0.72,
+          type: 'document',
+          required: true,
+          content: {
+            title: 'Case #4417 — Bennington Mills',
+            text:  "PINKERTON NATIONAL DETECTIVE AGENCY — CASE #4417\n\nBennington Mills, Bennington, PA\nClient: George Aldrich, Owner\nReport of labor agitation and possible strike organization.\nAgent assigned to identify organizers and recommend action.\n\nAldrich has been a reliable client for six years. Handle with care and professionalism.\n\n\"Reliable client for six years.\" He's called the Pinkertons before. What happened those times?"
+          }
+        },
+        {
+          id: 'marsh',
+          label: 'Agent Marsh',
+          x: 0.60, y: 0.40,
+          type: 'dialogue',
+          required: false,
+          content: {
+            title: 'Agent Marsh',
+            desc:  "An older man reviewing papers. He speaks quietly, like he's used to not being overheard.",
+            lines: [
+              "Bennington. I've heard of it. Aldrich runs a tight ship — company store, company housing, the whole arrangement.",
+              "Listen, most of these things aren't really about wages. People want to feel like they matter. Talk to the workers before you talk to the owner, if you can. You'll get a straighter picture."
+            ]
+          }
+        },
+        {
+          id: 'molly_file',
+          label: 'Molly Maguires File',
+          x: 0.63, y: 0.55,
+          type: 'document',
+          required: false,
+          content: {
+            title: 'Molly Maguires — Confidential',
+            text:  "A closed file on Marsh's desk. You know the story.\n\nIn the 1870s, Pinkerton agent James McParland spent two years undercover in the Pennsylvania coal fields, infiltrating an Irish miners' organization accused of violence against mine owners. His testimony sent twenty men to the gallows.\n\nIt made the agency's reputation. Some people say McParland was a hero who stopped terrorism. Others say he fabricated evidence to frame union organizers for crimes they didn't commit.\n\nThe file is closed. You don't open it."
+          }
+        },
+        {
+          id: 'callahan',
+          label: 'Miss Callahan',
+          x: 0.88, y: 0.38,
+          type: 'dialogue',
+          required: false,
+          content: {
+            title: 'Miss Callahan',
+            desc:  "The office secretary. She's the only one who smiles at you.",
+            lines: [
+              "You must be the agent heading to Bennington. Superintendent Harding is waiting for you. Your case file is on your desk.",
+              "You can look around by dragging left and right. Click on anything that catches your eye — people, objects, documents. Everything you find goes in your notebook."
+            ]
+          }
+        },
+        {
+          id: 'agency_rules',
+          label: 'Agency Code of Conduct',
+          x: 0.92, y: 0.15,
+          type: 'document',
+          required: false,
+          content: {
+            title: 'Agency Code of Conduct',
+            text:  "Gather facts with utmost discretion.\n\nReport findings without bias or embellishment.\n\nDo not fraternize with subjects of investigation.\n\nThe Agency's reputation is the client's guarantee."
+          }
+        }
+      ],
+
+      progression: {
+        required:   ['harding', 'case_file'],
+        buttonText: 'Head to Bennington \u2192',
+        nextScene:  'town_map_day'
+      }
+    }
+
+    // ── Future scenes go here ──────────────────────────────────
+    // town_map_day: {
+    //   id: 'town_map_day',
+    //   name: 'Bennington, Pennsylvania',
+    //   subtitle: 'Company Town',
+    //   actLabel: 'Act II — Arrival',
+    //   image: 'scene2.jpeg',
+    //   hotspots: [ ... ],
+    //   progression: { required: [...], buttonText: '...', nextScene: '...' }
+    // }
+  }
+};
+
+// =============================================================
+// GAME STATE
+// =============================================================
+const gameState = {
+  currentScene: 'pinkerton_office',
+  discovered:   new Set(),   // hotspot ids clicked
+  visited:      new Set(),   // scene ids entered
+  evidence:     [],          // {id, title, type, sceneName}
+  cardOpen:     false,
+  notebookOpen: false
+};
+
+// =============================================================
+// PANNING
+// =============================================================
+const pan = {
+  x: 0, minX: 0, maxX: 0,
+  dragging: false,
+  startMX: 0, startPX: 0,
+  moved: false,
+  imgW: 0
+};
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function setPan(x, animate) {
+  x = clamp(x, pan.minX, pan.maxX);
+  pan.x = x;
+  const c = document.getElementById('panorama-container');
+  c.style.transition = animate ? 'transform 0.28s ease-out' : 'none';
+  c.style.transform  = `translateX(${x}px)`;
+  updateScrollThumb();
+  updateChevrons();
+}
+
+function panBy(dx, animate) { setPan(pan.x + dx, animate); }
+
+function computeBounds() {
+  const vw = window.innerWidth;
+  const img = document.getElementById('scene-image');
+  let iw;
+  if (img.naturalWidth) {
+    iw = img.naturalWidth * (window.innerHeight / img.naturalHeight);
+  } else {
+    iw = vw * 3.18; // fallback ratio
+  }
+  pan.imgW = iw;
+  pan.minX = Math.min(0, vw - iw);
+  pan.maxX = 0;
+  document.getElementById('panorama-container').style.width = iw + 'px';
+  // Start slightly right of centre to land on Callahan/Harding area
+  const startX = pan.minX * 0.08;
+  setPan(startX, false);
+}
+
+function updateScrollThumb() {
+  const track = document.getElementById('scroll-track');
+  const thumb = document.getElementById('scroll-thumb');
+  const range = pan.minX - pan.maxX; // negative number, range magnitude
+  if (!range) { thumb.style.width = '100%'; thumb.style.left = '0'; return; }
+  const ratio  = pan.imgW / window.innerWidth;
+  const pct    = Math.max(8, 100 / ratio);
+  const prog   = pan.maxX === pan.minX ? 0 : (pan.x - pan.maxX) / (pan.minX - pan.maxX);
+  const tw     = track.offsetWidth;
+  thumb.style.width = pct + '%';
+  thumb.style.left  = (prog * (tw - tw * pct / 100)) + 'px';
+}
+
+function updateChevrons() {
+  document.getElementById('chev-left').classList.toggle('edge',  pan.x >= pan.maxX - 2);
+  document.getElementById('chev-right').classList.toggle('edge', pan.x <= pan.minX + 2);
+}
+
+// =============================================================
+// SCENE INIT
+// =============================================================
+function loadScene(id) {
+  const scene = GAME_DATA.scenes[id];
+  if (!scene) return;
+  gameState.currentScene = id;
+  gameState.visited.add(id);
+
+  document.getElementById('loc-name').textContent = scene.name;
+  document.getElementById('loc-sub').textContent  = scene.subtitle;
+  document.getElementById('loc-act').textContent  = scene.actLabel;
+  document.getElementById('nb-loc').textContent   = scene.name + ' — ' + scene.actLabel;
+
+  const img = document.getElementById('scene-image');
+  img.src = scene.image;
+  if (img.complete && img.naturalWidth) {
+    computeBounds();
+    buildHotspots(scene);
+  } else {
+    img.onload = () => { computeBounds(); buildHotspots(scene); };
+    img.onerror = () => { computeBounds(); buildHotspots(scene); };
+  }
+
+  const btn = document.getElementById('progress-btn');
+  btn.textContent = scene.progression.buttonText;
+  btn.classList.remove('show');
+  checkProgression();
+}
+
+// =============================================================
+// HOTSPOTS
+// =============================================================
+function buildHotspots(scene) {
+  const layer = document.getElementById('hotspot-layer');
+  layer.innerHTML = '';
+  scene.hotspots.forEach(h => {
+    const el = document.createElement('div');
+    el.className = 'hotspot' + (gameState.discovered.has(h.id) ? ' found' : '');
+    el.dataset.id = h.id;
+    el.style.left  = (h.x * 100) + '%';
+    el.style.top   = (h.y * 100) + '%';
+    el.setAttribute('role', 'button');
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('aria-label', h.label);
+    el.title = h.label;
+    const glow = document.createElement('div');
+    glow.className = 'hotspot-glow';
+    el.appendChild(glow);
+    el.addEventListener('click',   e => { e.stopPropagation(); if (!pan.moved) openCard(h.id); });
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCard(h.id); } });
+    layer.appendChild(el);
+  });
+}
+
+// =============================================================
+// EVIDENCE CARD
+// =============================================================
+function openCard(id) {
+  const scene = GAME_DATA.scenes[gameState.currentScene];
+  const h = scene.hotspots.find(x => x.id === id);
+  if (!h) return;
+
+  const isNew = !gameState.discovered.has(id);
+  if (isNew) {
+    gameState.discovered.add(id);
+    const el = document.querySelector(`.hotspot[data-id="${id}"]`);
+    if (el) el.classList.add('found');
+    addEvidence(h, scene);
+    checkProgression();
+  }
+
+  gameState.cardOpen = true;
+
+  const card    = document.getElementById('evidence-card');
+  const inner   = document.getElementById('card-inner');
+  const added   = document.getElementById('card-added');
+  const overlay = document.getElementById('card-overlay');
+
+  card.className = 'type-' + h.type;
+  added.classList.remove('show');
+
+  const typeLabel = { dialogue: 'Conversation', document: 'Document', object: 'Observation' };
+  let html = `<span class="card-type-tag">${typeLabel[h.type] || h.type}</span>`;
+  html += `<div class="card-title">${esc(h.content.title)}</div>`;
+
+  if (h.type === 'dialogue') {
+    if (h.content.desc) html += `<div class="card-desc">${esc(h.content.desc)}</div>`;
+    html += '<hr class="card-rule">';
+    (h.content.lines || []).forEach(l => {
+      html += `<div class="card-line">&ldquo;${esc(l)}&rdquo;</div>`;
+    });
+  } else {
+    html += '<hr class="card-rule">';
+    html += `<div class="card-body">${esc(h.content.text || '')}</div>`;
+  }
+
+  inner.innerHTML = html;
+  overlay.classList.add('open');
+  if (isNew) setTimeout(() => added.classList.add('show'), 200);
+  setTimeout(() => document.getElementById('card-close').focus(), 80);
+}
+
+function closeCard() {
+  gameState.cardOpen = false;
+  document.getElementById('card-overlay').classList.remove('open');
+}
+
+// =============================================================
+// NOTEBOOK
+// =============================================================
+function addEvidence(h, scene) {
+  if (gameState.evidence.find(e => e.id === h.id)) return;
+  gameState.evidence.push({ id: h.id, title: h.label, type: h.type, sceneName: scene.name });
+  document.getElementById('nb-badge').textContent = gameState.evidence.length;
+  renderNotebook();
+}
+
+function renderNotebook() {
+  const container = document.getElementById('nb-entries');
+  const empty     = document.getElementById('nb-empty');
+  if (!gameState.evidence.length) { empty.style.display = ''; return; }
+  empty.style.display = 'none';
+  // Rebuild entries after empty placeholder
+  const existing = container.querySelectorAll('.nb-entry');
+  existing.forEach(e => e.remove());
+  gameState.evidence.forEach(entry => {
+    const el  = document.createElement('div');
+    el.className = 'nb-entry';
+    const dot = document.createElement('div');
+    dot.className = `nb-dot ${entry.type}`;
+    const info = document.createElement('div');
+    info.className = 'nb-info';
+    info.innerHTML = `<div class="nb-title">${esc(entry.title)}</div><div class="nb-type">${entry.type}</div>`;
+    el.appendChild(dot);
+    el.appendChild(info);
+    el.addEventListener('click', () => {
+      toggleNotebook();
+      setTimeout(() => openCard(entry.id), 340);
+    });
+    container.appendChild(el);
+  });
+}
+
+function toggleNotebook() {
+  gameState.notebookOpen = !gameState.notebookOpen;
+  document.getElementById('notebook').classList.toggle('open', gameState.notebookOpen);
+}
+
+// =============================================================
+// PROGRESSION
+// =============================================================
+function checkProgression() {
+  const scene = GAME_DATA.scenes[gameState.currentScene];
+  const met   = scene.progression.required.every(id => gameState.discovered.has(id));
+  document.getElementById('progress-btn').classList.toggle('show', met);
+}
+
+function doProgression() {
+  const scene    = GAME_DATA.scenes[gameState.currentScene];
+  const nextId   = scene.progression.nextScene;
+  const nextScene = GAME_DATA.scenes[nextId];
+  const overlay  = document.getElementById('transition');
+  const inner    = document.getElementById('trans-inner');
+
+  overlay.classList.add('on');
+
+  if (nextScene) {
+    inner.querySelector('.trans-act').textContent   = nextScene.actLabel;
+    inner.querySelector('.trans-title').textContent = nextScene.name;
+    inner.querySelector('.trans-sub').textContent   = nextScene.subtitle;
+    setTimeout(() => { loadScene(nextId); setPan(0, false); }, 900);
+    setTimeout(() => overlay.classList.remove('on'), 2200);
+  } else {
+    inner.querySelector('.trans-act').textContent   = 'Coming Soon';
+    inner.querySelector('.trans-title').textContent = 'Act II \u2014 Bennington';
+    inner.querySelector('.trans-sub').textContent   = 'The town is waiting.';
+    setTimeout(() => overlay.classList.remove('on'), 3200);
+  }
+}
+
+// =============================================================
+// INPUT — MOUSE
+// =============================================================
+function initInput() {
+  const vp = document.getElementById('game-viewport');
+
+  vp.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    pan.dragging = true; pan.moved = false;
+    pan.startMX = e.clientX; pan.startPX = pan.x;
+    document.getElementById('panorama-container').style.transition = 'none';
+    vp.classList.add('dragging');
+  });
+  window.addEventListener('mousemove', e => {
+    if (!pan.dragging) return;
+    const dx = e.clientX - pan.startMX;
+    if (Math.abs(dx) > 4) pan.moved = true;
+    setPan(pan.startPX + dx, false);
+  });
+  window.addEventListener('mouseup', () => {
+    pan.dragging = false;
+    document.getElementById('game-viewport').classList.remove('dragging');
+    setTimeout(() => { pan.moved = false; }, 50);
+  });
+
+  // Touch
+  let tStartX = 0, tStartP = 0;
+  vp.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    pan.moved = false;
+    tStartX = e.touches[0].clientX; tStartP = pan.x;
+    document.getElementById('panorama-container').style.transition = 'none';
+  }, { passive: true });
+  vp.addEventListener('touchmove', e => {
+    if (e.touches.length !== 1) return;
+    const dx = e.touches[0].clientX - tStartX;
+    if (Math.abs(dx) > 4) pan.moved = true;
+    setPan(tStartP + dx, false);
+  }, { passive: true });
+  vp.addEventListener('touchend', () => {
+    setTimeout(() => { pan.moved = false; }, 50);
+  });
+
+  // Keyboard
+  window.addEventListener('keydown', e => {
+    if (gameState.cardOpen) { if (e.key === 'Escape') closeCard(); return; }
+    if (gameState.notebookOpen) { if (e.key === 'Escape') toggleNotebook(); return; }
+    if (e.key === 'ArrowLeft')  panBy( 140, true);
+    if (e.key === 'ArrowRight') panBy(-140, true);
+  });
+
+  // Chevrons
+  document.getElementById('chev-left').addEventListener('click',  () => panBy( 220, true));
+  document.getElementById('chev-right').addEventListener('click', () => panBy(-220, true));
+
+  // Resize
+  window.addEventListener('resize', () => computeBounds());
+}
+
+// =============================================================
+// UI BINDINGS
+// =============================================================
+function bindUI() {
+  document.getElementById('card-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('card-overlay')) closeCard();
+  });
+  document.getElementById('card-close').addEventListener('click', closeCard);
+  document.getElementById('nb-toggle').addEventListener('click', toggleNotebook);
+  document.getElementById('nb-close').addEventListener('click',  toggleNotebook);
+  document.getElementById('progress-btn').addEventListener('click', doProgression);
+}
+
+// =============================================================
+// UTILITY
+// =============================================================
+function esc(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// =============================================================
+// BOOT
+// =============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  bindUI();
+  initInput();
+  loadScene(gameState.currentScene);
+});
+</script>
+</body>
+</html>
