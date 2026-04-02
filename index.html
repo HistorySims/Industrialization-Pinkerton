@@ -443,6 +443,109 @@ html, body {
   .card-body, .card-line { font-size: 13px; }
   #nb-toggle { top: 14px; right: 14px; }
 }
+
+/* ── TUNE MODE ────────────────────────────────────────────── */
+body.tune-mode #game-viewport { cursor: crosshair; }
+body.tune-mode .hotspot { display: none; }
+
+#tune-banner {
+  display: none;
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 900;
+  background: rgba(180,40,40,0.92);
+  color: #fff;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 12px; letter-spacing: 1px;
+  text-align: center;
+  padding: 8px 12px;
+}
+body.tune-mode #tune-banner { display: block; }
+
+.tune-marker {
+  position: absolute;
+  width: 28px; height: 28px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 800;
+}
+.tune-marker-ring {
+  position: absolute; inset: 0;
+  border: 2px solid rgba(255,80,80,0.9);
+  border-radius: 50%;
+}
+.tune-marker-dot {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 6px; height: 6px;
+  background: rgba(255,80,80,1);
+  border-radius: 50%;
+  transform: translate(-50%,-50%);
+}
+.tune-marker-label {
+  position: absolute;
+  top: -18px; left: 50%;
+  transform: translateX(-50%);
+  font-family: monospace;
+  font-size: 11px;
+  color: #ff6060;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px #000, 0 0 6px #000;
+}
+
+#tune-panel {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 900;
+  background: rgba(10,8,6,0.97);
+  border-top: 1px solid rgba(255,80,80,0.4);
+  max-height: 42vh;
+  overflow-y: auto;
+  padding: 12px 16px 16px;
+}
+body.tune-mode #tune-panel { display: block; }
+
+#tune-panel h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px; color: rgba(255,120,120,0.9);
+  margin-bottom: 10px; letter-spacing: 1px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+#tune-copy-btn {
+  background: rgba(255,80,80,0.2);
+  border: 1px solid rgba(255,80,80,0.5);
+  color: rgba(255,180,180,0.9);
+  font-family: 'Libre Baskerville', serif;
+  font-size: 11px; letter-spacing: 1px;
+  padding: 5px 12px; cursor: pointer; border-radius: 1px;
+}
+#tune-copy-btn:hover { background: rgba(255,80,80,0.35); }
+#tune-clear-btn {
+  background: none;
+  border: 1px solid rgba(255,80,80,0.25);
+  color: rgba(255,120,120,0.5);
+  font-family: 'Libre Baskerville', serif;
+  font-size: 11px; padding: 5px 10px; cursor: pointer; border-radius: 1px;
+  margin-right: 6px;
+}
+#tune-output {
+  font-family: monospace;
+  font-size: 12px;
+  color: #a8d8a8;
+  white-space: pre;
+  line-height: 1.7;
+  background: rgba(255,255,255,0.03);
+  padding: 10px 12px;
+  border-radius: 2px;
+  border: 1px solid rgba(255,255,255,0.06);
+  min-height: 32px;
+}
+#tune-hint {
+  margin-top: 8px;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 10px; color: rgba(255,255,255,0.3);
+  font-style: italic;
+}
 </style>
 </head>
 <body style="background:#0a0908;margin:0;padding:0;">
@@ -495,6 +598,20 @@ html, body {
     <div class="trans-title"></div>
     <div class="trans-sub"></div>
   </div>
+</div>
+
+<div id="tune-banner">&#9678; TUNING MODE — tap the image to place hotspot markers</div>
+
+<div id="tune-panel">
+  <h3>
+    Hotspot Coordinates
+    <span>
+      <button id="tune-clear-btn">Clear</button>
+      <button id="tune-copy-btn">Copy All</button>
+    </span>
+  </h3>
+  <div id="tune-output">Tap on the scene to record coordinates...</div>
+  <div id="tune-hint">Drag to pan &nbsp;·&nbsp; Tap to place &nbsp;·&nbsp; Coordinates are % of full image width/height</div>
 </div>
 
 <script>
@@ -991,6 +1108,88 @@ function bindUI() {
 }
 
 // =============================================================
+// TUNE MODE  —  activate with ?tune in the URL
+// =============================================================
+const tuneState = { active: false, markers: [] };
+
+function initTuneMode() {
+  if (!location.search.includes('tune')) return;
+  tuneState.active = true;
+  document.body.classList.add('tune-mode');
+
+  // Tap/click on the panorama container places a marker
+  document.getElementById('panorama-container').addEventListener('click', e => {
+    if (pan.moved) return; // was a drag, not a tap
+    placeTuneMarker(e.clientX, e.clientY);
+  });
+
+  document.getElementById('tune-copy-btn').addEventListener('click', copyTuneOutput);
+  document.getElementById('tune-clear-btn').addEventListener('click', clearTuneMarkers);
+}
+
+function placeTuneMarker(clientX, clientY) {
+  // Convert client coords → fraction of full image
+  const container = document.getElementById('panorama-container');
+  const rect      = container.getBoundingClientRect();
+  const xFrac     = (clientX - rect.left) / rect.width;
+  const yFrac     = clientY / window.innerHeight;
+  const xClamped  = Math.max(0, Math.min(1, xFrac));
+  const yClamped  = Math.max(0, Math.min(1, yFrac));
+  const n         = tuneState.markers.length + 1;
+
+  tuneState.markers.push({ n, x: xClamped, y: yClamped });
+
+  // Place visual marker on the hotspot layer
+  const layer = document.getElementById('hotspot-layer');
+  const el    = document.createElement('div');
+  el.className    = 'tune-marker';
+  el.dataset.tune = n;
+  el.style.left   = (xClamped * 100) + '%';
+  el.style.top    = (yClamped * 100) + '%';
+  el.innerHTML = `
+    <div class="tune-marker-ring"></div>
+    <div class="tune-marker-dot"></div>
+    <div class="tune-marker-label">${n}</div>`;
+  layer.appendChild(el);
+
+  renderTuneOutput();
+}
+
+function renderTuneOutput() {
+  const lines = tuneState.markers.map(m =>
+    `  { x: ${m.x.toFixed(3)}, y: ${m.y.toFixed(3)} },  // marker ${m.n}`
+  );
+  document.getElementById('tune-output').textContent =
+    lines.length ? lines.join('\n') : 'Tap on the scene to record coordinates...';
+}
+
+function clearTuneMarkers() {
+  tuneState.markers = [];
+  document.querySelectorAll('.tune-marker').forEach(el => el.remove());
+  renderTuneOutput();
+}
+
+function copyTuneOutput() {
+  const text = document.getElementById('tune-output').textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('tune-copy-btn');
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = orig, 1800);
+    });
+  } else {
+    // Fallback: select the text
+    const el = document.getElementById('tune-output');
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+}
+
+// =============================================================
 // UTILITY
 // =============================================================
 function esc(s) {
@@ -1005,6 +1204,7 @@ document.addEventListener('DOMContentLoaded', () => {
   bindUI();
   initInput();
   loadScene(gameState.currentScene);
+  initTuneMode();
 });
 </script>
 </body>
