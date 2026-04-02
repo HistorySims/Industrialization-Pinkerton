@@ -546,6 +546,29 @@ body.tune-mode #tune-panel { display: block; }
   font-size: 10px; color: rgba(255,255,255,0.3);
   font-style: italic;
 }
+
+/* gear button — always visible, bottom-left */
+#tune-toggle-btn {
+  position: fixed; bottom: 12px; left: 12px;
+  z-index: 400;
+  background: rgba(10,8,6,0.6);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.25);
+  font-size: 18px; line-height: 1;
+  width: 36px; height: 36px;
+  border-radius: 50%; cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+#tune-toggle-btn:hover,
+#tune-toggle-btn.active { color: rgba(255,100,100,0.9); background: rgba(30,10,10,0.9); }
+
+#tune-exit-btn {
+  background: none; border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; font-family: 'Libre Baskerville', serif;
+  font-size: 11px; padding: 2px 10px; cursor: pointer;
+  border-radius: 1px; margin-left: 12px; vertical-align: middle;
+}
 </style>
 </head>
 <body style="background:#0a0908;margin:0;padding:0;">
@@ -600,7 +623,9 @@ body.tune-mode #tune-panel { display: block; }
   </div>
 </div>
 
-<div id="tune-banner">&#9678; TUNING MODE — tap the image to place hotspot markers</div>
+<button id="tune-toggle-btn" title="Toggle tuning mode">&#9881;</button>
+
+<div id="tune-banner">&#9678; TUNING MODE — tap the image to place hotspot markers &nbsp;<button id="tune-exit-btn">Exit</button></div>
 
 <div id="tune-panel">
   <h3>
@@ -1113,18 +1138,29 @@ function bindUI() {
 const tuneState = { active: false, markers: [] };
 
 function initTuneMode() {
-  if (!location.search.includes('tune')) return;
-  tuneState.active = true;
-  document.body.classList.add('tune-mode');
-
   // Tap/click on the panorama container places a marker
   document.getElementById('panorama-container').addEventListener('click', e => {
-    if (pan.moved) return; // was a drag, not a tap
+    if (!tuneState.active) return;
+    if (pan.moved) return;
     placeTuneMarker(e.clientX, e.clientY);
   });
 
   document.getElementById('tune-copy-btn').addEventListener('click', copyTuneOutput);
   document.getElementById('tune-clear-btn').addEventListener('click', clearTuneMarkers);
+
+  const gearBtn = document.getElementById('tune-toggle-btn');
+  gearBtn.addEventListener('click', toggleTuneMode);
+  document.getElementById('tune-exit-btn').addEventListener('click', toggleTuneMode);
+
+  // Also honour ?tune in URL for desktop convenience
+  if (location.search.includes('tune')) toggleTuneMode();
+}
+
+function toggleTuneMode() {
+  tuneState.active = !tuneState.active;
+  document.body.classList.toggle('tune-mode', tuneState.active);
+  document.getElementById('tune-toggle-btn').classList.toggle('active', tuneState.active);
+  if (!tuneState.active) clearTuneMarkers();
 }
 
 function placeTuneMarker(clientX, clientY) {
