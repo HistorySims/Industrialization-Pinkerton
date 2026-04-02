@@ -452,14 +452,28 @@ body.tune-mode .hotspot { display: none; }
   display: none;
   position: fixed; top: 0; left: 0; right: 0;
   z-index: 900;
-  background: rgba(180,40,40,0.92);
+  background: rgba(160,30,30,0.95);
   color: #fff;
   font-family: 'Libre Baskerville', serif;
-  font-size: 12px; letter-spacing: 1px;
-  text-align: center;
-  padding: 8px 12px;
+  font-size: 13px;
+  padding: 10px 14px;
+  display: none;
+  align-items: center;
+  gap: 10px;
 }
-body.tune-mode #tune-banner { display: block; }
+body.tune-mode #tune-banner { display: flex; }
+#tune-prompt {
+  flex: 1;
+  font-style: italic;
+  line-height: 1.3;
+}
+#tune-skip-btn {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; font-family: 'Libre Baskerville', serif;
+  font-size: 11px; padding: 4px 10px; cursor: pointer; border-radius: 1px;
+  white-space: nowrap;
+}
+#tune-skip-btn:hover { background: rgba(255,255,255,0.28); }
 
 .tune-marker {
   position: absolute;
@@ -626,18 +640,22 @@ body.tune-mode #tune-panel { display: block; }
 
 <button id="tune-toggle-btn" title="Toggle tuning mode">&#9881;</button>
 
-<div id="tune-banner">&#9678; TUNING MODE — tap the image to place hotspot markers &nbsp;<button id="tune-exit-btn">Exit</button></div>
+<div id="tune-banner">
+  <span id="tune-prompt">&#9678; TUNING MODE</span>
+  <button id="tune-skip-btn">Skip</button>
+  <button id="tune-exit-btn">Exit</button>
+</div>
 
 <div id="tune-panel">
   <h3>
-    Hotspot Coordinates
+    Coordinates
     <span>
-      <button id="tune-clear-btn">Clear</button>
+      <button id="tune-clear-btn">Restart</button>
       <button id="tune-copy-btn">Copy All</button>
     </span>
   </h3>
-  <div id="tune-output">Tap on the scene to record coordinates...</div>
-  <div id="tune-hint">Drag to pan &nbsp;·&nbsp; Tap to place &nbsp;·&nbsp; Coordinates are % of full image width/height</div>
+  <div id="tune-output"></div>
+  <div id="tune-hint">Drag to pan &nbsp;·&nbsp; Tap to place &nbsp;·&nbsp; Skip to leave a hotspot unchanged</div>
 </div>
 
 <script>
@@ -1134,26 +1152,28 @@ function bindUI() {
 }
 
 // =============================================================
-// TUNE MODE  —  activate with ?tune in the URL
+// TUNE MODE  —  tap gear icon (top-left) to activate
+// Guides you through each hotspot by name, one at a time.
 // =============================================================
-const tuneState = { active: false, markers: [] };
+const tuneState = {
+  active:  false,
+  step:    0,       // index into current scene's hotspots
+  results: []       // [{id, label, x, y}] — filled as you tap
+};
 
 function initTuneMode() {
-  // Tap/click on the panorama container places a marker
   document.getElementById('panorama-container').addEventListener('click', e => {
     if (!tuneState.active) return;
     if (pan.moved) return;
-    placeTuneMarker(e.clientX, e.clientY);
+    recordTuneTap(e.clientX, e.clientY);
   });
 
   document.getElementById('tune-copy-btn').addEventListener('click', copyTuneOutput);
-  document.getElementById('tune-clear-btn').addEventListener('click', clearTuneMarkers);
-
-  const gearBtn = document.getElementById('tune-toggle-btn');
-  gearBtn.addEventListener('click', toggleTuneMode);
+  document.getElementById('tune-clear-btn').addEventListener('click', restartTune);
+  document.getElementById('tune-toggle-btn').addEventListener('click', toggleTuneMode);
   document.getElementById('tune-exit-btn').addEventListener('click', toggleTuneMode);
+  document.getElementById('tune-skip-btn').addEventListener('click', skipTuneStep);
 
-  // Also honour ?tune in URL for desktop convenience
   if (location.search.includes('tune')) toggleTuneMode();
 }
 
@@ -1161,62 +1181,111 @@ function toggleTuneMode() {
   tuneState.active = !tuneState.active;
   document.body.classList.toggle('tune-mode', tuneState.active);
   document.getElementById('tune-toggle-btn').classList.toggle('active', tuneState.active);
-  if (!tuneState.active) clearTuneMarkers();
+  if (tuneState.active) {
+    restartTune();
+  } else {
+    document.querySelectorAll('.tune-marker').forEach(el => el.remove());
+  }
 }
 
-function placeTuneMarker(clientX, clientY) {
-  // Convert client coords → fraction of full image
-  const container = document.getElementById('panorama-container');
-  const rect      = container.getBoundingClientRect();
-  const xFrac     = (clientX - rect.left) / rect.width;
-  const yFrac     = clientY / window.innerHeight;
-  const xClamped  = Math.max(0, Math.min(1, xFrac));
-  const yClamped  = Math.max(0, Math.min(1, yFrac));
-  const n         = tuneState.markers.length + 1;
+function restartTune() {
+  tuneState.step    = 0;
+  tuneState.results = [];
+  document.querySelectorAll('.tune-marker').forEach(el => el.remove());
+  renderTunePrompt();
+  renderTuneOutput();
+}
 
-  tuneState.markers.push({ n, x: xClamped, y: yClamped });
+function currentHotspots() {
+  return GAME_DATA.scenes[gameState.currentScene].hotspots;
+}
 
-  // Place visual marker on the hotspot layer
+function renderTunePrompt() {
+  const hotspots = currentHotspots();
+  const prompt   = document.getElementById('tune-prompt');
+  if (tuneState.step >= hotspots.length) {
+    prompt.textContent = '\u2713 All done! Copy the coordinates below.';
+    return;
+  }
+  const h     = hotspots[tuneState.step];
+  const total = hotspots.length;
+  prompt.textContent = `Tap: ${h.label}  (${tuneState.step + 1} of ${total})`;
+}
+
+function recordTuneTap(clientX, clientY) {
+  const hotspots = currentHotspots();
+  if (tuneState.step >= hotspots.length) return;
+
+  const h       = hotspots[tuneState.step];
+  const rect    = document.getElementById('panorama-container').getBoundingClientRect();
+  const x       = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+  const y       = Math.max(0, Math.min(1, clientY / window.innerHeight));
+
+  // Store result
+  tuneState.results[tuneState.step] = { id: h.id, label: h.label, x, y };
+
+  // Place marker
   const layer = document.getElementById('hotspot-layer');
-  const el    = document.createElement('div');
-  el.className    = 'tune-marker';
-  el.dataset.tune = n;
-  el.style.left   = (xClamped * 100) + '%';
-  el.style.top    = (yClamped * 100) + '%';
+  // Remove any previous marker for this step
+  const prev = layer.querySelector(`.tune-marker[data-step="${tuneState.step}"]`);
+  if (prev) prev.remove();
+
+  const el = document.createElement('div');
+  el.className       = 'tune-marker';
+  el.dataset.step    = tuneState.step;
+  el.style.left      = (x * 100) + '%';
+  el.style.top       = (y * 100) + '%';
   el.innerHTML = `
     <div class="tune-marker-ring"></div>
     <div class="tune-marker-dot"></div>
-    <div class="tune-marker-label">${n}</div>`;
+    <div class="tune-marker-label">${h.label}</div>`;
   layer.appendChild(el);
 
+  tuneState.step++;
+  renderTunePrompt();
+  renderTuneOutput();
+}
+
+function skipTuneStep() {
+  const hotspots = currentHotspots();
+  if (tuneState.step >= hotspots.length) return;
+  // Mark as skipped (keep existing coords from GAME_DATA)
+  const h = hotspots[tuneState.step];
+  tuneState.results[tuneState.step] = { id: h.id, label: h.label, x: h.x, y: h.y, skipped: true };
+  tuneState.step++;
+  renderTunePrompt();
   renderTuneOutput();
 }
 
 function renderTuneOutput() {
-  const lines = tuneState.markers.map(m =>
-    `  { x: ${m.x.toFixed(3)}, y: ${m.y.toFixed(3)} },  // marker ${m.n}`
-  );
-  document.getElementById('tune-output').textContent =
-    lines.length ? lines.join('\n') : 'Tap on the scene to record coordinates...';
-}
-
-function clearTuneMarkers() {
-  tuneState.markers = [];
-  document.querySelectorAll('.tune-marker').forEach(el => el.remove());
-  renderTuneOutput();
+  const hotspots = currentHotspots();
+  const lines = hotspots.map((h, i) => {
+    const r = tuneState.results[i];
+    if (!r)            return `  // ${h.label}: not placed yet`;
+    if (r.skipped)     return `  // ${h.label}: skipped (keeping x:${h.x}, y:${h.y})`;
+    return `  id:'${r.id}', x:${r.x.toFixed(3)}, y:${r.y.toFixed(3)},  // ${r.label}`;
+  });
+  document.getElementById('tune-output').textContent = lines.join('\n');
 }
 
 function copyTuneOutput() {
-  const text = document.getElementById('tune-output').textContent;
+  // Only copy the placed (non-skipped, non-pending) lines
+  const hotspots = currentHotspots();
+  const lines = hotspots.map((h, i) => {
+    const r = tuneState.results[i];
+    if (!r || r.skipped) return null;
+    return `  id:'${r.id}', x:${r.x.toFixed(3)}, y:${r.y.toFixed(3)},`;
+  }).filter(Boolean);
+
+  const text = lines.join('\n');
+  const btn  = document.getElementById('tune-copy-btn');
+
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
-      const btn = document.getElementById('tune-copy-btn');
-      const orig = btn.textContent;
       btn.textContent = 'Copied!';
-      setTimeout(() => btn.textContent = orig, 1800);
+      setTimeout(() => btn.textContent = 'Copy All', 1800);
     });
   } else {
-    // Fallback: select the text
     const el = document.getElementById('tune-output');
     const range = document.createRange();
     range.selectNodeContents(el);
