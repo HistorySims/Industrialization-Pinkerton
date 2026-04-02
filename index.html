@@ -516,8 +516,29 @@ body.tune-mode #tune-banner { display: flex; }
   max-height: 42vh;
   overflow-y: auto;
   padding: 12px 16px 16px;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
 }
 body.tune-mode #tune-panel { display: block; }
+body.tune-mode #tune-panel.open { transform: translateY(0); }
+
+/* pull-up tab — always visible in tune mode */
+#tune-tab {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  z-index: 901;
+  background: rgba(160,30,30,0.92);
+  color: rgba(255,200,200,0.9);
+  font-family: 'Libre Baskerville', serif;
+  font-size: 11px; letter-spacing: 1px;
+  padding: 5px 18px 4px;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+body.tune-mode #tune-tab { display: block; }
 
 #tune-panel h3 {
   font-family: 'Playfair Display', serif;
@@ -645,6 +666,8 @@ body.tune-mode #tune-panel { display: block; }
   <button id="tune-skip-btn">Skip</button>
   <button id="tune-exit-btn">Exit</button>
 </div>
+
+<div id="tune-tab">&#9650; Results</div>
 
 <div id="tune-panel">
   <h3>
@@ -1173,6 +1196,7 @@ function initTuneMode() {
   document.getElementById('tune-toggle-btn').addEventListener('click', toggleTuneMode);
   document.getElementById('tune-exit-btn').addEventListener('click', toggleTuneMode);
   document.getElementById('tune-skip-btn').addEventListener('click', skipTuneStep);
+  document.getElementById('tune-tab').addEventListener('click', toggleTunePanel);
 
   if (location.search.includes('tune')) toggleTuneMode();
 }
@@ -1188,10 +1212,19 @@ function toggleTuneMode() {
   }
 }
 
+function toggleTunePanel() {
+  const panel = document.getElementById('tune-panel');
+  const tab   = document.getElementById('tune-tab');
+  const open  = panel.classList.toggle('open');
+  tab.textContent = open ? '\u25bc Results' : '\u25b2 Results';
+}
+
 function restartTune() {
   tuneState.step    = 0;
   tuneState.results = [];
   document.querySelectorAll('.tune-marker').forEach(el => el.remove());
+  document.getElementById('tune-panel').classList.remove('open');
+  document.getElementById('tune-tab').textContent = '\u25b2 Results';
   renderTunePrompt();
   renderTuneOutput();
 }
@@ -1244,6 +1277,11 @@ function recordTuneTap(clientX, clientY) {
   tuneState.step++;
   renderTunePrompt();
   renderTuneOutput();
+  // Auto-open panel when all done
+  if (tuneState.step >= currentHotspots().length) {
+    document.getElementById('tune-panel').classList.add('open');
+    document.getElementById('tune-tab').textContent = '\u25bc Results';
+  }
 }
 
 function skipTuneStep() {
