@@ -301,9 +301,96 @@ html, body {
   flex-shrink: 0;
 }
 
-#nb-entries {
+#nb-scroll-area {
   flex: 1; overflow-y: auto; padding: 4px 0 16px;
 }
+
+.nb-section-head {
+  padding: 10px 18px 4px;
+  font-size: 9px; letter-spacing: 2.5px;
+  text-transform: uppercase; font-variant: small-caps;
+  color: rgba(212,196,160,0.38);
+  font-family: 'Libre Baskerville', serif;
+  border-top: 1px solid rgba(212,196,160,0.08);
+  margin-top: 4px;
+}
+#nb-people-section .nb-section-head { border-top: none; margin-top: 0; }
+
+/* Person card */
+.nb-person-card {
+  padding: 10px 18px 12px;
+  border-bottom: 1px solid rgba(212,196,160,0.06);
+}
+.nb-person-name {
+  background: none; border: none;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 13px; color: rgba(212,196,160,0.85);
+  cursor: pointer; text-align: left;
+  padding: 0; min-height: 44px;
+  width: 100%; line-height: 1.4;
+  transition: color 0.18s;
+}
+.nb-person-name:hover { color: #d4c4a0; text-decoration: underline; }
+
+/* POI slider */
+.nb-poi-wrap {
+  margin-top: 6px;
+}
+.nb-poi-slider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: rgba(212,196,160,0.15);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.nb-poi-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #c9a84c;
+  border: 2px solid #e0c060;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.nb-poi-slider::-moz-range-thumb {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #c9a84c;
+  border: 2px solid #e0c060;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.nb-poi-label {
+  font-size: 9.5px;
+  color: rgba(212,196,160,0.45);
+  font-family: 'Libre Baskerville', serif;
+  letter-spacing: 0.8px;
+  margin-top: 3px;
+  font-style: italic;
+}
+
+/* Notes textarea */
+.nb-notes {
+  width: 100%;
+  margin-top: 7px;
+  background: #1e1810;
+  border: 1px solid rgba(212,196,160,0.18);
+  border-radius: 2px;
+  color: rgba(212,196,160,0.75);
+  font-family: 'Libre Baskerville', serif;
+  font-size: 11.5px;
+  line-height: 1.55;
+  padding: 6px 8px;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.nb-notes::placeholder { color: rgba(212,196,160,0.25); font-style: italic; }
+.nb-notes:focus { border-color: rgba(212,196,160,0.4); }
 
 .nb-entry {
   padding: 11px 18px;
@@ -426,13 +513,28 @@ html, body {
 }
 
 /* SCROLLBARS */
-#nb-entries::-webkit-scrollbar,
+#nb-scroll-area::-webkit-scrollbar,
 #evidence-card::-webkit-scrollbar { width: 3px; }
-#nb-entries::-webkit-scrollbar-track,
+#nb-scroll-area::-webkit-scrollbar-track,
 #evidence-card::-webkit-scrollbar-track { background: transparent; }
-#nb-entries::-webkit-scrollbar-thumb,
+#nb-scroll-area::-webkit-scrollbar-thumb,
 #evidence-card::-webkit-scrollbar-thumb {
   background: rgba(212,196,160,0.2); border-radius: 2px;
+}
+
+/* DESKTOP DOCKED NOTEBOOK */
+@media (min-width: 1000px) {
+  #notebook {
+    right: 0 !important;
+    width: 380px !important;
+    transition: none;
+  }
+  #nb-toggle { display: none !important; }
+  #nb-close  { display: none !important; }
+  #game-viewport { right: 380px; }
+  #vignette { right: 380px; }
+  #card-overlay { right: 380px; }
+  #scroll-wrap { left: calc(50% - 190px); }
 }
 
 /* MOBILE */
@@ -641,7 +743,17 @@ body.tune-mode #tune-tab { display: block; }
     <button id="nb-close" aria-label="Close notebook">&#215;</button>
   </div>
   <div id="nb-loc"></div>
-  <div id="nb-entries"><div id="nb-empty">Your notebook is empty.</div></div>
+  <div id="nb-scroll-area">
+    <div id="nb-empty">Your notebook is empty.</div>
+    <div id="nb-people-section">
+      <div class="nb-section-head">People</div>
+      <div id="nb-people"></div>
+    </div>
+    <div id="nb-evidence-section">
+      <div class="nb-section-head">Evidence</div>
+      <div id="nb-evidence"></div>
+    </div>
+  </div>
 </div>
 
 <button id="nb-toggle" aria-label="Open notebook">
@@ -695,7 +807,7 @@ const GAME_DATA = {
       id:       'pinkerton_office',
       name:     'Pinkerton National Detective Agency',
       subtitle: 'Philadelphia, Pennsylvania',
-      actLabel: 'Act I — The Assignment',
+      actLabel: 'Act I - The Assignment',
       image:    'IMG_5471.jpeg',
 
       hotspots: [
@@ -835,16 +947,78 @@ const GAME_DATA = {
       }
     }
 
-    // ── Future scenes go here ──────────────────────────────────
-    // town_map_day: {
-    //   id: 'town_map_day',
-    //   name: 'Bennington, Pennsylvania',
-    //   subtitle: 'Company Town',
-    //   actLabel: 'Act II — Arrival',
-    //   image: 'scene2.jpeg',
-    //   hotspots: [ ... ],
-    //   progression: { required: [...], buttonText: '...', nextScene: '...' }
-    // }
+    ,
+
+    town_map_day: {
+      id: 'town_map_day',
+      name: 'Bennington, Pennsylvania',
+      subtitle: 'A Company Town',
+      actLabel: 'Act II - Arrival',
+      image: 'IMG_6763.jpeg',
+      hotspots: [
+        { id:'company_store', label:'Company Store', x:0.40, y:0.30, type:'object', required:false,
+          content:{ title:'Bennington Mills Company Store',
+            text:"BENNINGTON MILLS COMPANY STORE, EST. 1888. The biggest and best kept building on the street. But the shutters are down, and a card hangs in the door: CLOSED UNTIL THE AFTERNOON BELL. Even the shopping here runs on the mill's clock." } },
+
+        { id:'town_school', label:'The Town School', x:0.19, y:0.33, type:'object', required:false,
+          content:{ title:'The Town School',
+            text:"A small white schoolhouse with a bell in its tower. Through the window you can see rows of children bent over their slates while a young woman walks the aisle, and you can just hear a voice leading them through their letters. School is in session, and this is no place for you in the middle of a lesson." } },
+
+        { id:'the_mill', label:'Bennington Mills', x:0.28, y:0.17, type:'object', required:false,
+          content:{ title:'Bennington Mills',
+            text:"Four floors of brick, a clock tower above the rooftops, smoke pouring from the stacks even now. Whatever else changes in this town, the mill never stops." } },
+
+        { id:'loading_dock', label:'The Loading Dock', x:0.58, y:0.62, type:'object', required:false,
+          content:{ title:'The Loading Dock',
+            text:"Crates stamped MACHINE PARTS sit stacked on the long dock beside the rail siding, fresh from the cars. New machinery, by the look of the raw wood. Somebody is spending money on something." } },
+
+        { id:'rail_men', label:'The Rail-Yard Men', x:0.55, y:0.55, type:'dialogue', required:true,
+          content:{ title:'The Rail-Yard Men',
+            desc:"Two men loading a freight car at a steady pace, keeping to their own end of the dock.",
+            people:['Isaac Greene','Sol Hayes'],
+            lines:[
+              "Afternoon. Don't mind us, this car has to be full before the four o'clock.",
+              "Name's Isaac. This is Sol. We work the yard. Loading, hauling, whatever rolls in or out. The mill is its own world up there. Us, we keep to the rails.",
+              "Honest work. Hard on the back, easy on the conscience.",
+              "We would talk longer, but we lose the light if we stop. We are around, after dark."
+            ] } },
+
+        { id:'locomotive', label:'The Locomotive', x:0.50, y:0.42, type:'object', required:false,
+          content:{ title:'The Locomotive',
+            text:"A small switching engine waits on the siding, BENNINGTON MILLS CO. painted across its tender. The company owns the rails, the cars, and whatever rides in them." } },
+
+        { id:'fine_house', label:'The Fine House', x:0.73, y:0.36, type:'object', required:false,
+          content:{ title:'The Fine House',
+            text:"At the end of the street stands a house finer than any other. Fresh paint, glass in every window, a deep shaded porch. The cottages were all built to one plan. This house was built for one man." } },
+
+        { id:'crate_men', label:'The Men on the Crates', x:0.80, y:0.66, type:'dialogue', required:true,
+          content:{ title:'The Men on the Crates',
+            desc:"Two men sit on crates by the store, passing a bottle, in no hurry. It is the middle of a workday.",
+            people:['Tom Egan'],
+            lines:[
+              "New face. You a buyer, or just passing?",
+              "Tom Egan. Middle of the day and here we sit. The mill let a few of us go when those new machines came in. Fewer hands needed now, they say.",
+              "You want to know how this town really runs, come round the tavern after dark. The one out past the yard. Cash only out there. Folks talk a sight freer once they are off the company's clock."
+            ] } },
+
+        { id:'cottages', label:'The Cottages', x:0.06, y:0.42, type:'object', required:false,
+          content:{ title:'The Cottages',
+            text:"A row of small wooden cottages, every one built to the same plan, every one owned by the company. Laundry strung between two of them. A child's chalk drawing fading on a doorstep. Plain, but kept." } },
+
+        { id:'woman_basket', label:'A Woman in the Street', x:0.93, y:0.72, type:'object', required:false,
+          content:{ title:'A Woman in the Street',
+            text:"A woman crosses the road with an empty basket and a shawl pulled close, though the day is mild. She does not look up as she passes." } },
+
+        { id:'grain_wagon', label:'The Grain Wagon', x:0.36, y:0.62, type:'object', required:false,
+          content:{ title:'The Grain Wagon',
+            text:"A swaybacked horse stands in its traces while sacks of grain are loaded behind it. It has been waiting long enough to fall asleep on its feet." } }
+      ],
+      progression: {
+        required: ['rail_men','crate_men'],
+        buttonText: 'To the Mill Gate →',
+        nextScene: 'factory_gate_day'
+      }
+    }
   }
 };
 
@@ -856,6 +1030,7 @@ const gameState = {
   discovered:   new Set(),   // hotspot ids clicked
   visited:      new Set(),   // scene ids entered
   evidence:     [],          // {id, title, type, sceneName}
+  people:       {},          // keyed by generated string ID, value: {id, hotspotId, name, sceneName, poi, notes}
   cardOpen:     false,
   notebookOpen: false
 };
@@ -873,6 +1048,32 @@ const pan = {
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
+function isDesktopDocked() { return window.innerWidth >= 1000; }
+function getGameWidth()    { return window.innerWidth - (isDesktopDocked() ? 380 : 0); }
+
+function applyDockedLayout() {
+  const docked = isDesktopDocked();
+  const vp = document.getElementById('game-viewport');
+  const nb = document.getElementById('notebook');
+  const toggle = document.getElementById('nb-toggle');
+  const nbClose = document.getElementById('nb-close');
+  if (docked) {
+    vp.style.right = '380px';
+    nb.style.right = '0';
+    nb.style.width = '380px';
+    nb.classList.add('open');
+    toggle.style.display = 'none';
+    nbClose.style.display = 'none';
+  } else {
+    vp.style.right = '0';
+    nb.style.width = '';
+    nb.style.right = '';
+    nb.classList.toggle('open', gameState.notebookOpen);
+    toggle.style.display = '';
+    nbClose.style.display = '';
+  }
+}
+
 function setPan(x, animate) {
   x = clamp(x, pan.minX, pan.maxX);
   pan.x = x;
@@ -886,7 +1087,7 @@ function setPan(x, animate) {
 function panBy(dx, animate) { setPan(pan.x + dx, animate); }
 
 function computeBounds() {
-  const vw = window.innerWidth;
+  const vw = getGameWidth();
   const img = document.getElementById('scene-image');
   let iw;
   if (img.naturalWidth) {
@@ -908,7 +1109,7 @@ function updateScrollThumb() {
   const thumb = document.getElementById('scroll-thumb');
   const range = pan.minX - pan.maxX; // negative number, range magnitude
   if (!range) { thumb.style.width = '100%'; thumb.style.left = '0'; return; }
-  const ratio  = pan.imgW / window.innerWidth;
+  const ratio  = pan.imgW / getGameWidth();
   const pct    = Math.max(8, 100 / ratio);
   const prog   = pan.maxX === pan.minX ? 0 : (pan.x - pan.maxX) / (pan.minX - pan.maxX);
   const tw     = track.offsetWidth;
@@ -989,7 +1190,11 @@ function openCard(id) {
     gameState.discovered.add(id);
     const el = document.querySelector(`.hotspot[data-id="${id}"]`);
     if (el) el.classList.add('found');
-    addEvidence(h, scene);
+    if (h.type === 'dialogue') {
+      addPerson(h, scene);
+    } else {
+      addEvidence(h, scene);
+    }
     checkProgression();
   }
 
@@ -1032,21 +1237,92 @@ function closeCard() {
 // =============================================================
 // NOTEBOOK
 // =============================================================
+const POI_LABELS = ['No concern', 'Worth watching', 'Person of interest'];
+
+function notebookBadgeCount() {
+  return Object.keys(gameState.people).length + gameState.evidence.length;
+}
+
 function addEvidence(h, scene) {
   if (gameState.evidence.find(e => e.id === h.id)) return;
   gameState.evidence.push({ id: h.id, title: h.label, type: h.type, sceneName: scene.name });
-  document.getElementById('nb-badge').textContent = gameState.evidence.length;
+  document.getElementById('nb-badge').textContent = notebookBadgeCount();
+  renderNotebook();
+}
+
+function addPerson(h, scene) {
+  const names = (h.content.people && h.content.people.length) ? h.content.people : [h.label];
+  names.forEach(name => {
+    // Use hotspotId + name as unique key
+    const key = h.id + '__' + name.replace(/\s+/g, '_');
+    if (gameState.people[key]) return;
+    gameState.people[key] = { id: key, hotspotId: h.id, name, sceneName: scene.name, poi: 0, notes: '' };
+  });
+  document.getElementById('nb-badge').textContent = notebookBadgeCount();
   renderNotebook();
 }
 
 function renderNotebook() {
-  const container = document.getElementById('nb-entries');
-  const empty     = document.getElementById('nb-empty');
-  if (!gameState.evidence.length) { empty.style.display = ''; return; }
-  empty.style.display = 'none';
-  // Rebuild entries after empty placeholder
-  const existing = container.querySelectorAll('.nb-entry');
-  existing.forEach(e => e.remove());
+  // People section
+  const peopleContainer = document.getElementById('nb-people');
+  peopleContainer.innerHTML = '';
+  const peopleKeys = Object.keys(gameState.people);
+  peopleKeys.forEach(key => {
+    const person = gameState.people[key];
+    const el = document.createElement('div');
+    el.className = 'nb-person-card';
+
+    // Name (clickable)
+    const nameBtn = document.createElement('button');
+    nameBtn.className = 'nb-person-name';
+    nameBtn.textContent = person.name;
+    nameBtn.addEventListener('click', () => {
+      if (isDesktopDocked()) {
+        openCard(person.hotspotId);
+      } else {
+        toggleNotebook();
+        setTimeout(() => openCard(person.hotspotId), 340);
+      }
+    });
+
+    // POI slider
+    const sliderWrap = document.createElement('div');
+    sliderWrap.className = 'nb-poi-wrap';
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = '0'; slider.max = '2'; slider.step = '1';
+    slider.value = String(person.poi);
+    slider.className = 'nb-poi-slider';
+    const poiLabel = document.createElement('div');
+    poiLabel.className = 'nb-poi-label';
+    poiLabel.textContent = POI_LABELS[person.poi];
+    slider.addEventListener('input', () => {
+      person.poi = parseInt(slider.value, 10);
+      poiLabel.textContent = POI_LABELS[person.poi];
+      gameState.people[key].poi = person.poi;
+    });
+    sliderWrap.appendChild(slider);
+    sliderWrap.appendChild(poiLabel);
+
+    // Notes textarea
+    const notes = document.createElement('textarea');
+    notes.className = 'nb-notes';
+    notes.placeholder = 'Your notes...';
+    notes.rows = 2;
+    notes.value = person.notes;
+    notes.addEventListener('input', () => {
+      gameState.people[key].notes = notes.value;
+    });
+
+    el.appendChild(nameBtn);
+    el.appendChild(sliderWrap);
+    el.appendChild(notes);
+    peopleContainer.appendChild(el);
+  });
+
+  // Evidence section
+  const evContainer = document.getElementById('nb-evidence');
+  evContainer.innerHTML = '';
   gameState.evidence.forEach(entry => {
     const el  = document.createElement('div');
     el.className = 'nb-entry';
@@ -1058,14 +1334,28 @@ function renderNotebook() {
     el.appendChild(dot);
     el.appendChild(info);
     el.addEventListener('click', () => {
-      toggleNotebook();
-      setTimeout(() => openCard(entry.id), 340);
+      if (isDesktopDocked()) {
+        openCard(entry.id);
+      } else {
+        toggleNotebook();
+        setTimeout(() => openCard(entry.id), 340);
+      }
     });
-    container.appendChild(el);
+    evContainer.appendChild(el);
   });
+
+  // Show/hide empty state and sections
+  const empty = document.getElementById('nb-empty');
+  const hasAny = peopleKeys.length > 0 || gameState.evidence.length > 0;
+  if (empty) empty.style.display = hasAny ? 'none' : '';
+  const pSection = document.getElementById('nb-people-section');
+  if (pSection) pSection.style.display = peopleKeys.length > 0 ? '' : 'none';
+  const eSection = document.getElementById('nb-evidence-section');
+  if (eSection) eSection.style.display = gameState.evidence.length > 0 ? '' : 'none';
 }
 
 function toggleNotebook() {
+  if (isDesktopDocked()) return; // on desktop it's always visible
   gameState.notebookOpen = !gameState.notebookOpen;
   document.getElementById('notebook').classList.toggle('open', gameState.notebookOpen);
 }
@@ -1096,8 +1386,8 @@ function doProgression() {
     setTimeout(() => overlay.classList.remove('on'), 2200);
   } else {
     inner.querySelector('.trans-act').textContent   = 'Coming Soon';
-    inner.querySelector('.trans-title').textContent = 'Act II \u2014 Bennington';
-    inner.querySelector('.trans-sub').textContent   = 'The town is waiting.';
+    inner.querySelector('.trans-title').textContent = 'The mill gate is waiting.';
+    inner.querySelector('.trans-sub').textContent   = '';
     setTimeout(() => overlay.classList.remove('on'), 3200);
   }
 }
@@ -1158,7 +1448,7 @@ function initInput() {
   document.getElementById('chev-right').addEventListener('click', () => panBy(-220, true));
 
   // Resize
-  window.addEventListener('resize', () => computeBounds());
+  window.addEventListener('resize', () => { applyDockedLayout(); computeBounds(); });
 }
 
 // =============================================================
@@ -1345,6 +1635,7 @@ function esc(s) {
 // BOOT
 // =============================================================
 document.addEventListener('DOMContentLoaded', () => {
+  applyDockedLayout();
   bindUI();
   initInput();
   loadScene(gameState.currentScene);
