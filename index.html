@@ -252,6 +252,26 @@ html, body {
   font-family: 'Libre Baskerville', serif;
 }
 
+.card-transition-btn {
+  display: block;
+  margin-top: 20px;
+  width: 100%;
+  background: linear-gradient(180deg, #594618 0%, #382c0e 100%);
+  border: 1px solid #897035;
+  color: #d4c4a0;
+  padding: 12px 20px;
+  font-family: 'Playfair Display', serif;
+  font-size: 14px; letter-spacing: 1px;
+  cursor: pointer; border-radius: 1px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,215,100,0.1);
+  transition: background 0.2s;
+  min-height: 44px;
+}
+.card-transition-btn:hover {
+  background: linear-gradient(180deg, #6a5520 0%, #463a14 100%);
+  border-color: #a09040;
+}
+
 #card-added {
   margin-top: 18px;
   font-size: 11.5px; color: #5a7a5a;
@@ -956,23 +976,23 @@ const GAME_DATA = {
       actLabel: 'Act II - Arrival',
       image: 'IMG_6763.jpeg',
       hotspots: [
-        { id:'company_store', label:'Company Store', x:0.40, y:0.30, type:'object', required:false,
+        { id:'company_store', label:'Company Store', x:0.433, y:0.432, type:'object', required:false,
           content:{ title:'Bennington Mills Company Store',
             text:"BENNINGTON MILLS COMPANY STORE, EST. 1888. The biggest and best kept building on the street. But the shutters are down, and a card hangs in the door: CLOSED UNTIL THE AFTERNOON BELL. Even the shopping here runs on the mill's clock." } },
 
-        { id:'town_school', label:'The Town School', x:0.19, y:0.33, type:'object', required:false,
+        { id:'town_school', label:'The Town School', x:0.204, y:0.426, type:'object', required:false,
           content:{ title:'The Town School',
             text:"A small white schoolhouse with a bell in its tower. Through the window you can see rows of children bent over their slates while a young woman walks the aisle, and you can just hear a voice leading them through their letters. School is in session, and this is no place for you in the middle of a lesson." } },
 
-        { id:'the_mill', label:'Bennington Mills', x:0.28, y:0.17, type:'object', required:false,
+        { id:'the_mill', label:'Bennington Mills', x:0.337, y:0.288, type:'object', required:false, transition:true,
           content:{ title:'Bennington Mills',
             text:"Four floors of brick, a clock tower above the rooftops, smoke pouring from the stacks even now. Whatever else changes in this town, the mill never stops." } },
 
-        { id:'loading_dock', label:'The Loading Dock', x:0.58, y:0.62, type:'object', required:false,
+        { id:'loading_dock', label:'The Loading Dock', x:0.520, y:0.645, type:'object', required:false,
           content:{ title:'The Loading Dock',
             text:"Crates stamped MACHINE PARTS sit stacked on the long dock beside the rail siding, fresh from the cars. New machinery, by the look of the raw wood. Somebody is spending money on something." } },
 
-        { id:'rail_men', label:'The Rail-Yard Men', x:0.55, y:0.55, type:'dialogue', required:true,
+        { id:'rail_men', label:'The Rail-Yard Men', x:0.562, y:0.640, type:'dialogue', required:false,
           content:{ title:'The Rail-Yard Men',
             desc:"Two men loading a freight car at a steady pace, keeping to their own end of the dock.",
             people:['Isaac Greene','Sol Hayes'],
@@ -983,15 +1003,15 @@ const GAME_DATA = {
               "We would talk longer, but we lose the light if we stop. We are around, after dark."
             ] } },
 
-        { id:'locomotive', label:'The Locomotive', x:0.50, y:0.42, type:'object', required:false,
+        { id:'locomotive', label:'The Locomotive', x:0.508, y:0.449, type:'object', required:false,
           content:{ title:'The Locomotive',
             text:"A small switching engine waits on the siding, BENNINGTON MILLS CO. painted across its tender. The company owns the rails, the cars, and whatever rides in them." } },
 
-        { id:'fine_house', label:'The Fine House', x:0.73, y:0.36, type:'object', required:false,
+        { id:'fine_house', label:'The Fine House', x:0.249, y:0.312, type:'object', required:false,
           content:{ title:'The Fine House',
             text:"At the end of the street stands a house finer than any other. Fresh paint, glass in every window, a deep shaded porch. The cottages were all built to one plan. This house was built for one man." } },
 
-        { id:'crate_men', label:'The Men on the Crates', x:0.80, y:0.66, type:'dialogue', required:true,
+        { id:'crate_men', label:'The Men on the Crates', x:0.827, y:0.782, type:'dialogue', required:false,
           content:{ title:'The Men on the Crates',
             desc:"Two men sit on crates by the store, passing a bottle, in no hurry. It is the middle of a workday.",
             people:['Tom Egan'],
@@ -1001,20 +1021,20 @@ const GAME_DATA = {
               "You want to know how this town really runs, come round the tavern after dark. The one out past the yard. Cash only out there. Folks talk a sight freer once they are off the company's clock."
             ] } },
 
-        { id:'cottages', label:'The Cottages', x:0.06, y:0.42, type:'object', required:false,
+        { id:'cottages', label:'The Cottages', x:0.105, y:0.470, type:'object', required:false,
           content:{ title:'The Cottages',
             text:"A row of small wooden cottages, every one built to the same plan, every one owned by the company. Laundry strung between two of them. A child's chalk drawing fading on a doorstep. Plain, but kept." } },
 
-        { id:'woman_basket', label:'A Woman in the Street', x:0.93, y:0.72, type:'object', required:false,
+        { id:'woman_basket', label:'A Woman in the Street', x:0.950, y:0.864, type:'object', required:false,
           content:{ title:'A Woman in the Street',
             text:"A woman crosses the road with an empty basket and a shawl pulled close, though the day is mild. She does not look up as she passes." } },
 
-        { id:'grain_wagon', label:'The Grain Wagon', x:0.36, y:0.62, type:'object', required:false,
+        { id:'grain_wagon', label:'The Grain Wagon', x:0.369, y:0.607, type:'object', required:false,
           content:{ title:'The Grain Wagon',
             text:"A swaybacked horse stands in its traces while sacks of grain are loaded behind it. It has been waiting long enough to fall asleep on its feet." } }
       ],
       progression: {
-        required: ['rail_men','crate_men'],
+        required: [],
         buttonText: 'To the Mill Gate →',
         nextScene: 'factory_gate_day'
       }
@@ -1223,6 +1243,11 @@ function openCard(id) {
     html += `<div class="card-body">${esc(h.content.text || '')}</div>`;
   }
 
+  if (h.transition) {
+    const scene = GAME_DATA.scenes[gameState.currentScene];
+    html += `<button class="card-transition-btn" onclick="closeCard();doProgression();">${esc(scene.progression.buttonText)}</button>`;
+  }
+
   inner.innerHTML = html;
   overlay.classList.add('open');
   if (isNew) setTimeout(() => added.classList.add('show'), 200);
@@ -1364,8 +1389,10 @@ function toggleNotebook() {
 // PROGRESSION
 // =============================================================
 function checkProgression() {
-  const scene = GAME_DATA.scenes[gameState.currentScene];
-  const met   = scene.progression.required.every(id => gameState.discovered.has(id));
+  const scene    = GAME_DATA.scenes[gameState.currentScene];
+  const required = scene.progression.required;
+  // If required list is empty, the scene uses a transition hotspot instead — never show button
+  const met = required.length > 0 && required.every(id => gameState.discovered.has(id));
   document.getElementById('progress-btn').classList.toggle('show', met);
 }
 
