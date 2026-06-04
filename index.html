@@ -988,7 +988,8 @@ const GAME_DATA = {
             title: 'Agency Code of Conduct',
             text:  "Gather facts with utmost discretion.\n\nReport findings without bias or embellishment.\n\nDo not fraternize with subjects of investigation.\n\nThe Agency's reputation is the client's guarantee."
           }
-        }
+        },
+        { id:'skip_to_bennington', label:'Skip to Bennington', x:0.92, y:0.12, type:'navigation', goto:'town_map_day' }
       ],
 
       progression: {
@@ -1007,23 +1008,23 @@ const GAME_DATA = {
       actLabel: 'Act II - Arrival',
       image: 'IMG_6763.jpeg',
       hotspots: [
-        { id:'company_store', label:'Company Store', x:0.433, y:0.432, type:'object', required:false,
+        { id:'company_store', label:'Company Store', x:0.042, y:0.553, type:'object', required:false,
           content:{ title:'Bennington Mills Company Store',
             text:"BENNINGTON MILLS COMPANY STORE, EST. 1888. The biggest and best kept building on the street. But the shutters are down, and a card hangs in the door: CLOSED UNTIL THE AFTERNOON BELL. Even the shopping here runs on the mill's clock." } },
 
-        { id:'town_school', label:'The Town School', x:0.204, y:0.426, type:'object', required:false,
+        { id:'town_school', label:'The Town School', x:0.204, y:0.425, type:'object', required:false,
           content:{ title:'The Town School',
             text:"A small white schoolhouse with a bell in its tower. Through the window you can see rows of children bent over their slates while a young woman walks the aisle, and you can just hear a voice leading them through their letters. School is in session, and this is no place for you in the middle of a lesson." } },
 
-        { id:'the_mill', label:'Bennington Mills', x:0.337, y:0.288, type:'object', required:false, transition:true,
+        { id:'the_mill', label:'Bennington Mills', x:0.298, y:0.306, type:'object', required:false, transition:true,
           content:{ title:'Bennington Mills',
             text:"Four floors of brick, a clock tower above the rooftops, smoke pouring from the stacks even now. Whatever else changes in this town, the mill never stops." } },
 
-        { id:'loading_dock', label:'The Loading Dock', x:0.520, y:0.645, type:'object', required:false,
+        { id:'loading_dock', label:'The Loading Dock', x:0.573, y:0.776, type:'object', required:false,
           content:{ title:'The Loading Dock',
             text:"Crates stamped MACHINE PARTS sit stacked on the long dock beside the rail siding, fresh from the cars. New machinery, by the look of the raw wood. Somebody is spending money on something." } },
 
-        { id:'rail_men', label:'The Rail-Yard Men', x:0.562, y:0.640, type:'dialogue', required:false,
+        { id:'rail_men', label:'The Rail-Yard Men', x:0.559, y:0.613, type:'dialogue', required:false,
           content:{ title:'The Rail-Yard Men',
             desc:"Two men loading a freight car at a steady pace, keeping to their own end of the dock.",
             people:['Isaac Greene','Sol Hayes'],
@@ -1034,15 +1035,15 @@ const GAME_DATA = {
               "We would talk longer, but we lose the light if we stop. We are around, after dark."
             ] } },
 
-        { id:'locomotive', label:'The Locomotive', x:0.508, y:0.449, type:'object', required:false,
+        { id:'locomotive', label:'The Locomotive', x:0.513, y:0.426, type:'object', required:false,
           content:{ title:'The Locomotive',
             text:"A small switching engine waits on the siding, BENNINGTON MILLS CO. painted across its tender. The company owns the rails, the cars, and whatever rides in them." } },
 
-        { id:'fine_house', label:'The Fine House', x:0.249, y:0.312, type:'object', required:false,
+        { id:'fine_house', label:'The Fine House', x:0.247, y:0.304, type:'object', required:false,
           content:{ title:'The Fine House',
             text:"At the end of the street stands a house finer than any other. Fresh paint, glass in every window, a deep shaded porch. The cottages were all built to one plan. This house was built for one man." } },
 
-        { id:'crate_men', label:'The Men on the Crates', x:0.827, y:0.782, type:'dialogue', required:false,
+        { id:'crate_men', label:'The Men on the Crates', x:0.825, y:0.848, type:'dialogue', required:false,
           content:{ title:'The Men on the Crates',
             desc:"Two men sit on crates by the store, passing a bottle, in no hurry. It is the middle of a workday.",
             people:['Tom Egan'],
@@ -1052,15 +1053,15 @@ const GAME_DATA = {
               "You want to know how this town really runs, come round the tavern after dark. The one out past the yard. Cash only out there. Folks talk a sight freer once they are off the company's clock."
             ] } },
 
-        { id:'cottages', label:'The Cottages', x:0.105, y:0.470, type:'object', required:false,
+        { id:'cottages', label:'The Cottages', x:0.112, y:0.453, type:'object', required:false,
           content:{ title:'The Cottages',
             text:"A row of small wooden cottages, every one built to the same plan, every one owned by the company. Laundry strung between two of them. A child's chalk drawing fading on a doorstep. Plain, but kept." } },
 
-        { id:'woman_basket', label:'A Woman in the Street', x:0.950, y:0.864, type:'object', required:false,
+        { id:'woman_basket', label:'A Woman in the Street', x:0.945, y:0.855, type:'object', required:false,
           content:{ title:'A Woman in the Street',
             text:"A woman crosses the road with an empty basket and a shawl pulled close, though the day is mild. She does not look up as she passes." } },
 
-        { id:'grain_wagon', label:'The Grain Wagon', x:0.369, y:0.607, type:'object', required:false,
+        { id:'grain_wagon', label:'The Grain Wagon', x:0.397, y:0.642, type:'object', required:false,
           content:{ title:'The Grain Wagon',
             text:"A swaybacked horse stands in its traces while sacks of grain are loaded behind it. It has been waiting long enough to fall asleep on its feet." } }
       ],
