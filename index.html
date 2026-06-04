@@ -850,7 +850,7 @@ body.tune-mode #tune-tab { display: block; }
 // =============================================================
 const GAME_DATA = {
 
-  sceneOrder: ['pinkerton_office', 'town_map_day', 'factory_gate_day'],
+  sceneOrder: ['pinkerton_office', 'town_map_day', 'factory_gate_day', 'factory_floor'],
 
   scenes: {
 
@@ -1114,6 +1114,80 @@ const GAME_DATA = {
         { id:'cotton_bales', label:'Cotton Bales', x:0.66, y:0.80, type:'object', required:false,
           content:{ title:'Cotton Bales',
             text:"Bales of raw cotton stacked by the posts, bound in burlap and rope, waiting to be hauled in and spun. The mill's appetite is steady, and always hungry for more." } }
+      ]
+    },
+
+    factory_floor: {
+      id: 'factory_floor',
+      name: 'Bennington Mills',
+      subtitle: 'The Spinning Floor',
+      actLabel: 'Act II - The Mill',
+      image: '97B99776-7B1A-4FFF-B143-B224B1841465.jpg',
+      hotspots: [
+        { id:'back_to_gate', label:'Back to the Gate', x:0.50, y:0.94, type:'navigation', goto:'factory_gate_day',
+          content:{ text:"The aisle leads back to the doors and the daylight." } },
+
+        { id:'organizer_woman', label:'Margaret Burke', x:0.84, y:0.55, type:'dialogue', required:false,
+          content:{ title:'Margaret Burke',
+            desc:"A woman at the inspection table, folding finished cloth with quick, practiced hands. She watches you a moment before she speaks.",
+            people:['Margaret Burke'],
+            lines:[
+              "You are not from the company. I would know your face. A buyer, then, or something else.",
+              "Margaret Burke. I check the cloth before it ships. Twelve years at this table.",
+              "It is steady work, if you do not mind the dust or the wage. The wage was better once. Then it was not, and it never came back.",
+              "If you have come to listen, there are people worth listening to. Some of us have been trying to be heard. That is all I will say to a stranger."
+            ] } },
+
+        { id:'company_man', label:'Walter Reese', x:0.33, y:0.68, type:'dialogue', required:false,
+          content:{ title:'Walter Reese',
+            desc:"A man crouched at the big carding machine, oiling its gears with a careful, unhurried hand. He keeps working as he talks.",
+            people:['Walter Reese'],
+            lines:[
+              "Walter Reese. I keep the machines running. Been doing it long enough they listen to me when something breaks.",
+              "Look, it is a good company. Aldrich built all this. The school, the houses. People forget that when they start complaining.",
+              "Are there problems? Sure. Wages, hours, the dust. I am not blind. But you fix that by being useful, not by stirring people up.",
+              "There is talk of organizing, and I keep my ears open. A man who helps management see trouble coming gets noticed. Gets moved up.",
+              "You want the one behind it? Burke. Margaret Burke, at the cloth table. She calls the meetings. Her house is the second past the school. You make sure your boss hears it was Walter Reese who helped."
+            ] } },
+
+        { id:'the_boy', label:'Sammy', x:0.56, y:0.62, type:'dialogue', required:false,
+          content:{ title:'Sammy',
+            desc:"A boy, maybe ten, working the spinning frame. He moves fast between the spindles, tying broken threads, and grins when he sees you watching.",
+            people:['Sammy'],
+            lines:[
+              "You watching me work? I am quick. Mr. Pratt says I am the quickest doffer he has had. I been here since spring.",
+              "It is good money. I give it to my ma. And the company gives us candy at Christmas, real candy, from the store.",
+              "Mr. Pratt is fair. He only cuffs me when I earn it, when I am slow or I let a thread go. My ma says that is how you learn.",
+              "A boy got his hand caught in the frame last winter. Lost two fingers. But that was his own fault, he was not paying attention. I always pay attention."
+            ] } },
+
+        { id:'the_overseer', label:'The Overseer', x:0.15, y:0.40, type:'object', required:false,
+          content:{ title:'The Overseer',
+            text:"A heavyset man in a hat stands at the end of the aisle, arms folded, watching the floor. Pratt, the boy called him. He marks something in a small book each time he looks up. He has not decided yet what to make of you, and he is in no hurry to." } },
+
+        { id:'the_air', label:'The Air', x:0.50, y:0.85, type:'object', required:false,
+          content:{ title:'The Air',
+            text:"Cotton lint drifts in the light like snow that never lands. It is on the floor, on the machines, in the workers' hair, and in their lungs. By the end of a shift you would breathe it without noticing. After enough years, the noticing comes back, as a cough that does not leave." } },
+
+        { id:'carding_machine', label:'The Carding Machine', x:0.22, y:0.62, type:'object', required:false,
+          content:{ title:'The Carding Machine',
+            text:"A great iron machine of gears, rollers, and leather belts, all of it turning, none of it guarded. Walter works at it with his hands inches from the teeth. The belts run off a shaft along the ceiling that drives every machine in the room at once. Nothing here was built with a body in mind." } },
+
+        { id:'spinning_frames', label:'The Spinning Frames', x:0.72, y:0.50, type:'object', required:false,
+          content:{ title:'The Spinning Frames',
+            text:"Long frames of spinning bobbins run the length of the wall, hundreds of threads pulled tight and fast. When one snaps it must be tied off before the flaw runs down the line, and small quick hands are best for the work. That is why the company likes boys." } },
+
+        { id:'finished_cloth', label:'The Finished Cloth', x:0.90, y:0.66, type:'object', required:false,
+          content:{ title:'The Finished Cloth',
+            text:"Bolts of finished cotton are stacked clean and white at the inspection table, stamped with a grade and a price, bound for stores in the cities. It is fine goods. None of the hands who made it could afford a yard." } },
+
+        { id:'production_board', label:'The Production Board', x:0.46, y:0.30, type:'object', required:false,
+          content:{ title:'The Production Board',
+            text:"A slate board hung on a post, chalked with the day's required output by room and by frame. The numbers have been rubbed out and raised more than once. The same hands, fewer of them now, are asked to make more cloth than last year, and more again than the year before." } },
+
+        { id:'the_windows', label:'The Windows', x:0.06, y:0.22, type:'object', required:false,
+          content:{ title:'The Windows',
+            text:"Tall windows line the wall, but they are shut tight and the air is kept warm and damp on purpose. Moist air keeps the threads from snapping. What is good for the thread is hard on the people, but the thread does not draw wages." } }
       ]
     }
   }
