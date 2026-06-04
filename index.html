@@ -566,6 +566,37 @@ html, body {
   #nb-toggle { top: 14px; right: 14px; }
 }
 
+/* NAVIGATION HOTSPOTS */
+.hotspot.nav-hotspot {
+  width: 48px; height: 48px;
+  transform: translate(-50%, -50%);
+}
+.hotspot.nav-hotspot .hotspot-glow {
+  background: radial-gradient(circle, rgba(150,210,240,0.95) 0%, rgba(80,155,200,0.45) 55%, transparent 100%);
+  animation: nav-pulse 3s ease-in-out infinite;
+}
+.hotspot.nav-hotspot:hover .hotspot-glow {
+  transform: scale(1.4);
+  animation-play-state: paused;
+  opacity: 1;
+}
+@keyframes nav-pulse {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50%       { opacity: 0.85; transform: scale(1.2); }
+}
+.hotspot-nav-label {
+  position: absolute;
+  top: calc(100% + 5px); left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 10px; font-style: italic;
+  color: rgba(170,215,240,0.9);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.95), 0 0 10px rgba(0,0,0,0.8);
+  letter-spacing: 0.3px;
+  pointer-events: none;
+}
+
 /* ── TUNE MODE ────────────────────────────────────────────── */
 body.tune-mode #game-viewport { cursor: crosshair; }
 body.tune-mode .hotspot { display: none; }
@@ -819,7 +850,7 @@ body.tune-mode #tune-tab { display: block; }
 // =============================================================
 const GAME_DATA = {
 
-  sceneOrder: ['pinkerton_office', 'town_map_day'],
+  sceneOrder: ['pinkerton_office', 'town_map_day', 'factory_gate_day'],
 
   scenes: {
 
@@ -1038,6 +1069,52 @@ const GAME_DATA = {
         buttonText: 'To the Mill Gate →',
         nextScene: 'factory_gate_day'
       }
+    },
+
+    factory_gate_day: {
+      id: 'factory_gate_day',
+      name: 'Bennington Mills',
+      subtitle: 'The Gate',
+      actLabel: 'Act II - The Mill',
+      image: 'IMG_5469.jpg',
+      hotspots: [
+        { id:'back_to_town', label:'Back to Town', x:0.02, y:0.72, type:'navigation', goto:'town_map_day',
+          content:{ text:"The road runs back south toward the houses and the store." } },
+
+        { id:'enter_mill', label:'Through the Gate', x:0.50, y:0.62, type:'navigation', goto:'factory_floor',
+          content:{ text:"The gates stand open. The work is inside." } },
+
+        { id:'management_office', label:'Management Office', x:0.88, y:0.58, type:'navigation', goto:'aldrich_office',
+          content:{ text:"OFFICE ENTRANCE. BENNINGTON MILLS MANAGEMENT AND RECORDS. The door marked Management stands open, and a clerk is visible at a desk within." } },
+
+        { id:'founding_plaque', label:'The Founding Plaque', x:0.62, y:0.55, type:'document', required:false,
+          content:{ title:'The Bennington Mills Plaque',
+            text:"A bronze plaque set into the brick beside the gate. BENNINGTON MILLS, FOUNDED 1888 BY GEORGE ALDRICH. 'A town built for the working family. Here a man may find honest work, a clean home, a school for his children, and a fair wage, all under one roof. We rise together.' The bronze is polished bright. Someone keeps it clean." } },
+
+        { id:'posted_notice', label:'Notice to the Hands', x:0.38, y:0.50, type:'document', required:false,
+          content:{ title:'Notice to the Hands',
+            text:"A printed notice nailed beside the gate. NOTICE TO ALL HANDS. Gates open at six, close at six. Wages paid in company scrip, redeemable at the company store. Fines levied for lateness, idle talk, and waste. By order of the management. The rules are not new, but the paper is fresh." } },
+
+        { id:'hands_coming_on', label:'The Hands Coming On', x:0.33, y:0.72, type:'object', required:false,
+          content:{ title:'The Hands Coming On',
+            text:"Men file through the gate for the next shift, lunch pails swinging, boots worn soft. One of them waves at you, easy and friendly. A stranger is still a novelty here. None of them know what you are, or why you have come." } },
+
+        { id:'gate_arch', label:'The Gate', x:0.46, y:0.20, type:'object', required:false,
+          content:{ title:'The Gate',
+            text:"A great arch of wrought iron over the entrance, BENNINGTON MILLS, EST. 1888 worked into the metal, finer than anything else in town. The men passing under it do not look up. They have walked through it ten thousand times." } },
+
+        { id:'smokestacks', label:'The Smokestacks', x:0.58, y:0.10, type:'object', required:false,
+          content:{ title:'The Smokestacks',
+            text:"Two tall stacks behind the wall pour dark smoke into a clean sky. The engines never cool. Day shift, night shift, the mill breathes without stopping." } },
+
+        { id:'mill_building', label:'The Mill', x:0.18, y:0.30, type:'object', required:false,
+          content:{ title:'The Mill',
+            text:"Five floors of brick and glass rising over the wall. From out here you cannot hear the machines. Inside, you imagine, it is a different thing entirely." } },
+
+        { id:'cotton_bales', label:'Cotton Bales', x:0.66, y:0.80, type:'object', required:false,
+          content:{ title:'Cotton Bales',
+            text:"Bales of raw cotton stacked by the posts, bound in burlap and rope, waiting to be hauled in and spun. The mill's appetite is steady, and always hungry for more." } }
+      ]
     }
   }
 };
@@ -1166,8 +1243,9 @@ function loadScene(id) {
     img.onerror = () => { computeBounds(); buildHotspots(scene); };
   }
 
-  const btn = document.getElementById('progress-btn');
-  btn.textContent = scene.progression.buttonText;
+  const btn  = document.getElementById('progress-btn');
+  const prog = scene.progression || {};
+  btn.textContent = prog.buttonText || '';
   btn.classList.remove('show');
   checkProgression();
 }
@@ -1179,20 +1257,36 @@ function buildHotspots(scene) {
   const layer = document.getElementById('hotspot-layer');
   layer.innerHTML = '';
   scene.hotspots.forEach(h => {
+    const isNav = h.type === 'navigation';
     const el = document.createElement('div');
-    el.className = 'hotspot' + (gameState.discovered.has(h.id) ? ' found' : '');
+    el.className = isNav
+      ? 'hotspot nav-hotspot'
+      : 'hotspot' + (gameState.discovered.has(h.id) ? ' found' : '');
     el.dataset.id = h.id;
     el.style.left  = (h.x * 100) + '%';
     el.style.top   = (h.y * 100) + '%';
     el.setAttribute('role', 'button');
     el.setAttribute('tabindex', '0');
     el.setAttribute('aria-label', h.label);
-    el.title = h.label;
+
     const glow = document.createElement('div');
     glow.className = 'hotspot-glow';
     el.appendChild(glow);
-    el.addEventListener('click',   e => { e.stopPropagation(); if (!pan.moved) openCard(h.id); });
-    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCard(h.id); } });
+
+    if (isNav) {
+      // Always-visible direction label
+      const lbl = document.createElement('div');
+      lbl.className = 'hotspot-nav-label';
+      lbl.textContent = h.label;
+      el.appendChild(lbl);
+      el.addEventListener('click',   e => { e.stopPropagation(); if (!pan.moved) goToScene(h.goto, h.label); });
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToScene(h.goto, h.label); } });
+    } else {
+      el.title = h.label;
+      el.addEventListener('click',   e => { e.stopPropagation(); if (!pan.moved) openCard(h.id); });
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCard(h.id); } });
+    }
+
     layer.appendChild(el);
   });
 }
@@ -1389,34 +1483,39 @@ function toggleNotebook() {
 // PROGRESSION
 // =============================================================
 function checkProgression() {
-  const scene    = GAME_DATA.scenes[gameState.currentScene];
-  const required = scene.progression.required;
-  // If required list is empty, the scene uses a transition hotspot instead — never show button
-  const met = required.length > 0 && required.every(id => gameState.discovered.has(id));
+  const scene = GAME_DATA.scenes[gameState.currentScene];
+  const prog  = scene.progression;
+  if (!prog || !prog.required || prog.required.length === 0) {
+    document.getElementById('progress-btn').classList.remove('show');
+    return;
+  }
+  const met = prog.required.every(id => gameState.discovered.has(id));
   document.getElementById('progress-btn').classList.toggle('show', met);
 }
 
-function doProgression() {
-  const scene    = GAME_DATA.scenes[gameState.currentScene];
-  const nextId   = scene.progression.nextScene;
-  const nextScene = GAME_DATA.scenes[nextId];
-  const overlay  = document.getElementById('transition');
-  const inner    = document.getElementById('trans-inner');
-
+function goToScene(targetId, fallbackLabel) {
+  const target  = GAME_DATA.scenes[targetId];
+  const overlay = document.getElementById('transition');
+  const inner   = document.getElementById('trans-inner');
   overlay.classList.add('on');
-
-  if (nextScene) {
-    inner.querySelector('.trans-act').textContent   = nextScene.actLabel;
-    inner.querySelector('.trans-title').textContent = nextScene.name;
-    inner.querySelector('.trans-sub').textContent   = nextScene.subtitle;
-    setTimeout(() => { loadScene(nextId); setPan(0, false); }, 900);
+  if (target) {
+    inner.querySelector('.trans-act').textContent   = target.actLabel;
+    inner.querySelector('.trans-title').textContent = target.name;
+    inner.querySelector('.trans-sub').textContent   = target.subtitle;
+    setTimeout(() => { loadScene(targetId); setPan(0, false); }, 900);
     setTimeout(() => overlay.classList.remove('on'), 2200);
   } else {
     inner.querySelector('.trans-act').textContent   = 'Coming Soon';
-    inner.querySelector('.trans-title').textContent = 'The mill gate is waiting.';
+    inner.querySelector('.trans-title').textContent = fallbackLabel || 'Next Scene';
     inner.querySelector('.trans-sub').textContent   = '';
-    setTimeout(() => overlay.classList.remove('on'), 3200);
+    setTimeout(() => overlay.classList.remove('on'), 2800);
   }
+}
+
+function doProgression() {
+  const scene = GAME_DATA.scenes[gameState.currentScene];
+  const prog  = scene.progression || {};
+  goToScene(prog.nextScene, prog.buttonText);
 }
 
 // =============================================================
