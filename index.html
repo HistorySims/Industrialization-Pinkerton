@@ -856,6 +856,147 @@ body.tune-mode #tune-tab { display: block; }
   font-size: 11px; padding: 2px 10px; cursor: pointer;
   border-radius: 1px; margin-left: 12px; vertical-align: middle;
 }
+#tune-scene {
+  max-width: 190px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; font-family: 'Libre Baskerville', serif;
+  font-size: 11px; padding: 4px 6px; border-radius: 1px;
+}
+#tune-scene option { color: #000; }
+@media (max-width: 600px) { #tune-scene { max-width: 110px; } }
+
+/* HOTSPOTS THAT APPEAR LATER */
+.hotspot.reveal { animation: hotspot-reveal 1.4s ease-out; }
+@keyframes hotspot-reveal {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  55%  { opacity: 1; transform: translate(-50%, -50%) scale(1.7); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* CARD DOORWAYS */
+.card-goto-note {
+  margin-top: 18px;
+  font-size: 12px; font-style: italic;
+  color: #7a5a38; line-height: 1.6;
+  font-family: 'Libre Baskerville', serif;
+}
+.card-goto-note + .card-transition-btn { margin-top: 10px; }
+.card-goto-locked {
+  margin-top: 18px; padding: 9px 12px;
+  border-left: 2px solid rgba(100,70,35,0.35);
+  font-size: 12.5px; font-style: italic;
+  color: #6a4828; line-height: 1.6;
+  font-family: 'Libre Baskerville', serif;
+}
+
+/* FINAL REPORT, READY TO FILE */
+.report-submit-btn:not(:disabled) {
+  background: linear-gradient(180deg, #594618 0%, #382c0e 100%);
+  border-color: #897035; color: #d4c4a0; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,215,100,0.1);
+}
+.report-submit-btn:not(:disabled):hover { background: linear-gradient(180deg, #6a5520 0%, #463a14 100%); }
+.report-textarea[readonly] { background: rgba(255,255,255,0.22); }
+
+/* ENDING */
+#ending-overlay {
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+  z-index: 140;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  background: rgba(0,0,0,0.74);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+#ending-overlay.open { opacity: 1; pointer-events: all; }
+#ending-card {
+  position: relative;
+  max-width: 600px; width: 100%;
+  max-height: 100%; overflow-y: auto;
+  padding: 28px 32px 26px; border-radius: 2px;
+  background: radial-gradient(ellipse at 20% 0%, rgba(160,110,50,0.09) 0%, transparent 55%), #f3e9cc;
+  box-shadow: 0 10px 50px rgba(0,0,0,0.65), 0 2px 8px rgba(0,0,0,0.4);
+  color: #3a2a1a;
+  font-family: 'Libre Baskerville', serif;
+}
+#ending-card::-webkit-scrollbar { width: 3px; }
+#ending-card::-webkit-scrollbar-thumb { background: rgba(100,70,35,0.25); border-radius: 2px; }
+.end-kicker {
+  display: block; font-size: 9px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: #9a7850; margin-bottom: 7px;
+}
+.end-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 700; color: #251508;
+  line-height: 1.3; margin-bottom: 6px;
+}
+.end-head {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px; font-weight: 600; color: #251508;
+  margin: 20px 0 8px; letter-spacing: 0.5px;
+}
+.end-p { font-size: 13.5px; line-height: 1.8; color: #3a2a1a; margin-bottom: 12px; white-space: pre-line; }
+.end-p.quiet { font-size: 12px; font-style: italic; color: #7a5a38; }
+.end-stamp {
+  display: inline-block; margin: 4px 0 16px; padding: 6px 12px;
+  border: 2px solid #7a1f16; color: #7a1f16;
+  font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  transform: rotate(-2.5deg); opacity: 0.88;
+}
+.end-stamp.good { border-color: #2f4a33; color: #2f4a33; }
+.end-names { margin: 6px 0 2px; border-top: 1px solid rgba(100,70,35,0.16); }
+.end-name-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 7px 0; border-bottom: 1px solid rgba(100,70,35,0.16);
+}
+.end-name-info { flex: 1; min-width: 0; }
+.end-name { font-size: 14px; color: #251508; }
+.end-name-poi { font-size: 10.5px; font-style: italic; color: #8a6a48; margin-top: 2px; }
+.end-toggle {
+  flex-shrink: 0; min-height: 44px; min-width: 118px; padding: 8px 12px;
+  background: transparent; border: 1px solid rgba(100,70,35,0.4); color: #6a4828;
+  font-family: 'Libre Baskerville', serif; font-size: 10.5px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  cursor: pointer; border-radius: 1px;
+  transition: background 0.18s, color 0.18s;
+}
+.end-toggle.on { background: #6b1d14; border-color: #4a120c; color: #f3e9cc; }
+.end-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.end-actions > button { flex: 1 1 160px; margin-top: 0; }
+.end-btn-secondary {
+  min-height: 44px; padding: 12px 18px;
+  background: transparent; border: 1px solid rgba(100,70,35,0.4); color: #5a3c20;
+  font-family: 'Playfair Display', serif; font-size: 14px; letter-spacing: 1px;
+  cursor: pointer; border-radius: 1px;
+}
+.end-btn-secondary:hover { background: rgba(100,70,35,0.08); }
+.end-item-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px; font-weight: 600; color: #251508; margin-bottom: 3px;
+}
+.end-q { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #8a6a48; margin-top: 12px; }
+.end-a { font-size: 13px; line-height: 1.7; color: #251508; white-space: pre-wrap; word-wrap: break-word; }
+.end-cat { padding: 10px 0; border-bottom: 1px solid rgba(100,70,35,0.16); }
+.end-cat-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.end-cat-title { font-family: 'Playfair Display', serif; font-size: 14.5px; font-weight: 600; color: #251508; }
+.end-cat-count { font-size: 11px; color: #8a6a48; white-space: nowrap; }
+.end-cat-desc { font-size: 12.5px; line-height: 1.6; color: #4a3826; margin-top: 3px; }
+.end-cat-found { font-size: 11.5px; font-style: italic; color: #4f6e4f; margin-top: 4px; line-height: 1.55; }
+.end-cat-none { font-size: 11.5px; font-style: italic; color: #9a7850; margin-top: 4px; }
+body.ending-mode .hotspot,
+body.ending-mode #progress-btn,
+body.ending-mode #tune-toggle-btn { display: none !important; }
+body.ending-mode #card-overlay { z-index: 160; }
+@media (min-width: 1000px) { #ending-overlay { right: 380px; } }
+@media (max-width: 999px)  { #ending-overlay { padding-top: 66px; } }
+@media (max-width: 500px) {
+  #ending-card { padding: 22px 18px 20px; }
+  .end-title { font-size: 18px; }
+  .end-p { font-size: 13px; }
+  .end-toggle { min-width: 104px; }
+}
 </style>
 </head>
 <body style="background:#0a0908;margin:0;padding:0;">
@@ -884,6 +1025,10 @@ body.tune-mode #tune-tab { display: block; }
     <div id="card-inner"></div>
     <div id="card-added">&#10003; Added to notebook</div>
   </div>
+</div>
+
+<div id="ending-overlay" role="dialog" aria-modal="true" aria-label="The Report">
+  <div id="ending-card"><div id="ending-inner"></div></div>
 </div>
 
 <div id="notebook" role="complementary" aria-label="Case Notebook">
@@ -916,27 +1061,27 @@ body.tune-mode #tune-tab { display: block; }
       <hr class="report-rule">
       <div class="report-field">
         <label class="report-label" for="report-who">Who</label>
-        <textarea class="report-textarea" id="report-who" rows="3" placeholder="Who is behind the organizing effort?" oninput="gameState.report.who=this.value"></textarea>
+        <textarea class="report-textarea" id="report-who" rows="3" placeholder="Who is behind the organizing effort?" oninput="updateReport('who', this.value)"></textarea>
       </div>
       <div class="report-field">
         <label class="report-label" for="report-what">What</label>
-        <textarea class="report-textarea" id="report-what" rows="3" placeholder="What do they intend?" oninput="gameState.report.what=this.value"></textarea>
+        <textarea class="report-textarea" id="report-what" rows="3" placeholder="What do they intend?" oninput="updateReport('what', this.value)"></textarea>
       </div>
       <div class="report-field">
         <label class="report-label" for="report-where">Where</label>
-        <textarea class="report-textarea" id="report-where" rows="3" placeholder="Where do they gather?" oninput="gameState.report.where=this.value"></textarea>
+        <textarea class="report-textarea" id="report-where" rows="3" placeholder="Where do they gather?" oninput="updateReport('where', this.value)"></textarea>
       </div>
       <div class="report-field">
         <label class="report-label" for="report-when">When</label>
-        <textarea class="report-textarea" id="report-when" rows="2" placeholder="When do they meet?" oninput="gameState.report.when=this.value"></textarea>
+        <textarea class="report-textarea" id="report-when" rows="2" placeholder="When do they meet?" oninput="updateReport('when', this.value)"></textarea>
       </div>
       <div class="report-field">
         <label class="report-label" for="report-why">Why</label>
-        <textarea class="report-textarea" id="report-why" rows="4" placeholder="Why? What drove them to this?" oninput="gameState.report.why=this.value"></textarea>
+        <textarea class="report-textarea" id="report-why" rows="4" placeholder="Why? What drove them to this?" oninput="updateReport('why', this.value)"></textarea>
       </div>
       <hr class="report-rule">
-      <button class="report-submit-btn" disabled>File Report</button>
-      <div class="report-submit-caption">This report cannot be filed until your investigation is complete.</div>
+      <button class="report-submit-btn" id="report-submit" disabled onclick="fileReport()">File Report</button>
+      <div class="report-submit-caption" id="report-caption">This report cannot be filed until your investigation is complete.</div>
     </div>
   </div>
 </div>
@@ -960,6 +1105,7 @@ body.tune-mode #tune-tab { display: block; }
 
 <div id="tune-banner">
   <span id="tune-prompt">&#9678; TUNING MODE</span>
+  <select id="tune-scene" aria-label="Jump to scene"></select>
   <button id="tune-skip-btn">Skip</button>
   <button id="tune-exit-btn">Exit</button>
 </div>
@@ -984,7 +1130,9 @@ body.tune-mode #tune-tab { display: block; }
 // =============================================================
 const GAME_DATA = {
 
-  sceneOrder: ['pinkerton_office', 'town_map_day', 'factory_gate_day', 'factory_floor', 'aldrich_office'],
+  sceneOrder: ['pinkerton_office', 'town_map_day', 'company_store_inside', 'school_inside', 'burke_cottage',
+               'factory_gate_day', 'factory_floor', 'aldrich_office',
+               'tavern_night', 'factory_gate_night', 'aldrich_office_night'],
 
   scenes: {
 
@@ -1012,6 +1160,7 @@ const GAME_DATA = {
           label: 'Superintendent Harding',
           x: 0.111, y: 0.494,
           type: 'dialogue',
+          noPoi: true,
           required: true,
           content: {
             title: 'Superintendent Harding',
@@ -1039,6 +1188,7 @@ const GAME_DATA = {
           label: 'Agent Bryce',
           x: 0.538, y: 0.480,
           type: 'dialogue',
+          noPoi: true,
           required: false,
           content: {
             title: 'Agent Bryce',
@@ -1076,6 +1226,7 @@ const GAME_DATA = {
           label: 'Agent Marsh',
           x: 0.718, y: 0.429,
           type: 'dialogue',
+          noPoi: true,
           required: false,
           content: {
             title: 'Agent Marsh',
@@ -1102,6 +1253,7 @@ const GAME_DATA = {
           label: 'Miss Callahan',
           x: 0.935, y: 0.631,
           type: 'dialogue',
+          noPoi: true,
           required: false,
           content: {
             title: 'Miss Callahan',
@@ -1143,10 +1295,12 @@ const GAME_DATA = {
       image: 'IMG_6763.jpeg',
       hotspots: [
         { id:'company_store', label:'Company Store', x:0.428, y:0.431, type:'object', required:false,
+          goto:'company_store_inside', gotoText:'Wait for the Afternoon Bell',
           content:{ title:'Bennington Mills Company Store',
             text:"BENNINGTON MILLS COMPANY STORE, EST. 1888. The biggest and best kept building on the street. But the shutters are down, and a card hangs in the door: CLOSED UNTIL THE AFTERNOON BELL. Even the shopping here runs on the mill's clock." } },
 
         { id:'town_school', label:'The Town School', x:0.204, y:0.425, type:'object', required:false,
+          goto:'school_inside', gotoText:'Come Back After the Lesson',
           content:{ title:'The Town School',
             text:"A small white schoolhouse with a bell in its tower. Through the window you can see rows of children bent over their slates while a young woman walks the aisle, and you can just hear a voice leading them through their letters. School is in session, and this is no place for you in the middle of a lesson." } },
 
@@ -1178,6 +1332,7 @@ const GAME_DATA = {
             text:"At the end of the street stands a house finer than any other. Fresh paint, glass in every window, a deep shaded porch. The cottages were all built to one plan. This house was built for one man." } },
 
         { id:'crate_men', label:'The Men on the Crates', x:0.825, y:0.848, type:'dialogue', required:false,
+          grants:['knows_tavern'],
           content:{ title:'The Men on the Crates',
             desc:"Two men sit on crates by the store, passing a bottle, in no hurry. It is the middle of a workday.",
             people:['Tom Egan'],
@@ -1197,7 +1352,21 @@ const GAME_DATA = {
 
         { id:'grain_wagon', label:'The Grain Wagon', x:0.397, y:0.642, type:'object', required:false,
           content:{ title:'The Grain Wagon',
-            text:"A swaybacked horse stands in its traces while sacks of grain are loaded behind it. It has been waiting long enough to fall asleep on its feet." } }
+            text:"A swaybacked horse stands in its traces while sacks of grain are loaded behind it. It has been waiting long enough to fall asleep on its feet." } },
+
+        { id:'kesslers', label:"Kessler's", x:0.745, y:0.400, type:'object', required:false,
+          goto:'tavern_night', gotoText:'Wait for Nightfall',
+          gotoRequires:['aldrich', 'knows_tavern'],
+          gotoNote:"Once night falls, you will not see Bennington by daylight again.",
+          gotoLocked:{
+            aldrich:"You have not yet called on the man who hired you. Aldrich will expect to see you before you go anywhere after dark.",
+            knows_tavern:"Shut up tight until evening. You have no reason to come back tonight. Not yet."
+          },
+          content:{ title:"Kessler's",
+            text:"A plain two-story frame house out past the rail yard, beyond the company fence. It is the only building in sight with no company name painted on it. The shutters are closed. Kessler's, the men call it. It opens when the whistle blows." } },
+
+        { id:'burke_house', label:"Margaret Burke's House", x:0.098, y:0.575, type:'navigation', goto:'burke_cottage',
+          requires:['company_man'] }
       ],
       progression: {
         required: [],
@@ -1394,6 +1563,436 @@ const GAME_DATA = {
       ]
     }
 
+    ,
+
+    company_store_inside: {
+      id: 'company_store_inside',
+      name: 'Bennington Mills Company Store',
+      subtitle: 'After the Afternoon Bell',
+      actLabel: 'Act II - The Store',
+      image: 'IMG_5449.jpg',
+
+      hotspots: [
+        { id:'store_exit', label:'Back to the Street', x:0.735, y:0.72, type:'navigation', goto:'town_map_day' },
+
+        { id:'store_clerk', label:'The Store Clerk', x:0.205, y:0.36, type:'dialogue', required:false,
+          content:{ title:'Abner Cole',
+            desc:"A neat man in sleeve garters behind the counter, weighing out cornmeal and writing every ounce into a book. He does not look up until the scale settles.",
+            people:['Abner Cole'],
+            lines:[
+              "Help you, sir? You will want scrip. We take nothing else here. Company rule.",
+              "Nobody really pays at this counter. They draw what they need and it goes on the book. Payday, the company takes back what is owed before the envelope is ever filled. Very simple.",
+              "The prices? Freight is dear, up the valley. And the company carries every family through the lean weeks. A town merchant would not carry them a day.",
+              "Some of them grumble, I know. But I notice they all come back. Where else would they go?"
+            ] } },
+
+        { id:'store_nora', label:'The Woman with the Basket', x:0.41, y:0.44, type:'dialogue', required:false,
+          content:{ title:'Nora Egan',
+            desc:"A woman near the front of the line, an empty basket over her arm and a shawl pulled close. You saw her crossing the road this morning.",
+            people:['Nora Egan'],
+            lines:[
+              "You were in the road this morning. Tom said there was a stranger about. I am Nora Egan. Tom's wife.",
+              "Flour and lard and a little coffee. That is all I came for. It goes on the book. Everything goes on the book.",
+              "We owe twenty-two dollars and some. Tom has not drawn a wage since the new frames came in, so it only grows. They will not let a family leave owing, and there is no paying it off.",
+              "Tom says buy at the general store, out past the yard. With what? Nobody in Bennington has held real money in years."
+            ] } },
+
+        { id:'store_sign', label:'Scrip Only', x:0.27, y:0.45, type:'document', required:false,
+          content:{ title:'Scrip Only',
+            text:"PAYMENT IN BENNINGTON MILLS SCRIP ONLY. A card propped on the counter where no one can miss it. The scrip is printed paper, good for nothing outside this room. The company pays its hands in money that only the company will take back." } },
+
+        { id:'store_prices', label:'The Price Board', x:0.44, y:0.20, type:'document', required:false,
+          content:{ title:'The Price Board',
+            text:"PRICE LIST. Flour, 25 lb., 95 cents. Sugar, 9 cents the pound. Coffee, 35 cents. Lard, 12 cents. Kerosene, 20 cents the gallon.\n\nYou paid a good deal less for the same goods in Philadelphia. But nobody in this line is going to Philadelphia." } },
+
+        { id:'store_book', label:'The Account Book', x:0.145, y:0.90, type:'document', required:false,
+          content:{ title:'The Account Book',
+            text:"The store's account book lies open on the side desk. Family by family, line by line: what was drawn, what was owed, what was taken back on payday. BURKE, M. EGAN, T. DOYLE, R.\n\nNearly every balance is carried forward. Almost none is ever closed. The book does not show what anyone earned. Only what they owe." } },
+
+        { id:'store_scale', label:'The Scale', x:0.165, y:0.31, type:'object', required:false,
+          content:{ title:'The Scale',
+            text:"A brass scale for flour and meal. It bears no county seal. The weights are the company's own, checked by no one but the company." } },
+
+        { id:'store_register', label:'The Register', x:0.255, y:0.80, type:'object', required:false,
+          content:{ title:'The Register',
+            text:"A handsome brass register. The drawer holds no coin at all, only paper, and every note says BENNINGTON MILLS. The money goes round and round inside the company, like water in a mill race." } },
+
+        { id:'store_portraits', label:'The Portraits', x:0.045, y:0.14, type:'object', required:false,
+          content:{ title:'The Portraits',
+            text:"George Aldrich looks down on the line from a gilt frame, younger and kinder than life. The people waiting under him keep their eyes on the floor. It is hard to haggle with a man who owns the wall." } },
+
+        { id:'store_line', label:'The Line', x:0.585, y:0.40, type:'object', required:false,
+          content:{ title:'The Line',
+            text:"The line runs out the door and down the steps, men in work clothes and women with baskets, waiting without complaint. Every one of them was paid this week. Every one of them will leave owing." } },
+
+        { id:'store_maps', label:'The Lot Maps', x:0.91, y:0.30, type:'document', required:false,
+          content:{ title:'The Lot Maps',
+            text:"Company maps of the town lots, every cottage numbered in red ink. Rent comes out of the wage before the wage is paid. A family in Bennington does not rent from a landlord. It rents from the man who sets its pay." } }
+      ]
+    },
+
+    school_inside: {
+      id: 'school_inside',
+      name: 'The Aldrich Free School',
+      subtitle: 'After the Lesson',
+      actLabel: 'Act II - The School',
+      image: 'IMG_5467.jpeg',
+
+      hotspots: [
+        { id:'school_exit', label:'Back to the Street', x:0.035, y:0.72, type:'navigation', goto:'town_map_day' },
+
+        { id:'school_teacher', label:'The Teacher', x:0.665, y:0.40, type:'dialogue', required:false,
+          content:{ title:'Miss Ellen Hale',
+            desc:"The teacher is wiping slates clean at her desk, quick and tidy, a young woman with chalk on her sleeves. She seems glad of a grown-up to talk to.",
+            people:['Ellen Hale'],
+            lines:[
+              "You have missed them, I am afraid. Eleven today. There are desks for thirty.",
+              "They come to me until they are nine or ten, and then the mill takes them. It is called the Free School, and it is free. But a boy at the frames brings home two dollars a week, and a boy at a desk brings home nothing.",
+              "Sammy Doyle was the best reader I ever had. He left in the spring. He still stops at the window some evenings to tell me what he has read off the crates.",
+              "In the evenings I teach the grown hands their letters, so they can read what they are asked to sign. Mr. Aldrich does not know about that. I would be grateful if he did not hear it from you."
+            ] } },
+
+        { id:'school_board', label:'The Blackboard', x:0.72, y:0.24, type:'document', required:false,
+          content:{ title:'The Blackboard',
+            text:"READING, WRITING, ARITHMETIC. ALDRICH FREE SCHOOL. OCTOBER 14, 1898.\n\nThe day's lesson has been wiped away, but not the name. The name of the school stays up all year." } },
+
+        { id:'school_desks', label:'The Empty Desks', x:0.33, y:0.72, type:'object', required:false,
+          content:{ title:'The Empty Desks',
+            text:"Thirty desks, thirty slates, thirty inkwells, bought when the town was new and the company was proud of its school. Most of the inkwells are dry." } },
+
+        { id:'school_slate', label:'A Slate', x:0.205, y:0.86, type:'object', required:false,
+          content:{ title:'A Slate',
+            text:"On one slate, in a careful, crooked hand, SAMUEL DOYLE is written ten times over. Nobody has wiped it clean. The teacher has kept it the way you keep a letter." } },
+
+        { id:'school_coats', label:'Coats on the Pegs', x:0.075, y:0.50, type:'object', required:false,
+          content:{ title:'Coats on the Pegs',
+            text:"Three coats hang by the door, a grown man's size, worn through at the elbows. No child in this school could wear them. They belong to someone who comes after dark." } },
+
+        { id:'school_stove', label:'The Stove', x:0.505, y:0.74, type:'object', required:false,
+          content:{ title:'The Stove',
+            text:"A pot-bellied stove with a copper kettle and a half-full coal bucket. The coal comes from the company yard and is charged against the teacher's pay. In January the children keep their coats on." } },
+
+        { id:'school_portraits', label:'Washington and Lincoln', x:0.715, y:0.08, type:'document', required:false,
+          content:{ title:'Washington and Lincoln',
+            text:"Washington and Lincoln look down on the empty room. Tucked into the corner of Lincoln's frame is a card in the teacher's hand:\n\n'Labor is prior to, and independent of, capital. Capital is only the fruit of labor, and could never have existed if labor had not first existed.' A. Lincoln, 1861.\n\nIt is not part of any lesson Mr. Aldrich approved." } },
+
+        { id:'school_map', label:'The Map', x:0.895, y:0.27, type:'object', required:false,
+          content:{ title:'The Map',
+            text:"A map of the United States, the states bright as a quilt. A pin is pushed into Massachusetts at New Bedford, where thousands of cotton mill hands walked out this past winter rather than take a cut in pay. Someone has been teaching the news." } },
+
+        { id:'school_window', label:'The Window', x:0.565, y:0.33, type:'object', required:false,
+          content:{ title:'The Window',
+            text:"Through the window, across the road, the old general store with its sign still up. It sells for cash only. Business, you would guess, is slow." } }
+      ]
+    },
+
+    burke_cottage: {
+      id: 'burke_cottage',
+      name: 'The Burke Cottage',
+      subtitle: 'Second Past the School',
+      actLabel: 'Act II - The Cottages',
+      image: 'IMG_5450.jpeg',
+
+      hotspots: [
+        { id:'burke_exit', label:'Back to the Street', x:0.64, y:0.47, type:'navigation', goto:'town_map_day' },
+
+        { id:'burke_table', label:'Papers on the Table', x:0.865, y:0.73, type:'document', required:false,
+          grants:['knows_tavern'],
+          content:{ title:'Papers on the Table',
+            text:"Under the lamp, a sheet of foolscap in a firm, even hand, a draft with words struck out and written over:\n\nTO ALL HANDS OF BENNINGTON MILLS. A meeting, Friday night at eight, in the upstairs room at Kessler's. We will vote on our demands. Wages paid in money, not scrip. An end to fines. Store prices no higher than the county. No child at the frames under twelve.\n\nAt the bottom, underlined twice: Bring no one you would not trust with your children's bread.\n\nToday is Friday. The meeting is tonight." } },
+
+        { id:'burke_chest', label:'The List of Names', x:0.155, y:0.80, type:'document', required:false,
+          content:{ title:'The List of Names',
+            text:"The chest at the foot of the bed is not locked. Under the folded quilts lies a ruled sheet of paper, creased soft from handling. Names. Forty-three of them, some signed in a good hand, some marked with an X and witnessed. Margaret Burke's is first.\n\nIt takes you a quarter of an hour to copy every name. When you fold the sheet back under the quilts, the list is in your notebook, and nothing in the room looks any different." } },
+
+        { id:'burke_books', label:'The Bookshelf', x:0.19, y:0.20, type:'object', required:false,
+          content:{ title:'The Bookshelf',
+            text:"A short shelf of books: a Bible, a hymnal, a child's primer, and a battered copy of Progress and Poverty by Henry George, the pages soft with turning. It is a book that asks why, in a country growing richer every year, the people who do the work stay poor. Someone in this house has been asking the same question." } },
+
+        { id:'burke_coat', label:'Coats on the Pegs', x:0.34, y:0.27, type:'object', required:false,
+          content:{ title:'Coats on the Pegs',
+            text:"Two coats hang on the pegs. One is a woman's, neatly mended. The other is a man's work coat, the cuffs black with machine oil, patched at both elbows. It has not been worn in a long time, and it has not been given away." } },
+
+        { id:'burke_crib', label:'The Crib', x:0.46, y:0.52, type:'object', required:false,
+          content:{ title:'The Crib',
+            text:"A crib with the rails worn smooth by small hands. The baby is with a neighbor while Margaret stands her twelve hours at the inspection table. The neighbor is paid in scrip, like everyone else." } },
+
+        { id:'burke_drawing', label:'The Drawing', x:0.455, y:0.27, type:'object', required:false,
+          content:{ title:'The Drawing',
+            text:"A child's drawing pinned to the wall: a house, a tree, a mother holding a little girl's hand, and a big yellow sun. There is no mill in the picture." } },
+
+        { id:'burke_wheel', label:'The Spinning Wheel', x:0.065, y:0.84, type:'object', required:false,
+          content:{ title:'The Spinning Wheel',
+            text:"An old spinning wheel, the kind a grandmother worked by the fire. One woman, one wheel, at her own pace, in her own house. Up the road, a single frame turns hundreds of spindles at once, and nobody sets their own pace anymore." } },
+
+        { id:'burke_pump', label:'The Pump', x:0.81, y:0.58, type:'object', required:false,
+          content:{ title:'The Pump',
+            text:"A hand pump over a tin basin. The water comes up cloudy and smells faintly of the mill race. The clean water from upstream turns the company's wheels first." } },
+
+        { id:'burke_jars', label:'The Jars', x:0.955, y:0.40, type:'object', required:false,
+          content:{ title:'The Jars',
+            text:"Shelves of jars, each one labeled in the same firm hand: beans, tomatoes, apples, lard. Bundles of herbs dry beside a little scale. Everything she can grow or put up herself is one more thing she does not have to buy on the book." } },
+
+        { id:'burke_toys', label:'The Toys', x:0.35, y:0.86, type:'object', required:false,
+          content:{ title:'The Toys',
+            text:"A wooden horse, whittled by hand, and a scatter of painted blocks. Nothing on this floor came from a store." } }
+      ]
+    },
+
+    tavern_night: {
+      id: 'tavern_night',
+      name: "Kessler's",
+      subtitle: 'Friday Night, After the Whistle',
+      actLabel: 'Act III - Nightfall',
+      image: 'IMG_5458.jpeg',
+
+      hotspots: [
+        { id:'tavern_exit', label:'Up the Road to the Mill', x:0.60, y:0.40, type:'navigation', goto:'factory_gate_night' },
+
+        { id:'tavern_kessler', label:'The Barkeep', x:0.19, y:0.36, type:'dialogue', required:false,
+          content:{ title:'Otto Kessler',
+            desc:"A broad, gray man behind the bar, polishing a glass that is already clean. The only man in the valley who does not work for George Aldrich, and he looks it.",
+            people:['Otto Kessler'],
+            lines:[
+              "Cash, friend. It says so on the board. I cannot spend Aldrich's paper anywhere but Aldrich's store, and I will not buy my whiskey from George Aldrich.",
+              "My father bought this ground before Aldrich ever came up the valley. Aldrich has offered for it four times. It is the one lot on the county survey without his name on it.",
+              "So they come here. Where else would they go? Every other room in this town belongs to the man they are talking about.",
+              "What is said upstairs is none of my business. I do not throw out a paying customer, and I do not repeat what I hear. In your place, I would think hard before I did."
+            ] } },
+
+        { id:'tavern_committee', label:'The Middle Table', x:0.47, y:0.56, type:'dialogue', required:false,
+          content:{ title:'The Middle Table',
+            desc:"Four men at the middle table, mugs untouched, a leather satchel among the coins. Isaac and Sol from the rail yard are two of them. The talk stops when you pull up a chair, and old Sol Hayes looks you over for a long moment before he speaks.",
+            people:['Isaac Greene', 'Sol Hayes'],
+            lines:[
+              "Isaac told you we would be around after dark. Here we are.",
+              "Margaret thinks you are a Pinkerton. Good boots, soft hands, a great many questions. I expect she is right. She usually is.",
+              "Isaac here could not get hired on the frames, not in this mill. The yard took him. Margaret says the union is for every hand who works for Aldrich, frame or yard. First time anybody in this town ever said so.",
+              "We have nothing to hide but our names. Money wages. Honest prices. Children out of the frames. Write that down, if you like.",
+              "The meeting is upstairs. Go on up and listen. Then you can decide what kind of man you are."
+            ] } },
+
+        { id:'tavern_meeting', label:'The Stairs', x:0.655, y:0.55, type:'dialogue', required:false,
+          requires:['tavern_committee'],
+          content:{ title:'Voices Upstairs', tag:'Overheard',
+            desc:"You climb halfway up the narrow stairs and stop where the boards creak least. The room above is packed and quiet, listening to one voice. Margaret Burke's.",
+            people:['Margaret Burke'],
+            lines:[
+              "Four years at the same wage, and every year a bigger bill at the store. Mr. Aldrich says times are hard. Then whose are the new frames sitting on the siding?",
+              "We are not asking for the moon. Wages in money, so we can buy where we please. An end to the fines. Store prices no higher than the county's. And no child at the frames before the age of twelve.",
+              "We put it to him in writing, signed by every hand who will sign. If he will not meet with us by the first of November, we walk out. All of us. Mill and yard together.",
+              "And mind who you talk to. There is a stranger in this town asking a great many questions, and a man in the mill who has been answering them."
+            ] } },
+
+        { id:'tavern_egan', label:'Tom Egan', x:0.085, y:0.60, type:'dialogue', required:false,
+          content:{ title:'Tom Egan',
+            desc:"Tom Egan from the crates sits at a table by the bar, a little more sober than this afternoon. He raises his mug when he sees you.",
+            people:['Tom Egan'],
+            lines:[
+              "You came. Good. A man ought to see this town after the whistle, when it is itself.",
+              "My Nora was up at the store again today, putting flour on the book. Twenty-two dollars we owe now, and no wage coming in since the new frames. A family that owes the company cannot leave, and cannot pay. So we stay.",
+              "I signed Margaret's card last week. What have I got to lose? They already took the job."
+            ] } },
+
+        { id:'tavern_satchel', label:'The Leather Satchel', x:0.48, y:0.85, type:'document', required:false,
+          content:{ title:'The Leather Satchel',
+            text:"A worn leather satchel sits open among the mugs. Inside is a stack of printed cards, the ink still fresh: TEXTILE WORKERS UNION, BENNINGTON LOCAL. DUES TEN CENTS A WEEK.\n\nMost of them are already signed. In a company town, a union card is a dangerous thing to own. Someone at this table is carrying forty of them." } },
+
+        { id:'tavern_noscrip', label:'No Scrip, Cash Only', x:0.13, y:0.27, type:'document', required:false,
+          content:{ title:'No Scrip, Cash Only',
+            text:"NO SCRIP, CASH ONLY. Chalked big enough to read from the door. In a town where every wage is paid in company paper, it is close to a declaration of independence. Whatever cash the hands manage to keep from the company store, a little of it ends up here." } },
+
+        { id:'tavern_notices', label:'Notices by the Door', x:0.485, y:0.25, type:'document', required:false,
+          content:{ title:'Notices by the Door',
+            text:"Papers tacked up by the door. An auction notice for a farm downstream, sold for debt, the second this year. A reward for a strayed cow. And a printed bill on mill letterhead:\n\nREWARD. TWENTY-FIVE DOLLARS for information leading to the names of persons inciting the hands of Bennington Mills to quit work. Apply at the Management Office.\n\nKessler has left it up. Everyone who walks in can see what a neighbor is worth." } },
+
+        { id:'tavern_oldtimers', label:'The Old-Timers', x:0.72, y:0.37, type:'object', required:false,
+          content:{ title:'The Old-Timers',
+            text:"Two old men at the high table by the dartboard, too worn out for the frames and too stubborn to stay home. 'In seventy-seven we stopped every train between here and Pittsburgh,' says one. 'And in seventy-seven they shot us for it,' says the other. It is an argument they have been having for twenty years, and neither one has won it yet." } },
+
+        { id:'tavern_corner', label:'The Corner Table', x:0.92, y:0.74, type:'object', required:false,
+          content:{ title:'The Corner Table',
+            text:"An old woman sits between two silent drinkers, counting coins into a careful little pile. Real money, saved a penny at a time and kept away from the company store. She counts it twice. A ticket out of Bennington costs more than she has, and she knows it, and she counts it anyway." } },
+
+        { id:'tavern_portraits', label:'Behind the Bar', x:0.29, y:0.22, type:'object', required:false,
+          content:{ title:'Behind the Bar',
+            text:"Behind the bar hangs a portrait of Lincoln, and below it a stern, bearded man in a cheap frame with the same nose as the man pouring the beer. Kessler's father. In every other room in Bennington, the face on the wall is George Aldrich." } }
+      ]
+    },
+
+    factory_gate_night: {
+      id: 'factory_gate_night',
+      name: 'Bennington Mills',
+      subtitle: 'The Gate by Moonlight',
+      actLabel: 'Act III - Nightfall',
+      image: 'IMG_5470.jpeg',
+
+      hotspots: [
+        { id:'gate_night_back', label:"Back to Kessler's", x:0.03, y:0.80, type:'navigation', goto:'tavern_night' },
+
+        { id:'gate_night_in', label:'Through the Gate', x:0.495, y:0.80, type:'navigation', goto:'aldrich_office_night' },
+
+        { id:'night_door', label:'The Management Door', x:0.875, y:0.80, type:'object', required:false,
+          content:{ title:'The Management Door',
+            text:"A chain runs through the handles of the Management door, fastened with a padlock the size of your fist. Nobody comes in this way after dark. But the gate beside it has been left open a hand's width, and across the yard, at the back of the office, a door stands open on a lamp." } },
+
+        { id:'night_plaque', label:'The Plaque by Moonlight', x:0.64, y:0.68, type:'object', required:false,
+          content:{ title:'The Plaque by Moonlight',
+            text:"The bronze plaque still shines, even by moonlight. A TOWN BUILT FOR THE WORKING FAMILY. WE RISE TOGETHER. Somebody polished it again today. It is the cleanest thing in Bennington." } },
+
+        { id:'night_stacks', label:'The Stacks at Night', x:0.62, y:0.20, type:'object', required:false,
+          content:{ title:'The Stacks at Night',
+            text:"The stacks pour smoke into the moonlight. The night shift is on, and the frames never stop turning. The mill never sleeps. Neither, says the open eye on the badge in your pocket, do you." } },
+
+        { id:'night_moon', label:'The Moon', x:0.405, y:0.05, type:'object', required:false,
+          content:{ title:'The Moon',
+            text:"A full moon over the stacks, bright enough to read by. Bright enough to be seen by, too, if anyone were watching the gate." } },
+
+        { id:'night_bales', label:'Cotton Bales', x:0.24, y:0.84, type:'object', required:false,
+          content:{ title:'Cotton Bales',
+            text:"The bales are stamped with the names of Southern ports, Savannah and Galveston. Somewhere far from here, other hands picked this cotton for even less than these hands are paid to spin it. The mill is one link in a very long chain." } }
+      ]
+    },
+
+    aldrich_office_night: {
+      id: 'aldrich_office_night',
+      name: 'Bennington Mills',
+      subtitle: 'The Office, After Dark',
+      actLabel: 'Act III - Nightfall',
+      image: 'IMG_5468.jpeg',
+
+      hotspots: [
+        { id:'office_night_exit', label:'Back to the Gate', x:0.745, y:0.52, type:'navigation', goto:'factory_gate_night' },
+
+        { id:'night_safe', label:'Inside the Safe', x:0.10, y:0.40, type:'document', required:false,
+          content:{ title:'Inside the Safe',
+            text:"The safe stands open, as if someone was called away and means to come back. Behind the wage books is a narrower ledger bound in red: PROFIT AND DIVIDEND.\n\nNet profit, 1895: $41,200. 1896: $46,900. 1897: $55,300. 1898, to the end of June: $31,800, a better half-year than any before it. Dividend to G. Aldrich, 1898: twice what it was in 1895.\n\n'Times are hard,' he told you. Not in this book." } },
+
+        { id:'harding_letter', label:'A Letter on the Desk', x:0.48, y:0.57, type:'document', required:false,
+          content:{ title:'A Letter on the Desk',
+            text:"A letter on agency paper, in a hand you know well.\n\nDear Mr. Aldrich, Our operative arrives on the fourteenth. He is young, but he does as he is told, and you will have his report with names inside the week. As in '94, the Agency cannot itself furnish armed men. But I again recommend the Keystone Watch Company of Pittsburgh, who will supply forty special watchmen at three dollars a man per day and ask no questions. With names in hand, I advise acting all at once, on a Monday, before the hands can meet. Your servant, Harding, Superintendent.\n\nAs in '94. So that is what happened the other times." } },
+
+        { id:'reese_note', label:'A Folded Note', x:0.255, y:0.51, type:'document', required:false,
+          content:{ title:'A Folded Note',
+            text:"A note on cheap paper, in pencil, folded small.\n\nMr. Aldrich, Sir. The Burke woman calls the meetings, Friday nights, upstairs at Kessler's. Greene and Hayes from the yard. Egan, the one you let go. The schoolteacher lends them her room to learn their letters. I will have more by Monday. Your obedient servant, W. Reese.\n\nAcross the bottom, in Aldrich's hand: Paid R. five dollars. Promise him the overseer's place.\n\nAldrich already has the names. What he wants from you is the agency's name at the bottom of the page." } },
+
+        { id:'vacate_notices', label:'Printed Forms', x:0.90, y:0.64, type:'document', required:false,
+          content:{ title:'Printed Forms',
+            text:"A stack of printed forms in a leather folder by the lamp, crisp from the printer:\n\nNOTICE TO QUIT. The tenant named below is hereby required to vacate the company dwelling within five days, and to leave all furnishings against any sum owing to the company store.\n\nThe blanks for the names are empty. There are a great many forms." } },
+
+        { id:'fines_book', label:'The Fines Book', x:0.33, y:0.92, type:'document', required:false,
+          content:{ title:'The Fines Book',
+            text:"A ledger lies open on the bench, ruled for fines. Late, two minutes: ten cents. Talking: twenty-five cents. Spoiled bobbin: fifteen cents.\n\nThe fines have doubled since summer, and they fall hardest on a few names. BURKE, M., fined for talking four times this month. Fines come out of the wage before it is paid, in scrip, so the money never leaves the company at all." } },
+
+        { id:'time_recorder', label:'The Time Recorder', x:0.10, y:0.74, type:'object', required:false,
+          content:{ title:'The Time Recorder',
+            text:"A brass time recorder, the newest kind, with a numbered key for every hand. Each morning the machine stamps the minute they arrive. One minute late is a fine. The machine does not argue, and it does not listen." } },
+
+        { id:'night_lamp', label:'The Lamp', x:0.865, y:0.47, type:'object', required:false,
+          content:{ title:'The Lamp',
+            text:"An oil lamp left burning on the counter, turned low. No one leaves a lamp lit in an empty office full of paper. Whoever opened the safe tonight means to come back to it. You should not be here long." } }
+      ]
+    }
+
+  },
+
+  // The File Report button unlocks once every id here has been discovered.
+  report: {
+    requires: ['tavern_meeting']
+  },
+
+  ending: {
+    confirm: {
+      title: 'The Report Is Finished',
+      text: "Five plain points, in your own hand. In the morning you will carry it up to the office and put it in George Aldrich's hands, and after that it will not be yours anymore.\n\nIs there anything left you need to see?"
+    },
+
+    names: {
+      intro: "Aldrich reads your report at the window, every page, slowly. When he is done he folds it once and turns to you.\n\n'Five plain points. Thorough. But you have not given me what I asked for.' He holds out his hand. 'The names.'",
+      note: "Aldrich will act on every name you give him. Anyone you marked as a Person of Interest in your notebook is named already. Change anything you like.",
+      listLabel: 'The List of Names (43)',
+      listNote: 'Copied from the Burke cottage'
+    },
+
+    reaction: {
+      names: "Aldrich runs his finger down the names, and something in his face settles. 'Thank you,' he says, and he means it. 'You have done this town a service.' He is reaching for the telephone before you are out the door.",
+      none: "You give him none. Aldrich looks at you for a long moment. 'I see,' he says. 'Then the agency will hear from me.' He does not offer his hand.",
+      aldrichOnly: "His finger stops at the only name you have given him. His own.\n\n'Is this meant as a joke?' It is not. 'You were sent here to find agitators,' he says quietly, 'not to preach to me. Get out of my office.'",
+      aldrichToo: "But his finger stops at one name on your list. His own. 'You were sent here to find agitators,' he says quietly, 'not to preach to me.' He keeps the rest of the list all the same.",
+      reeseNames: "The names match the ones Walter Reese sold him for five dollars. What Aldrich needed from you was never the names. It was the agency's seal on them.",
+      reeseNone: "He has Reese's list already. Without the agency's seal on it, he does not quite dare to use it. Not yet."
+    },
+    reeseList: ['Margaret Burke', 'Isaac Greene', 'Sol Hayes', 'Tom Egan', 'Ellen Hale'],
+
+    // breaks:true means naming this person ends the strike before it starts.
+    fates: {
+      'Margaret Burke': { breaks:true, text:"Margaret Burke was discharged on Monday morning and served with a notice to quit the cottage. Five days later she left Bennington in a borrowed wagon with her children, the crib, and the spinning wheel. Her name went out to every mill in the valley. She never worked at a cloth table again." },
+      'Isaac Greene':   { breaks:true, text:"Isaac Greene was let go from the yard that same day. No other line in the county would take him on. He went west looking for railroad work, and nobody in Bennington heard from him again." },
+      'Sol Hayes':      { breaks:true, text:"Sol Hayes, too old to start over, took his discharge without a word and went to live with his daughter in Scranton. He lived long enough to see his grandsons carry union cards in the open." },
+      'Tom Egan':       { breaks:true, text:"Tom and Nora Egan were put out of their cottage with the debt still on the book. The company kept their furniture against it. They left town on foot." },
+      'Nora Egan':      { text:"Nora Egan was struck off the store's credit. With Tom already out of work, the family slipped out of Bennington one night owing twenty-two dollars, which is the only way anyone ever leaves." },
+      'Ellen Hale':     { text:"Ellen Hale was dismissed as unfit to instruct the young. The Aldrich Free School stayed shut until spring, and it reopened with a new teacher and no evening class." },
+      'Otto Kessler':   { text:"Otto Kessler kept his ground. But when the county court next sat, his license was not renewed, and the court did as George Aldrich asked. Kessler's was dark by Christmas." },
+      'Sammy':          { text:"Sammy was let go, to show the others. It cost his mother two dollars a week. Within the month he was back at the frames in a mill down the valley, where nobody asked his age." },
+      'Walter Reese':   { text:"You named Walter Reese. Aldrich only smiled. Reese had been his man for a year. In the spring, Reese was made overseer." },
+      'Abner Cole':     { text:"Abner Cole was questioned for an hour and sent back to his counter. He had never done anything but keep the book." }
+    },
+    fateDefault: '{name} was discharged within the week.',
+    listFate: "With the list in hand, Aldrich did not have to guess. All forty-three hands on it were discharged. By the first snow most of their families were out of the cottages, and the mill was hiring new hands from the city at a lower wage.",
+
+    outcome: {
+      broken: "On Monday morning, forty special watchmen stepped off the Pittsburgh train, rifles packed in their baggage. By noon the names you gave were posted on the mill gate under the word DISCHARGED. There was no strike. With the people who had held it together gone, there was nothing left to hold.\n\nIn the spring the new frames went in, and another hundred and twenty hands were let go.",
+      strike: "Aldrich wired Philadelphia that afternoon, and the agency sent another man, older, with fewer questions. He was still asking them on the first of November, when the hands of Bennington Mills put down their work and walked out together, mill and yard.\n\nThe strike lasted seven weeks. In the end Aldrich agreed to pay wages in money and to post the fines on the gate for all to see. He never recognized the union, and by spring Margaret Burke had been let go for poor work. But the scrip was gone from Bennington, and it never came back."
+    },
+
+    harding: {
+      pleased: {
+        before: "Harding has Aldrich's telegram on his desk when you come in. 'He says you have a future,' Harding says, and reaches for his stamp.",
+        stamp: 'Case #4417 Closed: Satisfactory',
+        after: "'There is a mill in Lawrence, Massachusetts, that wants a man like you. You leave Monday.'"
+      },
+      fired: {
+        before: "Harding has Aldrich's telegram on his desk when you come in. He does not ask you to sit. 'Aldrich says your report was no use to him,' he says. 'You were sent for names.' He reaches for his stamp.",
+        stamp: 'Case #4417 Closed: Unsatisfactory',
+        after: "'Clear your desk.' On your way out, Agent Marsh does not look up from his papers. But he nods, once."
+      },
+      aldrich: {
+        before: "Harding has Aldrich's telegram on his desk when you come in. 'You put the client's own name in his report,' he says, as though he still cannot believe it. He reaches for his stamp.",
+        stamp: 'Case #4417 Closed: Unsatisfactory',
+        after: "'Mr. Aldrich has asked that you never work for this agency again. For once, I agree with him.' On your way out, Miss Callahan looks as if she would like to laugh, and does not dare."
+      },
+      letter: "You think of the letter you found in Aldrich's safe, written in this same hand. As in '94. This is how it has always been done.",
+      closeBroken: "Six years ago at Homestead, ten people died, and the agency's file still calls it a success. In Bennington nobody died. The strike was broken all the same.",
+      closeStrike: "Your file will say that you failed. In Bennington, they may remember it differently."
+    },
+
+    history: {
+      intro: "The Pinkerton File is fiction. Bennington Mills, George Aldrich, and Margaret Burke never existed. But nearly everything that happens to them happened somewhere in America in the years around 1898.",
+      items: [
+        { title:'Company Towns', text:"Owners like George Pullman built whole towns for their workers, then set the rents, the prices, and the rules. When Pullman cut wages in 1894 but not rents, his workers struck, and federal troops broke the strike. In 1898 the Illinois Supreme Court ordered the Pullman Company to sell off its town." },
+        { title:'Scrip and the Company Store', text:"Many mill and mining towns paid wages in scrip, good only at the company's own store. Families sank into debts they could never pay off. States passed laws to ban scrip, and courts often struck them down as interfering with workers' freedom of contract." },
+        { title:'Children in the Mills', text:"In 1900, nearly one American child in five between the ages of ten and fifteen worked for wages, many of them in textile mills. Reformers fought for decades to change that. Federal law did not effectively ban child labor until 1938." },
+        { title:'The Pinkertons', text:"The agency really did plant an undercover operative among the Molly Maguires in the 1870s, and its armed guards really did fight striking steelworkers at Homestead in 1892. In 1893 Congress barred the federal government from hiring Pinkerton-style agencies. Private employers kept hiring them for decades to spy on unions." },
+        { title:'Workers Organize', text:"In January 1898, thousands of cotton mill workers in New Bedford, Massachusetts, walked out rather than accept a wage cut. Strikes like theirs often failed. American workers did not win a federal guarantee of the right to organize until the Wagner Act of 1935." }
+      ]
+    },
+
+    review: [
+      { title:'Paid in Scrip, Bound by Debt', text:"Wages paid in company paper, spent at company prices, and owed back to the company before the next payday.",
+        ids:['posted_notice','wage_ledger','price_list','store_sign','store_prices','store_book','store_register','store_clerk','store_nora','store_line','tavern_noscrip','tavern_corner'] },
+      { title:'Children at the Frames', text:"Children left school at nine or ten because their families needed two dollars a week.",
+        ids:['the_boy','spinning_frames','school_teacher','school_desks','school_slate'] },
+      { title:'Dust, Belts, and Damp Air', text:"Lint in the lungs, unguarded machines, and air kept damp for the sake of the thread.",
+        ids:['the_air','carding_machine','the_windows','burke_coat'] },
+      { title:'More Work for Fewer Hands', text:"Rising quotas, new machines, cheaper materials, fines and time clocks, and men let go to pay for it all.",
+        ids:['production_board','loading_dock','crate_men','dye_samples','tavern_egan','fines_book','time_recorder'] },
+      { title:"One Man's Valley", text:"The land, the water, the houses, the rails, and the store all belonged to the same man.",
+        ids:['land_survey','water_rights','dam_plan','fine_house','cottages','locomotive','telephone','portrait','store_maps','store_portraits','burke_pump','tavern_kessler','tavern_notices'] },
+      { title:'The Hands Organize', text:"Who they were, what they wanted, and where and when they met.",
+        ids:['organizer_woman','burke_table','burke_chest','burke_books','school_coats','school_portraits','tavern_committee','tavern_satchel','tavern_meeting'] },
+      { title:'What the Company Was Hiding', text:"Rising profits, a paid informer, eviction notices waiting for names, and the agency's quiet offer of armed men.",
+        ids:['night_safe','harding_letter','reese_note','vacate_notices'] }
+    ]
   }
 };
 
@@ -1407,6 +2006,7 @@ const gameState = {
   evidence:     [],          // {id, title, type, sceneName}
   people:       {},          // keyed by generated string ID, value: {id, hotspotId, name, sceneName, poi, notes}
   report:       { who:'', what:'', where:'', when:'', why:'' },
+  reportFiled:  false,
   cardOpen:     false,
   notebookOpen: false,
   notebookTab:  'notes'
@@ -1511,16 +2111,23 @@ function loadScene(id) {
   document.getElementById('loc-name').textContent = scene.name;
   document.getElementById('loc-sub').textContent  = scene.subtitle;
   document.getElementById('loc-act').textContent  = scene.actLabel;
-  document.getElementById('nb-loc').textContent   = scene.name + ' — ' + scene.actLabel;
+  document.getElementById('nb-loc').textContent   = scene.name + ' · ' + scene.actLabel;
 
+  // Clear the previous scene's handlers first: a cached image still fires a
+  // late load event, which would otherwise rebuild the old scene's hotspots.
   const img = document.getElementById('scene-image');
+  img.onload = img.onerror = null;
   img.src = scene.image;
-  if (img.complete && img.naturalWidth) {
+  const build = () => {
+    if (gameState.currentScene !== id) return;
     computeBounds();
     buildHotspots(scene);
+  };
+  if (img.complete && img.naturalWidth) {
+    build();
   } else {
-    img.onload = () => { computeBounds(); buildHotspots(scene); };
-    img.onerror = () => { computeBounds(); buildHotspots(scene); };
+    img.onload = build;
+    img.onerror = build;
   }
 
   const btn  = document.getElementById('progress-btn');
@@ -1533,6 +2140,27 @@ function loadScene(id) {
 // =============================================================
 // HOTSPOTS
 // =============================================================
+// A hotspot with requires:[ids] stays hidden until every id has been discovered.
+function hotspotAvailable(h) {
+  return !h.requires || h.requires.every(id => gameState.discovered.has(id));
+}
+
+function refreshHotspots() {
+  const scene = GAME_DATA.scenes[gameState.currentScene];
+  if (!scene) return;
+  scene.hotspots.forEach(h => {
+    const el = document.querySelector(`.hotspot[data-id="${h.id}"]`);
+    if (!el) return;
+    const show = hotspotAvailable(h);
+    if (show && el.style.display === 'none') {
+      el.style.display = '';
+      el.classList.add('reveal');
+    } else if (!show) {
+      el.style.display = 'none';
+    }
+  });
+}
+
 function buildHotspots(scene) {
   const layer = document.getElementById('hotspot-layer');
   layer.innerHTML = '';
@@ -1542,6 +2170,7 @@ function buildHotspots(scene) {
     el.className = isNav
       ? 'hotspot nav-hotspot'
       : 'hotspot' + (gameState.discovered.has(h.id) ? ' found' : '');
+    if (!hotspotAvailable(h)) el.style.display = 'none';
     el.dataset.id = h.id;
     el.style.left  = (h.x * 100) + '%';
     el.style.top   = (h.y * 100) + '%';
@@ -1574,14 +2203,33 @@ function buildHotspots(scene) {
 // =============================================================
 // EVIDENCE CARD
 // =============================================================
-function openCard(id) {
-  const scene = GAME_DATA.scenes[gameState.currentScene];
-  const h = scene.hotspots.find(x => x.id === id);
-  if (!h) return;
+// Looks in the current scene first, then anywhere else, so notebook entries
+// from earlier scenes can still be reopened.
+function findHotspot(id) {
+  const here  = GAME_DATA.scenes[gameState.currentScene];
+  const local = here.hotspots.find(x => x.id === id);
+  if (local) return { h: local, scene: here, local: true };
+  for (const sid of Object.keys(GAME_DATA.scenes)) {
+    const s = GAME_DATA.scenes[sid];
+    const h = s.hotspots.find(x => x.id === id && x.type !== 'navigation');
+    if (h) return { h, scene: s, local: false };
+  }
+  return null;
+}
 
-  const isNew = !gameState.discovered.has(id);
+function markDiscovered(h) {
+  gameState.discovered.add(h.id);
+  (h.grants || []).forEach(flag => gameState.discovered.add(flag));
+}
+
+function openCard(id) {
+  const found = findHotspot(id);
+  if (!found) return;
+  const { h, scene, local } = found;
+
+  const isNew = local && !gameState.discovered.has(id);
   if (isNew) {
-    gameState.discovered.add(id);
+    markDiscovered(h);
     const el = document.querySelector(`.hotspot[data-id="${id}"]`);
     if (el) el.classList.add('found');
     if (h.type === 'dialogue') {
@@ -1603,7 +2251,7 @@ function openCard(id) {
   added.classList.remove('show');
 
   const typeLabel = { dialogue: 'Conversation', document: 'Document', object: 'Observation' };
-  let html = `<span class="card-type-tag">${typeLabel[h.type] || h.type}</span>`;
+  let html = `<span class="card-type-tag">${esc(h.content.tag || typeLabel[h.type] || h.type)}</span>`;
   html += `<div class="card-title">${esc(h.content.title)}</div>`;
 
   if (h.type === 'dialogue') {
@@ -1617,9 +2265,20 @@ function openCard(id) {
     html += `<div class="card-body">${esc(h.content.text || '')}</div>`;
   }
 
-  if (h.transition) {
-    const scene = GAME_DATA.scenes[gameState.currentScene];
+  // Doorways only work from the scene you are standing in, and not once the report is filed.
+  const canAct = local && !gameState.reportFiled;
+  if (canAct && h.transition) {
     html += `<button class="card-transition-btn" onclick="closeCard();doProgression();">${esc(scene.progression.buttonText)}</button>`;
+  }
+  if (canAct && h.goto && GAME_DATA.scenes[h.goto]) {
+    const missing = (h.gotoRequires || []).find(r => !gameState.discovered.has(r));
+    if (!missing) {
+      if (h.gotoNote) html += `<div class="card-goto-note">${esc(h.gotoNote)}</div>`;
+      html += `<button class="card-transition-btn" onclick="closeCard();goToScene('${h.goto}');">${esc(h.gotoText || 'Go')}</button>`;
+    } else {
+      const hint = typeof h.gotoLocked === 'string' ? h.gotoLocked : (h.gotoLocked || {})[missing];
+      if (hint) html += `<div class="card-goto-locked">${esc(hint)}</div>`;
+    }
   }
 
   inner.innerHTML = html;
@@ -1631,6 +2290,7 @@ function openCard(id) {
 function closeCard() {
   gameState.cardOpen = false;
   document.getElementById('card-overlay').classList.remove('open');
+  refreshHotspots();
 }
 
 // =============================================================
@@ -1651,11 +2311,17 @@ function addEvidence(h, scene) {
 
 function addPerson(h, scene) {
   const names = (h.content.people && h.content.people.length) ? h.content.people : [h.label];
+  const noPoi = !!(h.noPoi || h.content.noPoi);
   names.forEach(name => {
-    // Use hotspotId + name as unique key
+    // Meeting someone again points their notebook entry at the newest conversation.
+    const existing = Object.values(gameState.people).find(p => p.name === name);
+    if (existing) {
+      existing.hotspotId = h.id;
+      existing.sceneName = scene.name;
+      return;
+    }
     const key = h.id + '__' + name.replace(/\s+/g, '_');
-    if (gameState.people[key]) return;
-    gameState.people[key] = { id: key, hotspotId: h.id, name, sceneName: scene.name, poi: 0, notes: '' };
+    gameState.people[key] = { id: key, hotspotId: h.id, name, sceneName: scene.name, poi: 0, notes: '', noPoi };
   });
   document.getElementById('nb-badge').textContent = notebookBadgeCount();
   renderNotebook();
@@ -1714,7 +2380,7 @@ function renderNotebook() {
     });
 
     el.appendChild(nameBtn);
-    el.appendChild(sliderWrap);
+    if (!person.noPoi) el.appendChild(sliderWrap);
     el.appendChild(notes);
     peopleContainer.appendChild(el);
   });
@@ -1753,6 +2419,40 @@ function renderNotebook() {
   if (eSection) eSection.style.display = gameState.evidence.length > 0 ? '' : 'none';
 
   checkReportTab();
+  checkReportReady();
+}
+
+const REPORT_KEYS = ['who', 'what', 'where', 'when', 'why'];
+
+function updateReport(key, value) {
+  gameState.report[key] = value;
+  checkReportReady();
+}
+
+function reportInvestigationDone() {
+  return (GAME_DATA.report.requires || []).every(id => gameState.discovered.has(id));
+}
+
+function reportFieldsComplete() {
+  return REPORT_KEYS.every(k => (gameState.report[k] || '').trim().length > 0);
+}
+
+function checkReportReady() {
+  const btn = document.getElementById('report-submit');
+  const cap = document.getElementById('report-caption');
+  if (!btn || !cap) return;
+  if (gameState.reportFiled) {
+    btn.disabled = true;
+    btn.textContent = 'Report Filed';
+    cap.textContent = 'Delivered to George Aldrich, Saturday, October 15, 1898.';
+    return;
+  }
+  const done = reportInvestigationDone();
+  const full = reportFieldsComplete();
+  btn.disabled = !(done && full);
+  cap.textContent = !done ? 'This report cannot be filed until your investigation is complete.'
+                  : !full ? 'Your investigation is complete. Answer all five questions before you file.'
+                  :         'Your investigation is complete. The report goes to George Aldrich in the morning.';
 }
 
 function checkReportTab() {
@@ -1782,7 +2482,7 @@ function switchTab(tab) {
   const reportArea = document.getElementById('nb-report-area');
   if (tab === 'report') {
     notesArea.style.display  = 'none';
-    reportArea.style.display = '';
+    reportArea.style.display = 'block';
     const dot = document.getElementById('nb-report-dot');
     if (dot) dot.style.display = 'none';
     syncReportFields();
@@ -1812,22 +2512,23 @@ function checkProgression() {
   document.getElementById('progress-btn').classList.toggle('show', met);
 }
 
-function goToScene(targetId, fallbackLabel) {
-  const target  = GAME_DATA.scenes[targetId];
+function runTransition(act, title, sub, midFn, endMs) {
   const overlay = document.getElementById('transition');
   const inner   = document.getElementById('trans-inner');
+  inner.querySelector('.trans-act').textContent   = act   || '';
+  inner.querySelector('.trans-title').textContent = title || '';
+  inner.querySelector('.trans-sub').textContent   = sub   || '';
   overlay.classList.add('on');
+  if (midFn) setTimeout(midFn, 900);
+  setTimeout(() => overlay.classList.remove('on'), endMs || 2200);
+}
+
+function goToScene(targetId, fallbackLabel) {
+  const target = GAME_DATA.scenes[targetId];
   if (target) {
-    inner.querySelector('.trans-act').textContent   = target.actLabel;
-    inner.querySelector('.trans-title').textContent = target.name;
-    inner.querySelector('.trans-sub').textContent   = target.subtitle;
-    setTimeout(() => { loadScene(targetId); setPan(0, false); }, 900);
-    setTimeout(() => overlay.classList.remove('on'), 2200);
+    runTransition(target.actLabel, target.name, target.subtitle, () => { loadScene(targetId); setPan(0, false); });
   } else {
-    inner.querySelector('.trans-act').textContent   = 'Coming Soon';
-    inner.querySelector('.trans-title').textContent = fallbackLabel || 'Next Scene';
-    inner.querySelector('.trans-sub').textContent   = '';
-    setTimeout(() => overlay.classList.remove('on'), 2800);
+    runTransition('Coming Soon', fallbackLabel || 'Next Scene', '', null, 2800);
   }
 }
 
@@ -1835,6 +2536,281 @@ function doProgression() {
   const scene = GAME_DATA.scenes[gameState.currentScene];
   const prog  = scene.progression || {};
   goToScene(prog.nextScene, prog.buttonText);
+}
+
+// =============================================================
+// ENDING: File Report, Aldrich asks for names, what became of
+// them, Harding in Philadelphia, the history, the case review.
+// =============================================================
+const ending = { named: new Set(), listGiven: false };
+
+function paras(text, cls) {
+  return String(text || '').split(/\n\s*\n/)
+    .map(p => `<p class="end-p${cls ? ' ' + cls : ''}">${esc(p)}</p>`).join('');
+}
+
+function showEnding(html) {
+  document.getElementById('ending-inner').innerHTML = html;
+  document.getElementById('ending-overlay').classList.add('open');
+  document.getElementById('ending-card').scrollTop = 0;
+}
+
+function closeEnding() {
+  document.getElementById('ending-overlay').classList.remove('open');
+}
+
+function setLocationLabels(name, sub, act) {
+  document.getElementById('loc-name').textContent = name;
+  document.getElementById('loc-sub').textContent  = sub;
+  document.getElementById('loc-act').textContent  = act;
+  document.getElementById('nb-loc').textContent   = name + ' · ' + act;
+}
+
+function fileReport() {
+  if (gameState.reportFiled || !reportInvestigationDone() || !reportFieldsComplete()) return;
+  if (!isDesktopDocked() && gameState.notebookOpen) toggleNotebook();
+  if (gameState.cardOpen) closeCard();
+  const c = GAME_DATA.ending.confirm;
+  showEnding(`
+    <span class="end-kicker">Case #4417</span>
+    <div class="end-title">${esc(c.title)}</div>
+    <hr class="card-rule">
+    ${paras(c.text)}
+    <div class="end-actions">
+      <button class="end-btn-secondary" onclick="closeEnding()">Not Yet</button>
+      <button class="card-transition-btn" onclick="beginEnding()">Carry It to Aldrich</button>
+    </div>`);
+}
+
+function beginEnding() {
+  gameState.reportFiled = true;
+  document.querySelectorAll('.report-textarea').forEach(t => { t.readOnly = true; });
+  checkReportReady();
+  runTransition('Act IV - The Report', 'Bennington Mills', 'Saturday Morning', () => {
+    document.body.classList.add('ending-mode');
+    loadScene('aldrich_office');
+    setLocationLabels('Bennington Mills', 'Saturday Morning', 'Act IV - The Report');
+    showNamesPage();
+  });
+}
+
+function endingCandidates() {
+  return Object.values(gameState.people)
+    .filter(p => !p.noPoi)
+    .sort((a, b) => b.poi - a.poi);
+}
+
+function nameRow(name, sub, on, attr) {
+  return `
+    <div class="end-name-row">
+      <div class="end-name-info">
+        <div class="end-name">${esc(name)}</div>
+        <div class="end-name-poi">${esc(sub)}</div>
+      </div>
+      <button class="end-toggle${on ? ' on' : ''}" ${attr} onclick="toggleEndingName(this)">${on ? 'Named' : 'Not Named'}</button>
+    </div>`;
+}
+
+function showNamesPage() {
+  const N = GAME_DATA.ending.names;
+  const people = endingCandidates();
+  ending.named = new Set(people.filter(p => p.poi === 2).map(p => p.name));
+  ending.listGiven = false;
+  let rows = people.map(p => nameRow(p.name, POI_LABELS[p.poi], ending.named.has(p.name), `data-name="${esc(p.name)}"`)).join('');
+  if (gameState.discovered.has('burke_chest')) rows += nameRow(N.listLabel, N.listNote, false, 'data-list="1"');
+  showEnding(`
+    <span class="end-kicker">Act IV - The Report</span>
+    <div class="end-title">George Aldrich</div>
+    <hr class="card-rule">
+    ${paras(N.intro)}
+    ${rows ? paras(N.note, 'quiet') + `<div class="end-names">${rows}</div>` : ''}
+    <div class="end-actions">
+      <button class="card-transition-btn" id="end-give" onclick="showOutcomePage()"></button>
+    </div>`);
+  updateGiveButton();
+}
+
+function toggleEndingName(btn) {
+  let on;
+  if (btn.dataset.list) {
+    ending.listGiven = !ending.listGiven;
+    on = ending.listGiven;
+  } else {
+    const name = btn.dataset.name;
+    if (ending.named.has(name)) ending.named.delete(name); else ending.named.add(name);
+    on = ending.named.has(name);
+  }
+  btn.classList.toggle('on', on);
+  btn.textContent = on ? 'Named' : 'Not Named';
+  updateGiveButton();
+}
+
+function updateGiveButton() {
+  const btn = document.getElementById('end-give');
+  if (!btn) return;
+  btn.textContent = (ending.named.size || ending.listGiven) ? 'Hand Him the Names' : 'Give Him No Names';
+}
+
+function endingResult() {
+  const E = GAME_DATA.ending;
+  const named  = [...ending.named];
+  const others = named.filter(n => n !== 'George Aldrich');
+  return {
+    others,
+    aldrichNamed: named.includes('George Aldrich'),
+    anyOthers:    others.length > 0 || ending.listGiven,
+    broke:        ending.listGiven || others.some(n => E.fates[n] && E.fates[n].breaks)
+  };
+}
+
+function showOutcomePage() {
+  const E = GAME_DATA.ending, R = E.reaction;
+  const r = endingResult();
+  let html = `<span class="end-kicker">Act IV - The Report</span>
+    <div class="end-title">George Aldrich</div><hr class="card-rule">`;
+
+  if (r.aldrichNamed && !r.anyOthers) {
+    html += paras(R.aldrichOnly);
+  } else if (r.anyOthers) {
+    html += paras(R.names);
+    if (r.aldrichNamed) html += paras(R.aldrichToo);
+    const echoesReese = ending.listGiven || r.others.some(n => E.reeseList.includes(n));
+    if (gameState.discovered.has('reese_note') && echoesReese) html += paras(R.reeseNames);
+  } else {
+    html += paras(R.none);
+    if (gameState.discovered.has('reese_note')) html += paras(R.reeseNone);
+  }
+
+  if (r.anyOthers) {
+    html += `<div class="end-head">What Became of Them</div>`;
+    r.others.forEach(n => {
+      const f = E.fates[n];
+      html += paras(f ? f.text : E.fateDefault.replace('{name}', n));
+    });
+    if (ending.listGiven) html += paras(E.listFate);
+  }
+
+  html += `<div class="end-head">Bennington</div>`;
+  html += paras(r.broke ? E.outcome.broken : E.outcome.strike);
+  html += `<div class="end-actions"><button class="card-transition-btn" onclick="goToEpilogue()">One Week Later</button></div>`;
+  showEnding(html);
+}
+
+function goToEpilogue() {
+  runTransition('Epilogue', 'Pinkerton National Detective Agency', 'Philadelphia, One Week Later', () => {
+    loadScene('pinkerton_office');
+    setLocationLabels('Pinkerton National Detective Agency', 'Philadelphia, One Week Later', 'Epilogue');
+    showHardingPage();
+  });
+}
+
+function showHardingPage() {
+  const H = GAME_DATA.ending.harding;
+  const r = endingResult();
+  const v = r.aldrichNamed ? H.aldrich : (r.broke ? H.pleased : H.fired);
+  let html = `<span class="end-kicker">Epilogue</span>
+    <div class="end-title">Superintendent Harding</div><hr class="card-rule">
+    ${paras(v.before)}
+    <div class="end-stamp${v === H.pleased ? ' good' : ''}">${esc(v.stamp)}</div>
+    ${paras(v.after)}`;
+  if (gameState.discovered.has('harding_letter')) html += paras(H.letter);
+  html += paras(r.broke ? H.closeBroken : H.closeStrike, 'quiet');
+  html += `<div class="end-actions"><button class="card-transition-btn" onclick="showHistoryPage()">The History Behind the File</button></div>`;
+  showEnding(html);
+}
+
+function showHistoryPage() {
+  const H = GAME_DATA.ending.history;
+  let html = `<span class="end-kicker">Historical Note</span>
+    <div class="end-title">The History Behind the File</div><hr class="card-rule">
+    ${paras(H.intro)}`;
+  H.items.forEach(it => { html += `<div class="end-item-title">${esc(it.title)}</div>${paras(it.text)}`; });
+  html += `<div class="end-actions"><button class="card-transition-btn" onclick="showReviewPage()">Review Your Case</button></div>`;
+  showEnding(html);
+}
+
+function benningtonClueIds() {
+  const ids = [];
+  Object.values(GAME_DATA.scenes).forEach(s => {
+    if (s.id === 'pinkerton_office') return;
+    s.hotspots.forEach(h => { if (h.type !== 'navigation') ids.push(h.id); });
+  });
+  return ids;
+}
+
+function clueTitle(id) {
+  const f = findHotspot(id);
+  return f ? (f.h.content && f.h.content.title) || f.h.label : id;
+}
+
+function namesGivenText() {
+  const list = [...ending.named];
+  if (ending.listGiven) list.push('the list of forty-three names from the Burke cottage');
+  return list.length ? list.join(', ') : 'None';
+}
+
+const REPORT_LABELS = { who: 'Who', what: 'What', where: 'Where', when: 'When', why: 'Why' };
+
+function showReviewPage() {
+  const E = GAME_DATA.ending;
+  let html = `<span class="end-kicker">Case #4417</span>
+    <div class="end-title">Your Report</div><hr class="card-rule">`;
+  REPORT_KEYS.forEach(k => {
+    html += `<div class="end-q">${REPORT_LABELS[k]}</div><div class="end-a">${esc(gameState.report[k])}</div>`;
+  });
+  html += `<div class="end-q">Names Given to the Client</div><div class="end-a">${esc(namesGivenText())}</div>`;
+
+  const all = benningtonClueIds();
+  const foundCount = all.filter(id => gameState.discovered.has(id)).length;
+  html += `<div class="end-head">What You Uncovered</div>`;
+  html += paras(`You found ${foundCount} of the ${all.length} clues in Bennington. Here is what the hands were organizing against, and how much of it you saw.`, 'quiet');
+  E.review.forEach(cat => {
+    const got = cat.ids.filter(id => gameState.discovered.has(id));
+    html += `<div class="end-cat">
+      <div class="end-cat-top"><span class="end-cat-title">${esc(cat.title)}</span><span class="end-cat-count">${got.length} of ${cat.ids.length}</span></div>
+      <div class="end-cat-desc">${esc(cat.text)}</div>
+      ${got.length ? `<div class="end-cat-found">${esc(got.map(clueTitle).join(' · '))}</div>` : '<div class="end-cat-none">Nothing found here.</div>'}
+    </div>`;
+  });
+  html += `<div class="end-actions">
+      <button class="end-btn-secondary" id="end-copy" onclick="copyFinalReport()">Copy Report</button>
+      <button class="card-transition-btn" onclick="location.reload()">Play Again</button>
+    </div>`;
+  showEnding(html);
+}
+
+function finalReportText() {
+  const lines = ['PINKERTON NATIONAL DETECTIVE AGENCY', 'CASE #4417: BENNINGTON MILLS', "OPERATIVE'S FINAL REPORT", ''];
+  REPORT_KEYS.forEach(k => { lines.push(REPORT_LABELS[k].toUpperCase() + ': ' + (gameState.report[k] || '').trim(), ''); });
+  lines.push('NAMES GIVEN TO THE CLIENT: ' + namesGivenText());
+  return lines.join('\n');
+}
+
+function copyFinalReport() {
+  const text = finalReportText();
+  const btn  = document.getElementById('end-copy');
+  const done = () => {
+    if (!btn) return;
+    btn.textContent = 'Copied';
+    setTimeout(() => { btn.textContent = 'Copy Report'; }, 1800);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed';
+  ta.style.opacity  = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { if (document.execCommand('copy')) done(); } catch (e) {}
+  ta.remove();
 }
 
 // =============================================================
@@ -1933,6 +2909,18 @@ function initTuneMode() {
   document.getElementById('tune-skip-btn').addEventListener('click', skipTuneStep);
   document.getElementById('tune-tab').addEventListener('click', toggleTunePanel);
 
+  // Scene jumper: reach any scene for tuning without playing up to it.
+  const sel = document.getElementById('tune-scene');
+  GAME_DATA.sceneOrder.forEach(id => {
+    const s = GAME_DATA.scenes[id];
+    if (!s) return;
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = s.name + ': ' + s.subtitle;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', () => { loadScene(sel.value); restartTune(); });
+
   if (location.search.includes('tune')) toggleTuneMode();
 }
 
@@ -1941,6 +2929,7 @@ function toggleTuneMode() {
   document.body.classList.toggle('tune-mode', tuneState.active);
   document.getElementById('tune-toggle-btn').classList.toggle('active', tuneState.active);
   if (tuneState.active) {
+    document.getElementById('tune-scene').value = gameState.currentScene;
     restartTune();
   } else {
     document.querySelectorAll('.tune-marker').forEach(el => el.remove());
