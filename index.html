@@ -773,7 +773,7 @@ body.tune-mode #tune-banner { display: flex; }
 body.tune-mode #tune-panel { display: block; }
 body.tune-mode #tune-panel.open { transform: translateY(0); }
 
-/* pull-up tab — always visible in tune mode */
+/* pull-up tab, always visible in tune mode */
 #tune-tab {
   display: none;
   position: fixed;
@@ -833,7 +833,7 @@ body.tune-mode #tune-tab { display: block; }
   font-style: italic;
 }
 
-/* gear button — top-left, below location label */
+/* gear button: top-left, below location label */
 #tune-toggle-btn {
   position: fixed; top: 68px; left: 22px;
   z-index: 400;
@@ -1126,8 +1126,10 @@ body.ending-mode #card-overlay { z-index: 160; }
 
 <script>
 // =============================================================
-// GAME DATA — add future scenes here; engine reads generically
+// GAME DATA: add future scenes here; engine reads generically
 // =============================================================
+// Every non-navigation hotspot has a kind: 'clue', 'ambiance', 'trivial', or 'herring'.
+// Only clues count toward the case review; each herring carries a debunk shown there.
 const GAME_DATA = {
 
   sceneOrder: ['pinkerton_office', 'town_map_day', 'company_store_inside', 'school_inside', 'burke_cottage',
@@ -1149,10 +1151,11 @@ const GAME_DATA = {
           label: 'Pinkerton Badge',
           x: 0.071, y: 0.145,
           type: 'object',
+          kind: 'ambiance',
           required: false,
           content: {
             title: 'Pinkerton Badge',
-            text:  "Pinkerton National Detective Agency — 'We Never Sleep.' The famous open eye.\n\nYou've been with the agency three years. Good work in Pittsburgh. This should be straightforward."
+            text:  "Pinkerton National Detective Agency. 'We Never Sleep.' The famous open eye.\n\nYou've been with the agency three years. Good work in Pittsburgh. This should be straightforward."
           }
         },
         {
@@ -1160,13 +1163,14 @@ const GAME_DATA = {
           label: 'Superintendent Harding',
           x: 0.111, y: 0.494,
           type: 'dialogue',
+          kind: 'clue',
           noPoi: true,
           required: true,
           content: {
             title: 'Superintendent Harding',
             desc:  "A sharp-eyed man behind a heavy desk. He doesn't waste words.",
             lines: [
-              "Sit down. Bennington Mills — textile operation, company town, been running thirty years. Owner says his workers are organizing. Wants it stopped before it becomes a strike.",
+              "Sit down. Bennington Mills. Textile operation, company town, been running thirty years. Owner says his workers are organizing. Wants it stopped before it becomes a strike.",
               "This should be straightforward. Go up there, talk to the owner, talk to the workers, find out who's stirring the pot. Write me a report with names and a recommendation.",
               "Aldrich is a good client. Don't embarrass the agency."
             ]
@@ -1177,10 +1181,11 @@ const GAME_DATA = {
           label: 'The Safe',
           x: 0.218, y: 0.405,
           type: 'object',
+          kind: 'clue',
           required: false,
           content: {
             title: 'The Safe',
-            text:  "Case files from previous jobs line the shelves. You notice labels — other company names, other towns. This isn't the first time the agency has done this kind of work."
+            text:  "Case files from previous jobs line the shelves. You notice labels: other company names, other towns. This isn't the first time the agency has done this kind of work."
           }
         },
         {
@@ -1188,6 +1193,7 @@ const GAME_DATA = {
           label: 'Agent Bryce',
           x: 0.538, y: 0.480,
           type: 'dialogue',
+          kind: 'ambiance',
           noPoi: true,
           required: false,
           content: {
@@ -1204,21 +1210,23 @@ const GAME_DATA = {
           label: 'Homestead File',
           x: 0.557, y: 0.822,
           type: 'document',
+          kind: 'clue',
           required: false,
           content: {
-            title: 'Homestead File — 1892',
-            text:  "A case file sits open on Bryce's desk.\n\nHOMESTEAD, PA — 1892. Client: Carnegie Steel Co. Action: 300 Pinkerton agents deployed by barge to secure Homestead Steel Works during labor dispute. Outcome: Armed confrontation with workers. 10 killed (7 workers, 3 agents). Strike broken. Public reaction: Negative. Congressional investigation followed.\n\nNOTE: Agency no longer accepts armed deployment contracts.\n\nSix years ago. Ten people dead. And they still call it a success in the file because the strike was broken."
+            title: 'Homestead File, 1892',
+            text:  "A case file sits open on Bryce's desk.\n\nHOMESTEAD, PA, 1892. Client: Carnegie Steel Co. Action: 300 Pinkerton agents deployed by barge to secure Homestead Steel Works during labor dispute. Outcome: Armed confrontation with workers. 10 killed (7 workers, 3 agents). Strike broken. Public reaction: Negative. Congressional investigation followed.\n\nNOTE: Agency no longer accepts armed deployment contracts.\n\nSix years ago. Ten people dead. And they still call it a success in the file because the strike was broken."
           }
         },
         {
           id: 'case_file',
-          label: 'Your Desk — Case File',
+          label: 'Your Desk: Case File',
           x: 0.658, y: 0.848,
           type: 'document',
+          kind: 'clue',
           required: true,
           content: {
-            title: 'Case #4417 — Bennington Mills',
-            text:  "PINKERTON NATIONAL DETECTIVE AGENCY — CASE #4417\n\nBennington Mills, Bennington, PA\nClient: George Aldrich, Owner\nReport of labor agitation and possible strike organization.\nAgent assigned to identify organizers and recommend action.\n\nAldrich has been a reliable client for six years. Handle with care and professionalism.\n\n\"Reliable client for six years.\" He's called the Pinkertons before. What happened those times?"
+            title: 'Case #4417: Bennington Mills',
+            text:  "PINKERTON NATIONAL DETECTIVE AGENCY. CASE #4417\n\nBennington Mills, Bennington, PA\nClient: George Aldrich, Owner\nReport of labor agitation and possible strike organization.\nAgent assigned to identify organizers and recommend action.\n\nAldrich has been a reliable client for six years. Handle with care and professionalism.\n\n\"Reliable client for six years.\" He's called the Pinkertons before. What happened those times?"
           }
         },
         {
@@ -1226,13 +1234,14 @@ const GAME_DATA = {
           label: 'Agent Marsh',
           x: 0.718, y: 0.429,
           type: 'dialogue',
+          kind: 'clue',
           noPoi: true,
           required: false,
           content: {
             title: 'Agent Marsh',
             desc:  "An older man reviewing papers. He speaks quietly, like he's used to not being overheard.",
             lines: [
-              "Bennington. I've heard of it. Aldrich runs a tight ship — company store, company housing, the whole arrangement.",
+              "Bennington. I've heard of it. Aldrich runs a tight ship: company store, company housing, the whole arrangement.",
               "Listen, most of these things aren't really about wages. People want to feel like they matter. Talk to the workers before you talk to the owner, if you can. You'll get a straighter picture."
             ]
           }
@@ -1242,9 +1251,10 @@ const GAME_DATA = {
           label: 'Molly Maguires File',
           x: 0.737, y: 0.735,
           type: 'document',
+          kind: 'clue',
           required: false,
           content: {
-            title: 'Molly Maguires — Confidential',
+            title: 'Molly Maguires: Confidential',
             text:  "A closed file on Marsh's desk. You know the story.\n\nIn the 1870s, Pinkerton agent James McParland spent two years undercover in the Pennsylvania coal fields, infiltrating an Irish miners' organization accused of violence against mine owners. His testimony sent twenty men to the gallows.\n\nIt made the agency's reputation. Some people say McParland was a hero who stopped terrorism. Others say he fabricated evidence to frame union organizers for crimes they didn't commit.\n\nThe file is closed. You don't open it."
           }
         },
@@ -1253,6 +1263,7 @@ const GAME_DATA = {
           label: 'Miss Callahan',
           x: 0.935, y: 0.631,
           type: 'dialogue',
+          kind: 'ambiance',
           noPoi: true,
           required: false,
           content: {
@@ -1260,7 +1271,7 @@ const GAME_DATA = {
             desc:  "The office secretary. She's the only one who smiles at you.",
             lines: [
               "You must be the agent heading to Bennington. Superintendent Harding is waiting for you. Your case file is on your desk.",
-              "You can look around by dragging left and right. Click on anything that catches your eye — people, objects, documents. Everything you find goes in your notebook."
+              "You can look around by dragging left and right. Click on anything that catches your eye: people, objects, documents. Everything you find goes in your notebook."
             ]
           }
         },
@@ -1269,12 +1280,29 @@ const GAME_DATA = {
           label: 'Agency Code of Conduct',
           x: 0.955, y: 0.202,
           type: 'document',
+          kind: 'ambiance',
           required: false,
           content: {
             title: 'Agency Code of Conduct',
             text:  "Gather facts with utmost discretion.\n\nReport findings without bias or embellishment.\n\nDo not fraternize with subjects of investigation.\n\nThe Agency's reputation is the client's guarantee."
           }
         },
+        { id:'valise', label:'Your Valise', x:0.06, y:0.94, type:'object', kind:'ambiance', required:false,
+          content:{ title:'Your Valise',
+            text:"Your traveling bag, packed the night before: two shirts, a razor, a notebook, and a letter of introduction in a name that is not yours. In Bennington you will be a cloth buyer from Philadelphia. It is not much of a story. It will have to do." } },
+
+        { id:'office_window', label:'The Window', x:0.33, y:0.30, type:'object', kind:'ambiance', required:false,
+          content:{ title:'The Window',
+            text:"Philadelphia in the morning: water towers on every roof, an elevated train rattling past, smoke from a hundred chimneys going up into a dirty sky. Somewhere out past all of it, a mill town is starting its shift." } },
+
+        { id:'wall_clock', label:'The Clock', x:0.835, y:0.06, type:'object', kind:'trivial', required:false,
+          content:{ title:'The Clock',
+            text:"A plain office clock, four minutes fast. Everyone in the office knows it is four minutes fast. Nobody has ever fixed it, and everyone is on time." } },
+
+        { id:'loose_change', label:'Loose Change', x:0.775, y:0.905, type:'object', kind:'trivial', required:false,
+          content:{ title:'Loose Change',
+            text:"A dollar bill and a few coins on the side table, somebody's change from the cigar shop. It has been sitting there since yesterday. This is a detective agency. Nobody would dare." } },
+
         { id:'skip_to_bennington', label:'Skip to Bennington', x:0.92, y:0.12, type:'navigation', goto:'town_map_day' }
       ],
 
@@ -1294,25 +1322,25 @@ const GAME_DATA = {
       actLabel: 'Act II - Arrival',
       image: 'IMG_6763.jpeg',
       hotspots: [
-        { id:'company_store', label:'Company Store', x:0.428, y:0.431, type:'object', required:false,
+        { id:'company_store', label:'Company Store', x:0.428, y:0.431, type:'object', kind:'clue', required:false,
           goto:'company_store_inside', gotoText:'Wait for the Afternoon Bell',
           content:{ title:'Bennington Mills Company Store',
             text:"BENNINGTON MILLS COMPANY STORE, EST. 1888. The biggest and best kept building on the street. But the shutters are down, and a card hangs in the door: CLOSED UNTIL THE AFTERNOON BELL. Even the shopping here runs on the mill's clock." } },
 
-        { id:'town_school', label:'The Town School', x:0.204, y:0.425, type:'object', required:false,
+        { id:'town_school', label:'The Town School', x:0.204, y:0.425, type:'object', kind:'ambiance', required:false,
           goto:'school_inside', gotoText:'Come Back After the Lesson',
           content:{ title:'The Town School',
             text:"A small white schoolhouse with a bell in its tower. Through the window you can see rows of children bent over their slates while a young woman walks the aisle, and you can just hear a voice leading them through their letters. School is in session, and this is no place for you in the middle of a lesson." } },
 
-        { id:'the_mill', label:'Bennington Mills', x:0.298, y:0.306, type:'object', required:false, transition:true,
+        { id:'the_mill', label:'Bennington Mills', x:0.298, y:0.306, type:'object', kind:'ambiance', required:false, transition:true,
           content:{ title:'Bennington Mills',
             text:"Four floors of brick, a clock tower above the rooftops, smoke pouring from the stacks even now. Whatever else changes in this town, the mill never stops." } },
 
-        { id:'loading_dock', label:'The Loading Dock', x:0.573, y:0.776, type:'object', required:false,
+        { id:'loading_dock', label:'The Loading Dock', x:0.573, y:0.776, type:'object', kind:'clue', required:false,
           content:{ title:'The Loading Dock',
             text:"Crates stamped MACHINE PARTS sit stacked on the long dock beside the rail siding, fresh from the cars. New machinery, by the look of the raw wood. Somebody is spending money on something." } },
 
-        { id:'rail_men', label:'The Rail-Yard Men', x:0.559, y:0.613, type:'dialogue', required:false,
+        { id:'rail_men', label:'The Rail-Yard Men', x:0.559, y:0.613, type:'dialogue', kind:'clue', required:false,
           content:{ title:'The Rail-Yard Men',
             desc:"Two men loading a freight car at a steady pace, keeping to their own end of the dock.",
             people:['Isaac Greene','Sol Hayes'],
@@ -1323,15 +1351,15 @@ const GAME_DATA = {
               "We would talk longer, but we lose the light if we stop. We are around, after dark."
             ] } },
 
-        { id:'locomotive', label:'The Locomotive', x:0.513, y:0.426, type:'object', required:false,
+        { id:'locomotive', label:'The Locomotive', x:0.513, y:0.426, type:'object', kind:'clue', required:false,
           content:{ title:'The Locomotive',
             text:"A small switching engine waits on the siding, BENNINGTON MILLS CO. painted across its tender. The company owns the rails, the cars, and whatever rides in them." } },
 
-        { id:'fine_house', label:'The Fine House', x:0.247, y:0.304, type:'object', required:false,
+        { id:'fine_house', label:'The Fine House', x:0.247, y:0.304, type:'object', kind:'clue', required:false,
           content:{ title:'The Fine House',
             text:"At the end of the street stands a house finer than any other. Fresh paint, glass in every window, a deep shaded porch. The cottages were all built to one plan. This house was built for one man." } },
 
-        { id:'crate_men', label:'The Men on the Crates', x:0.825, y:0.848, type:'dialogue', required:false,
+        { id:'crate_men', label:'The Men on the Crates', x:0.825, y:0.848, type:'dialogue', kind:'clue', required:false,
           grants:['knows_tavern'],
           content:{ title:'The Men on the Crates',
             desc:"Two men sit on crates by the store, passing a bottle, in no hurry. It is the middle of a workday.",
@@ -1342,19 +1370,19 @@ const GAME_DATA = {
               "You want to know how this town really runs, come round the tavern after dark. The one out past the yard. Cash only out there. Folks talk a sight freer once they are off the company's clock."
             ] } },
 
-        { id:'cottages', label:'The Cottages', x:0.112, y:0.453, type:'object', required:false,
+        { id:'cottages', label:'The Cottages', x:0.112, y:0.453, type:'object', kind:'clue', required:false,
           content:{ title:'The Cottages',
             text:"A row of small wooden cottages, every one built to the same plan, every one owned by the company. Laundry strung between two of them. A child's chalk drawing fading on a doorstep. Plain, but kept." } },
 
-        { id:'woman_basket', label:'A Woman in the Street', x:0.945, y:0.855, type:'object', required:false,
+        { id:'woman_basket', label:'A Woman in the Street', x:0.945, y:0.855, type:'object', kind:'ambiance', required:false,
           content:{ title:'A Woman in the Street',
             text:"A woman crosses the road with an empty basket and a shawl pulled close, though the day is mild. She does not look up as she passes." } },
 
-        { id:'grain_wagon', label:'The Grain Wagon', x:0.397, y:0.642, type:'object', required:false,
+        { id:'grain_wagon', label:'The Grain Wagon', x:0.397, y:0.642, type:'object', kind:'trivial', required:false,
           content:{ title:'The Grain Wagon',
             text:"A swaybacked horse stands in its traces while sacks of grain are loaded behind it. It has been waiting long enough to fall asleep on its feet." } },
 
-        { id:'kesslers', label:"Kessler's", x:0.745, y:0.400, type:'object', required:false,
+        { id:'kesslers', label:"Kessler's", x:0.745, y:0.400, type:'object', kind:'clue', required:false,
           goto:'tavern_night', gotoText:'Wait for Nightfall',
           gotoRequires:['aldrich', 'knows_tavern'],
           gotoNote:"Once night falls, you will not see Bennington by daylight again.",
@@ -1366,7 +1394,15 @@ const GAME_DATA = {
             text:"A plain two-story frame house out past the rail yard, beyond the company fence. It is the only building in sight with no company name painted on it. The shutters are closed. Kessler's, the men call it. It opens when the whistle blows." } },
 
         { id:'burke_house', label:"Margaret Burke's House", x:0.098, y:0.575, type:'navigation', goto:'burke_cottage',
-          requires:['company_man'] }
+          requires:['company_man'] },
+
+        { id:'road_papers', label:'Papers in the Road', x:0.30, y:0.88, type:'object', kind:'trivial', required:false,
+          content:{ title:'Papers in the Road',
+            text:"Scraps of printed paper lie scattered in the wheel ruts. Handbills? You fit two torn pieces together: ELEPHANTS! ACROBATS! THE WILD MAN OF BORNEO! A circus came through last summer, and nobody has swept up since." } },
+
+        { id:'the_hills', label:'The Hills', x:0.90, y:0.30, type:'object', kind:'ambiance', required:false,
+          content:{ title:'The Hills',
+            text:"Past the last fence the valley opens out into stubble fields and wooded hills going gold with October. From out here you can hear a cowbell somewhere, and under it, never stopping, the mill." } }
       ],
       progression: {
         required: [],
@@ -1391,33 +1427,41 @@ const GAME_DATA = {
         { id:'management_office', label:'Management Office', x:0.874, y:0.806, type:'navigation', goto:'aldrich_office',
           content:{ text:"OFFICE ENTRANCE. BENNINGTON MILLS MANAGEMENT AND RECORDS. The door marked Management stands open, and a clerk is visible at a desk within." } },
 
-        { id:'founding_plaque', label:'The Founding Plaque', x:0.640, y:0.673, type:'document', required:false,
+        { id:'founding_plaque', label:'The Founding Plaque', x:0.640, y:0.673, type:'document', kind:'clue', required:false,
           content:{ title:'The Bennington Mills Plaque',
             text:"A bronze plaque set into the brick beside the gate. BENNINGTON MILLS, FOUNDED 1888 BY GEORGE ALDRICH. 'A town built for the working family. Here a man may find honest work, a clean home, a school for his children, and a fair wage, all under one roof. We rise together.' The bronze is polished bright. Someone keeps it clean." } },
 
-        { id:'posted_notice', label:'Notice to the Hands', x:0.111, y:0.744, type:'document', required:false,
+        { id:'posted_notice', label:'Notice to the Hands', x:0.111, y:0.744, type:'document', kind:'clue', required:false,
           content:{ title:'Notice to the Hands',
             text:"A printed notice nailed beside the gate. NOTICE TO ALL HANDS. Gates open at six, close at six. Wages paid in company scrip, redeemable at the company store. Fines levied for lateness, idle talk, and waste. By order of the management. The rules are not new, but the paper is fresh." } },
 
-        { id:'hands_coming_on', label:'The Hands Coming On', x:0.402, y:0.783, type:'object', required:false,
+        { id:'hands_coming_on', label:'The Hands Coming On', x:0.402, y:0.783, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Hands Coming On',
             text:"Men file through the gate for the next shift, lunch pails swinging, boots worn soft. One of them waves at you, easy and friendly. A stranger is still a novelty here. None of them know what you are, or why you have come." } },
 
-        { id:'gate_arch', label:'The Gate', x:0.494, y:0.244, type:'object', required:false,
+        { id:'gate_arch', label:'The Gate', x:0.494, y:0.244, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Gate',
             text:"A great arch of wrought iron over the entrance, BENNINGTON MILLS, EST. 1888 worked into the metal, finer than anything else in town. The men passing under it do not look up. They have walked through it ten thousand times." } },
 
-        { id:'smokestacks', label:'The Smokestacks', x:0.628, y:0.334, type:'object', required:false,
+        { id:'smokestacks', label:'The Smokestacks', x:0.628, y:0.334, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Smokestacks',
             text:"Two tall stacks behind the wall pour dark smoke into a clean sky. The engines never cool. Day shift, night shift, the mill breathes without stopping." } },
 
-        { id:'mill_building', label:'The Mill', x:0.552, y:0.619, type:'object', required:false,
+        { id:'mill_building', label:'The Mill', x:0.552, y:0.619, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Mill',
             text:"Five floors of brick and glass rising over the wall. From out here you cannot hear the machines. Inside, you imagine, it is a different thing entirely." } },
 
-        { id:'cotton_bales', label:'Cotton Bales', x:0.645, y:0.870, type:'object', required:false,
+        { id:'cotton_bales', label:'Cotton Bales', x:0.645, y:0.870, type:'object', kind:'ambiance', required:false,
           content:{ title:'Cotton Bales',
-            text:"Bales of raw cotton stacked by the posts, bound in burlap and rope, waiting to be hauled in and spun. The mill's appetite is steady, and always hungry for more." } }
+            text:"Bales of raw cotton stacked by the posts, bound in burlap and rope, waiting to be hauled in and spun. The mill's appetite is steady, and always hungry for more." } },
+
+        { id:'lunch_pails', label:'Lunch Pails', x:0.58, y:0.88, type:'object', kind:'clue', required:false,
+          content:{ title:'Lunch Pails',
+            text:"The men carry their dinners in tin pails. One sets his down to shift his grip and the lid falls open: bread, a cold boiled potato, a twist of salt in a paper. That is a day's food for a twelve-hour day." } },
+
+        { id:'menagement_sign', label:'The Sign over the Door', x:0.875, y:0.555, type:'object', kind:'trivial', required:false,
+          content:{ title:'The Sign over the Door',
+            text:"MENAGEMENT, in fine gold letters over the office door. The sign painter was paid by the letter, and so far nobody has had the nerve to tell Mr. Aldrich." } }
       ]
     },
 
@@ -1431,7 +1475,7 @@ const GAME_DATA = {
         { id:'back_to_gate', label:'Back to the Gate', x:0.921, y:0.399, type:'navigation', goto:'factory_gate_day',
           content:{ text:"The aisle leads back to the doors and the daylight." } },
 
-        { id:'organizer_woman', label:'Margaret Burke', x:0.823, y:0.521, type:'dialogue', required:false,
+        { id:'organizer_woman', label:'Margaret Burke', x:0.823, y:0.521, type:'dialogue', kind:'clue', required:false,
           content:{ title:'Margaret Burke',
             desc:"A woman at the inspection table, folding finished cloth with quick, practiced hands. She watches you a moment before she speaks.",
             people:['Margaret Burke'],
@@ -1442,7 +1486,7 @@ const GAME_DATA = {
               "If you have come to listen, there are people worth listening to. Some of us have been trying to be heard. That is all I will say to a stranger."
             ] } },
 
-        { id:'company_man', label:'Walter Reese', x:0.332, y:0.685, type:'dialogue', required:false,
+        { id:'company_man', label:'Walter Reese', x:0.332, y:0.685, type:'dialogue', kind:'clue', required:false,
           content:{ title:'Walter Reese',
             desc:"A man crouched at the big carding machine, oiling its gears with a careful, unhurried hand. He keeps working as he talks.",
             people:['Walter Reese'],
@@ -1454,7 +1498,7 @@ const GAME_DATA = {
               "You want the one behind it? Burke. Margaret Burke, at the cloth table. She calls the meetings. Her house is the second past the school. You make sure your boss hears it was Walter Reese who helped."
             ] } },
 
-        { id:'the_boy', label:'Sammy', x:0.555, y:0.575, type:'dialogue', required:false,
+        { id:'the_boy', label:'Sammy', x:0.555, y:0.575, type:'dialogue', kind:'clue', required:false,
           content:{ title:'Sammy',
             desc:"A boy, maybe ten, working the spinning frame. He moves fast between the spindles, tying broken threads, and grins when he sees you watching.",
             people:['Sammy'],
@@ -1465,33 +1509,46 @@ const GAME_DATA = {
               "A boy got his hand caught in the frame last winter. Lost two fingers. But that was his own fault, he was not paying attention. I always pay attention."
             ] } },
 
-        { id:'the_overseer', label:'The Overseer', x:0.167, y:0.349, type:'object', required:false,
+        { id:'the_overseer', label:'The Overseer', x:0.167, y:0.349, type:'object', kind:'herring', required:false,
+          debunk:"Pratt's little book held fines, not names. Margaret Burke was docked a quarter every time he caught her talking. The company's real informer was Walter Reese, the friendly mechanic at the carding machine.",
           content:{ title:'The Overseer',
-            text:"A heavyset man in a hat stands at the end of the aisle, arms folded, watching the floor. Pratt, the boy called him. He marks something in a small book each time he looks up. He has not decided yet what to make of you, and he is in no hurry to." } },
+            text:"A heavyset man in a hat stands at the end of the aisle, arms folded, watching the floor. Pratt, the boy called him. He marks something in a small book each time he looks up. When Margaret Burke laughs at something across the room, Pratt looks straight at her and writes again. He has not decided yet what to make of you, and he is in no hurry to. You would give a good deal to read that book." } },
 
-        { id:'the_air', label:'The Air', x:0.456, y:0.261, type:'object', required:false,
+        { id:'the_air', label:'The Air', x:0.456, y:0.261, type:'object', kind:'clue', required:false,
           content:{ title:'The Air',
             text:"Cotton lint drifts in the light like snow that never lands. It is on the floor, on the machines, in the workers' hair, and in their lungs. By the end of a shift you would breathe it without noticing. After enough years, the noticing comes back, as a cough that does not leave." } },
 
-        { id:'carding_machine', label:'The Carding Machine', x:0.227, y:0.672, type:'object', required:false,
+        { id:'carding_machine', label:'The Carding Machine', x:0.227, y:0.672, type:'object', kind:'clue', required:false,
           content:{ title:'The Carding Machine',
             text:"A great iron machine of gears, rollers, and leather belts, all of it turning, none of it guarded. Walter works at it with his hands inches from the teeth. The belts run off a shaft along the ceiling that drives every machine in the room at once. Nothing here was built with a body in mind." } },
 
-        { id:'spinning_frames', label:'The Spinning Frames', x:0.684, y:0.557, type:'object', required:false,
+        { id:'spinning_frames', label:'The Spinning Frames', x:0.684, y:0.557, type:'object', kind:'clue', required:false,
           content:{ title:'The Spinning Frames',
             text:"Long frames of spinning bobbins run the length of the wall, hundreds of threads pulled tight and fast. When one snaps it must be tied off before the flaw runs down the line, and small quick hands are best for the work. That is why the company likes boys." } },
 
-        { id:'finished_cloth', label:'The Finished Cloth', x:0.934, y:0.681, type:'object', required:false,
+        { id:'finished_cloth', label:'The Finished Cloth', x:0.934, y:0.681, type:'object', kind:'clue', required:false,
           content:{ title:'The Finished Cloth',
             text:"Bolts of finished cotton are stacked clean and white at the inspection table, stamped with a grade and a price, bound for stores in the cities. It is fine goods. None of the hands who made it could afford a yard." } },
 
-        { id:'production_board', label:'The Production Board', x:0.722, y:0.285, type:'object', required:false,
+        { id:'production_board', label:'The Production Board', x:0.722, y:0.285, type:'object', kind:'clue', required:false,
           content:{ title:'The Production Board',
             text:"A slate board hung on a post, chalked with the day's required output by room and by frame. The numbers have been rubbed out and raised more than once. The same hands, fewer of them now, are asked to make more cloth than last year, and more again than the year before." } },
 
-        { id:'the_windows', label:'The Windows', x:0.055, y:0.227, type:'object', required:false,
+        { id:'the_windows', label:'The Windows', x:0.055, y:0.227, type:'object', kind:'clue', required:false,
           content:{ title:'The Windows',
-            text:"Tall windows line the wall, but they are shut tight and the air is kept warm and damp on purpose. Moist air keeps the threads from snapping. What is good for the thread is hard on the people, but the thread does not draw wages." } }
+            text:"Tall windows line the wall, but they are shut tight and the air is kept warm and damp on purpose. Moist air keeps the threads from snapping. What is good for the thread is hard on the people, but the thread does not draw wages." } },
+
+        { id:'mill_noise', label:'The Noise', x:0.30, y:0.09, type:'object', kind:'ambiance', required:false,
+          content:{ title:'The Noise',
+            text:"The noise is everywhere at once: the clatter of the frames, the slap of the belts on the shafts overhead, the grinding of the cards. After a minute your ears stop trying. Nobody here shouts. They have learned to read lips." } },
+
+        { id:'mill_lamps', label:'The Lamps', x:0.71, y:0.09, type:'object', kind:'ambiance', required:false,
+          content:{ title:'The Lamps',
+            text:"Electric lamps hang on long cords from the ceiling, a new thing in a mill this size. Their light never changes. From down here you cannot tell whether it is morning or night outside, and after a while you stop wondering." } },
+
+        { id:'waste_basket', label:'A Basket of Waste', x:0.075, y:0.76, type:'object', kind:'trivial', required:false,
+          content:{ title:'A Basket of Waste',
+            text:"A wicker basket heaped with loose cotton swept up from the floor, waiting to go back through the cards. It looks soft enough to sleep in. Nobody here has time to find out." } }
       ]
     }
 
@@ -1508,7 +1565,7 @@ const GAME_DATA = {
         { id:'back_to_gate', label:'Back to the Gate', x:0.68, y:0.45, type:'navigation', goto:'factory_gate_day',
           content:{ text:"The door leads back out to the yard and the gate." } },
 
-        { id:'aldrich', label:'George Aldrich', x:0.40, y:0.45, type:'dialogue', required:false,
+        { id:'aldrich', label:'George Aldrich', x:0.40, y:0.45, type:'dialogue', kind:'clue', required:false,
           content:{ title:'George Aldrich',
             desc:"A trim, silver-bearded man rises from the desk to greet you, hand out, smile easy. George Aldrich. He looks genuinely pleased to see you.",
             people:['George Aldrich'],
@@ -1521,45 +1578,53 @@ const GAME_DATA = {
               "Put it in one report when you are done. Who is behind it, what they intend, where and when they gather, and why. The why most of all. I should like to understand what went wrong in my own house. Five plain points, and we can put this behind us."
             ] } },
 
-        { id:'open_safe', label:'The Open Safe', x:0.16, y:0.35, type:'object', required:false,
+        { id:'open_safe', label:'The Open Safe', x:0.16, y:0.35, type:'object', kind:'clue', required:false,
           content:{ title:'The Open Safe',
             text:"The safe stands open while Aldrich works. Inside, neat rows of ledgers and a strongbox. Today there is nothing here he minds you seeing. You wonder what it looks like when he is not in the room." } },
 
-        { id:'wage_ledger', label:'The Wage Ledger', x:0.30, y:0.88, type:'document', required:false,
+        { id:'wage_ledger', label:'The Wage Ledger', x:0.30, y:0.88, type:'document', kind:'clue', required:false,
           content:{ title:'The Wage Ledger',
             text:"An open ledger of wages and accounts. The wage column has not moved in four years. Beside it the debt column, what each family owes the company store, climbs steadily down the page. The longer a family stays, the more it owes." } },
 
-        { id:'land_survey', label:'The County Land Survey', x:0.88, y:0.18, type:'document', required:false,
+        { id:'land_survey', label:'The County Land Survey', x:0.88, y:0.18, type:'document', kind:'clue', required:false,
           content:{ title:'The County Land Survey',
             text:"A surveyor's map of the whole valley, every parcel marked, and nearly all of it carrying one name. The houses, the store, the school, the streets, the fields beyond. A man may live his whole life in Bennington and never set foot on ground that is not Aldrich's." } },
 
-        { id:'water_rights', label:'The Water Rights', x:0.97, y:0.32, type:'document', required:false,
+        { id:'water_rights', label:'The Water Rights', x:0.97, y:0.32, type:'document', kind:'clue', required:false,
           content:{ title:'The Water Rights',
             text:"A filed claim to the water of the river and the creek that feeds it. The mill needs it for its wheels and boilers. So does every farm downstream. On paper, the water belongs to the company first, and to everyone else after." } },
 
-        { id:'dam_plan', label:'The Dam Plan', x:0.60, y:0.30, type:'document', required:false,
+        { id:'dam_plan', label:'The Dam Plan', x:0.585, y:0.37, type:'document', kind:'clue', required:false,
           content:{ title:'The Dam Plan',
             text:"A framed engineering drawing, a plan for the mill dam and the channels that turn the river toward the works. The river was moved to suit the mill. What reaches the town and the farms is whatever the mill does not use first." } },
 
-        { id:'price_list', label:'The Price List', x:0.81, y:0.20, type:'document', required:false,
+        { id:'price_list', label:'The Price List', x:0.81, y:0.20, type:'document', kind:'clue', required:false,
           content:{ title:'The Price List',
             text:"A printed price list for the company store, the same goods a town merchant sells, marked a third higher, and payable only in scrip. Wages go in one company door and come out another." } },
 
-        { id:'dye_samples', label:'The Dye and Wool Samples', x:0.86, y:0.65, type:'object', required:false,
+        { id:'dye_samples', label:'The Dye and Wool Samples', x:0.865, y:0.76, type:'object', kind:'clue', required:false,
           content:{ title:'The Dye and Wool Samples',
             text:"Hanks of dyed thread and tufts of wool hang labeled along the wall for grading the goods. A newer card marks a cheaper dye and a coarser grade than the older samples beside it. Somewhere a corner is being cut." } },
 
-        { id:'portrait', label:'The Portrait', x:0.59, y:0.18, type:'object', required:false,
+        { id:'portrait', label:'The Portrait', x:0.59, y:0.18, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Portrait',
             text:"A formal portrait of Aldrich hangs above the desk, younger and straighter, painted in better years. The man beneath it is older and more tired than the picture allows. Every town has its great man. Most of the greatness is in the frame." } },
 
-        { id:'cane_keys', label:'The Cane and Keys', x:0.52, y:0.82, type:'object', required:false,
+        { id:'cane_keys', label:'The Cane and Keys', x:0.52, y:0.82, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Cane and Keys',
             text:"A fine silver-topped cane leans by the desk, and a ring of keys rests beside it. One of those keys, you would guess, opens the safe. He keeps them close." } },
 
-        { id:'telephone', label:'The Telephone', x:0.55, y:0.48, type:'object', required:false,
+        { id:'telephone', label:'The Telephone', x:0.925, y:0.49, type:'object', kind:'clue', required:false,
           content:{ title:'The Telephone',
-            text:"A telephone, a rare thing in a town like this. The line runs out to the cities, to the banks and the buyers Aldrich deals with. The town speaks to no one. Aldrich speaks to everyone." } }
+            text:"A telephone, a rare thing in a town like this. The line runs out to the cities, to the banks and the buyers Aldrich deals with. The town speaks to no one. Aldrich speaks to everyone." } },
+
+        { id:'brass_gadget', label:'A Brass Instrument', x:0.545, y:0.55, type:'object', kind:'trivial', required:false,
+          content:{ title:'A Brass Instrument',
+            text:"A brass instrument on the desk, all arms and little cups, polished to a high shine. You have no idea what it is for. You suspect Aldrich does not either, but it looks very fine." } },
+
+        { id:'mill_model', label:'The Model', x:0.965, y:0.555, type:'object', kind:'trivial', required:false,
+          content:{ title:'The Model',
+            text:"A little wooden model of the mill on the side table, every window painted on by hand, the smokestacks made of rolled paper. Somebody spent a long winter on it. Aldrich's grandchildren are not allowed to touch it." } }
       ]
     }
 
@@ -1575,7 +1640,7 @@ const GAME_DATA = {
       hotspots: [
         { id:'store_exit', label:'Back to the Street', x:0.735, y:0.72, type:'navigation', goto:'town_map_day' },
 
-        { id:'store_clerk', label:'The Store Clerk', x:0.205, y:0.36, type:'dialogue', required:false,
+        { id:'store_clerk', label:'The Store Clerk', x:0.205, y:0.36, type:'dialogue', kind:'clue', required:false,
           content:{ title:'Abner Cole',
             desc:"A neat man in sleeve garters behind the counter, weighing out cornmeal and writing every ounce into a book. He does not look up until the scale settles.",
             people:['Abner Cole'],
@@ -1586,7 +1651,7 @@ const GAME_DATA = {
               "Some of them grumble, I know. But I notice they all come back. Where else would they go?"
             ] } },
 
-        { id:'store_nora', label:'The Woman with the Basket', x:0.41, y:0.44, type:'dialogue', required:false,
+        { id:'store_nora', label:'The Woman with the Basket', x:0.41, y:0.44, type:'dialogue', kind:'clue', required:false,
           content:{ title:'Nora Egan',
             desc:"A woman near the front of the line, an empty basket over her arm and a shawl pulled close. You saw her crossing the road this morning.",
             people:['Nora Egan'],
@@ -1597,37 +1662,49 @@ const GAME_DATA = {
               "Tom says buy at the general store, out past the yard. With what? Nobody in Bennington has held real money in years."
             ] } },
 
-        { id:'store_sign', label:'Scrip Only', x:0.27, y:0.45, type:'document', required:false,
+        { id:'store_sign', label:'Scrip Only', x:0.27, y:0.45, type:'document', kind:'clue', required:false,
           content:{ title:'Scrip Only',
             text:"PAYMENT IN BENNINGTON MILLS SCRIP ONLY. A card propped on the counter where no one can miss it. The scrip is printed paper, good for nothing outside this room. The company pays its hands in money that only the company will take back." } },
 
-        { id:'store_prices', label:'The Price Board', x:0.44, y:0.20, type:'document', required:false,
+        { id:'store_prices', label:'The Price Board', x:0.44, y:0.20, type:'document', kind:'clue', required:false,
           content:{ title:'The Price Board',
             text:"PRICE LIST. Flour, 25 lb., 95 cents. Sugar, 9 cents the pound. Coffee, 35 cents. Lard, 12 cents. Kerosene, 20 cents the gallon.\n\nYou paid a good deal less for the same goods in Philadelphia. But nobody in this line is going to Philadelphia." } },
 
-        { id:'store_book', label:'The Account Book', x:0.145, y:0.90, type:'document', required:false,
+        { id:'store_book', label:'The Account Book', x:0.145, y:0.90, type:'document', kind:'clue', required:false,
           content:{ title:'The Account Book',
             text:"The store's account book lies open on the side desk. Family by family, line by line: what was drawn, what was owed, what was taken back on payday. BURKE, M. EGAN, T. DOYLE, R.\n\nNearly every balance is carried forward. Almost none is ever closed. The book does not show what anyone earned. Only what they owe." } },
 
-        { id:'store_scale', label:'The Scale', x:0.165, y:0.31, type:'object', required:false,
+        { id:'store_scale', label:'The Scale', x:0.165, y:0.31, type:'object', kind:'clue', required:false,
           content:{ title:'The Scale',
             text:"A brass scale for flour and meal. It bears no county seal. The weights are the company's own, checked by no one but the company." } },
 
-        { id:'store_register', label:'The Register', x:0.255, y:0.80, type:'object', required:false,
+        { id:'store_register', label:'The Register', x:0.255, y:0.80, type:'object', kind:'clue', required:false,
           content:{ title:'The Register',
             text:"A handsome brass register. The drawer holds no coin at all, only paper, and every note says BENNINGTON MILLS. The money goes round and round inside the company, like water in a mill race." } },
 
-        { id:'store_portraits', label:'The Portraits', x:0.045, y:0.14, type:'object', required:false,
+        { id:'store_portraits', label:'The Portraits', x:0.045, y:0.14, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Portraits',
             text:"George Aldrich looks down on the line from a gilt frame, younger and kinder than life. The people waiting under him keep their eyes on the floor. It is hard to haggle with a man who owns the wall." } },
 
-        { id:'store_line', label:'The Line', x:0.585, y:0.40, type:'object', required:false,
+        { id:'store_line', label:'The Line', x:0.585, y:0.40, type:'object', kind:'clue', required:false,
           content:{ title:'The Line',
             text:"The line runs out the door and down the steps, men in work clothes and women with baskets, waiting without complaint. Every one of them was paid this week. Every one of them will leave owing." } },
 
-        { id:'store_maps', label:'The Lot Maps', x:0.91, y:0.30, type:'document', required:false,
+        { id:'store_maps', label:'The Lot Maps', x:0.91, y:0.30, type:'document', kind:'clue', required:false,
           content:{ title:'The Lot Maps',
-            text:"Company maps of the town lots, every cottage numbered in red ink. Rent comes out of the wage before the wage is paid. A family in Bennington does not rent from a landlord. It rents from the man who sets its pay." } }
+            text:"Company maps of the town lots, every cottage numbered in red ink. Rent comes out of the wage before the wage is paid. A family in Bennington does not rent from a landlord. It rents from the man who sets its pay." } },
+
+        { id:'store_bins', label:'The Bins', x:0.08, y:0.60, type:'object', kind:'ambiance', required:false,
+          content:{ title:'The Bins',
+            text:"Open bins of beans, coffee, and cornmeal, the smell of them thick in the warm air. Every eye in the line follows the clerk's scoop as it goes in, and comes out, and goes in again." } },
+
+        { id:'store_barrel', label:'The Barrel Pump', x:0.175, y:0.66, type:'object', kind:'trivial', required:false,
+          content:{ title:'The Barrel Pump',
+            text:"A barrel of kerosene with a hand pump screwed into the lid and a drip pan underneath that has not been emptied in some time. Mind your cuffs." } },
+
+        { id:'store_pews', label:'The Benches', x:0.93, y:0.76, type:'object', kind:'trivial', required:false,
+          content:{ title:'The Benches',
+            text:"Two old church pews against the far wall, for those who wait. Someone has carved J.M. + A.K. into the arm of one. It has been sanded off, and carved again." } }
       ]
     },
 
@@ -1641,7 +1718,7 @@ const GAME_DATA = {
       hotspots: [
         { id:'school_exit', label:'Back to the Street', x:0.035, y:0.72, type:'navigation', goto:'town_map_day' },
 
-        { id:'school_teacher', label:'The Teacher', x:0.665, y:0.40, type:'dialogue', required:false,
+        { id:'school_teacher', label:'The Teacher', x:0.665, y:0.40, type:'dialogue', kind:'clue', required:false,
           content:{ title:'Miss Ellen Hale',
             desc:"The teacher is wiping slates clean at her desk, quick and tidy, a young woman with chalk on her sleeves. She seems glad of a grown-up to talk to.",
             people:['Ellen Hale'],
@@ -1652,37 +1729,45 @@ const GAME_DATA = {
               "In the evenings I teach the grown hands their letters, so they can read what they are asked to sign. Mr. Aldrich does not know about that. I would be grateful if he did not hear it from you."
             ] } },
 
-        { id:'school_board', label:'The Blackboard', x:0.72, y:0.24, type:'document', required:false,
+        { id:'school_board', label:'The Blackboard', x:0.72, y:0.24, type:'document', kind:'ambiance', required:false,
           content:{ title:'The Blackboard',
             text:"READING, WRITING, ARITHMETIC. ALDRICH FREE SCHOOL. OCTOBER 14, 1898.\n\nThe day's lesson has been wiped away, but not the name. The name of the school stays up all year." } },
 
-        { id:'school_desks', label:'The Empty Desks', x:0.33, y:0.72, type:'object', required:false,
+        { id:'school_desks', label:'The Empty Desks', x:0.33, y:0.72, type:'object', kind:'clue', required:false,
           content:{ title:'The Empty Desks',
             text:"Thirty desks, thirty slates, thirty inkwells, bought when the town was new and the company was proud of its school. Most of the inkwells are dry." } },
 
-        { id:'school_slate', label:'A Slate', x:0.205, y:0.86, type:'object', required:false,
+        { id:'school_slate', label:'A Slate', x:0.205, y:0.86, type:'object', kind:'clue', required:false,
           content:{ title:'A Slate',
             text:"On one slate, in a careful, crooked hand, SAMUEL DOYLE is written ten times over. Nobody has wiped it clean. The teacher has kept it the way you keep a letter." } },
 
-        { id:'school_coats', label:'Coats on the Pegs', x:0.075, y:0.50, type:'object', required:false,
+        { id:'school_coats', label:'Coats on the Pegs', x:0.075, y:0.50, type:'object', kind:'clue', required:false,
           content:{ title:'Coats on the Pegs',
             text:"Three coats hang by the door, a grown man's size, worn through at the elbows. No child in this school could wear them. They belong to someone who comes after dark." } },
 
-        { id:'school_stove', label:'The Stove', x:0.505, y:0.74, type:'object', required:false,
+        { id:'school_stove', label:'The Stove', x:0.505, y:0.74, type:'object', kind:'clue', required:false,
           content:{ title:'The Stove',
             text:"A pot-bellied stove with a copper kettle and a half-full coal bucket. The coal comes from the company yard and is charged against the teacher's pay. In January the children keep their coats on." } },
 
-        { id:'school_portraits', label:'Washington and Lincoln', x:0.715, y:0.08, type:'document', required:false,
+        { id:'school_portraits', label:'Washington and Lincoln', x:0.715, y:0.08, type:'document', kind:'clue', required:false,
           content:{ title:'Washington and Lincoln',
             text:"Washington and Lincoln look down on the empty room. Tucked into the corner of Lincoln's frame is a card in the teacher's hand:\n\n'Labor is prior to, and independent of, capital. Capital is only the fruit of labor, and could never have existed if labor had not first existed.' A. Lincoln, 1861.\n\nIt is not part of any lesson Mr. Aldrich approved." } },
 
-        { id:'school_map', label:'The Map', x:0.895, y:0.27, type:'object', required:false,
+        { id:'school_map', label:'The Map', x:0.895, y:0.27, type:'object', kind:'clue', required:false,
           content:{ title:'The Map',
             text:"A map of the United States, the states bright as a quilt. A pin is pushed into Massachusetts at New Bedford, where thousands of cotton mill hands walked out this past winter rather than take a cut in pay. Someone has been teaching the news." } },
 
-        { id:'school_window', label:'The Window', x:0.565, y:0.33, type:'object', required:false,
+        { id:'school_window', label:'The Window', x:0.565, y:0.33, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Window',
-            text:"Through the window, across the road, the old general store with its sign still up. It sells for cash only. Business, you would guess, is slow." } }
+            text:"Through the window, across the road, the old general store with its sign still up. It sells for cash only. Business, you would guess, is slow." } },
+
+        { id:'school_alphabet', label:'The Alphabet', x:0.17, y:0.37, type:'object', kind:'trivial', required:false,
+          content:{ title:'The Alphabet',
+            text:"The alphabet in big black capitals, A to Z, tacked up low where the smallest children can see it. Somebody has given the Q a mustache." } },
+
+        { id:'school_clock', label:'The Clock', x:0.40, y:0.19, type:'object', kind:'trivial', required:false,
+          content:{ title:'The Clock',
+            text:"A schoolroom clock with a loud, patient tick. It runs eleven minutes slow. The children know this, and so far the teacher does not." } }
       ]
     },
 
@@ -1696,46 +1781,54 @@ const GAME_DATA = {
       hotspots: [
         { id:'burke_exit', label:'Back to the Street', x:0.64, y:0.47, type:'navigation', goto:'town_map_day' },
 
-        { id:'burke_table', label:'Papers on the Table', x:0.865, y:0.73, type:'document', required:false,
+        { id:'burke_table', label:'Papers on the Table', x:0.865, y:0.73, type:'document', kind:'clue', required:false,
           grants:['knows_tavern'],
           content:{ title:'Papers on the Table',
             text:"Under the lamp, a sheet of foolscap in a firm, even hand, a draft with words struck out and written over:\n\nTO ALL HANDS OF BENNINGTON MILLS. A meeting, Friday night at eight, in the upstairs room at Kessler's. We will vote on our demands. Wages paid in money, not scrip. An end to fines. Store prices no higher than the county. No child at the frames under twelve.\n\nAt the bottom, underlined twice: Bring no one you would not trust with your children's bread.\n\nToday is Friday. The meeting is tonight." } },
 
-        { id:'burke_chest', label:'The List of Names', x:0.155, y:0.80, type:'document', required:false,
+        { id:'burke_chest', label:'The List of Names', x:0.155, y:0.80, type:'document', kind:'clue', required:false,
           content:{ title:'The List of Names',
             text:"The chest at the foot of the bed is not locked. Under the folded quilts lies a ruled sheet of paper, creased soft from handling. Names. Forty-three of them, some signed in a good hand, some marked with an X and witnessed. Margaret Burke's is first.\n\nIt takes you a quarter of an hour to copy every name. When you fold the sheet back under the quilts, the list is in your notebook, and nothing in the room looks any different." } },
 
-        { id:'burke_books', label:'The Bookshelf', x:0.19, y:0.20, type:'object', required:false,
+        { id:'burke_books', label:'The Bookshelf', x:0.19, y:0.20, type:'object', kind:'clue', required:false,
           content:{ title:'The Bookshelf',
             text:"A short shelf of books: a Bible, a hymnal, a child's primer, and a battered copy of Progress and Poverty by Henry George, the pages soft with turning. It is a book that asks why, in a country growing richer every year, the people who do the work stay poor. Someone in this house has been asking the same question." } },
 
-        { id:'burke_coat', label:'Coats on the Pegs', x:0.34, y:0.27, type:'object', required:false,
+        { id:'burke_coat', label:'Coats on the Pegs', x:0.34, y:0.27, type:'object', kind:'clue', required:false,
           content:{ title:'Coats on the Pegs',
             text:"Two coats hang on the pegs. One is a woman's, neatly mended. The other is a man's work coat, the cuffs black with machine oil, patched at both elbows. It has not been worn in a long time, and it has not been given away." } },
 
-        { id:'burke_crib', label:'The Crib', x:0.46, y:0.52, type:'object', required:false,
+        { id:'burke_crib', label:'The Crib', x:0.46, y:0.52, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Crib',
             text:"A crib with the rails worn smooth by small hands. The baby is with a neighbor while Margaret stands her twelve hours at the inspection table. The neighbor is paid in scrip, like everyone else." } },
 
-        { id:'burke_drawing', label:'The Drawing', x:0.455, y:0.27, type:'object', required:false,
+        { id:'burke_drawing', label:'The Drawing', x:0.455, y:0.27, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Drawing',
             text:"A child's drawing pinned to the wall: a house, a tree, a mother holding a little girl's hand, and a big yellow sun. There is no mill in the picture." } },
 
-        { id:'burke_wheel', label:'The Spinning Wheel', x:0.065, y:0.84, type:'object', required:false,
+        { id:'burke_wheel', label:'The Spinning Wheel', x:0.065, y:0.84, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Spinning Wheel',
             text:"An old spinning wheel, the kind a grandmother worked by the fire. One woman, one wheel, at her own pace, in her own house. Up the road, a single frame turns hundreds of spindles at once, and nobody sets their own pace anymore." } },
 
-        { id:'burke_pump', label:'The Pump', x:0.81, y:0.58, type:'object', required:false,
+        { id:'burke_pump', label:'The Pump', x:0.81, y:0.58, type:'object', kind:'clue', required:false,
           content:{ title:'The Pump',
             text:"A hand pump over a tin basin. The water comes up cloudy and smells faintly of the mill race. The clean water from upstream turns the company's wheels first." } },
 
-        { id:'burke_jars', label:'The Jars', x:0.955, y:0.40, type:'object', required:false,
+        { id:'burke_jars', label:'The Jars', x:0.955, y:0.40, type:'object', kind:'clue', required:false,
           content:{ title:'The Jars',
             text:"Shelves of jars, each one labeled in the same firm hand: beans, tomatoes, apples, lard. Bundles of herbs dry beside a little scale. Everything she can grow or put up herself is one more thing she does not have to buy on the book." } },
 
-        { id:'burke_toys', label:'The Toys', x:0.35, y:0.86, type:'object', required:false,
+        { id:'burke_toys', label:'The Toys', x:0.35, y:0.86, type:'object', kind:'trivial', required:false,
           content:{ title:'The Toys',
-            text:"A wooden horse, whittled by hand, and a scatter of painted blocks. Nothing on this floor came from a store." } }
+            text:"A wooden horse whittled by hand, missing one ear, and a scatter of painted blocks. Someone was building a tower and got called away to supper." } },
+
+        { id:'burke_broom', label:'The Broom', x:0.02, y:0.74, type:'object', kind:'trivial', required:false,
+          content:{ title:'The Broom',
+            text:"A corn broom leaning by the window, worn down on one side. Whoever sweeps this house is left-handed. It is a fine piece of deduction, and it tells you nothing at all." } },
+
+        { id:'burke_rocker', label:'The Rocking Chair', x:0.235, y:0.78, type:'object', kind:'ambiance', required:false,
+          content:{ title:'The Rocking Chair',
+            text:"A rocking chair with a knitted shawl over the back. When you brush against it, it creaks, loud as a gunshot in the empty house. You stand very still and listen. Nobody comes." } }
       ]
     },
 
@@ -1749,7 +1842,7 @@ const GAME_DATA = {
       hotspots: [
         { id:'tavern_exit', label:'Up the Road to the Mill', x:0.60, y:0.40, type:'navigation', goto:'factory_gate_night' },
 
-        { id:'tavern_kessler', label:'The Barkeep', x:0.19, y:0.36, type:'dialogue', required:false,
+        { id:'tavern_kessler', label:'The Barkeep', x:0.19, y:0.36, type:'dialogue', kind:'clue', required:false,
           content:{ title:'Otto Kessler',
             desc:"A broad, gray man behind the bar, polishing a glass that is already clean. The only man in the valley who does not work for George Aldrich, and he looks it.",
             people:['Otto Kessler'],
@@ -1760,7 +1853,7 @@ const GAME_DATA = {
               "What is said upstairs is none of my business. I do not throw out a paying customer, and I do not repeat what I hear. In your place, I would think hard before I did."
             ] } },
 
-        { id:'tavern_committee', label:'The Middle Table', x:0.47, y:0.56, type:'dialogue', required:false,
+        { id:'tavern_committee', label:'The Middle Table', x:0.47, y:0.56, type:'dialogue', kind:'clue', required:false,
           content:{ title:'The Middle Table',
             desc:"Four men at the middle table, mugs untouched, a leather satchel among the coins. Isaac and Sol from the rail yard are two of them. The talk stops when you pull up a chair, and old Sol Hayes looks you over for a long moment before he speaks.",
             people:['Isaac Greene', 'Sol Hayes'],
@@ -1769,10 +1862,11 @@ const GAME_DATA = {
               "Margaret thinks you are a Pinkerton. Good boots, soft hands, a great many questions. I expect she is right. She usually is.",
               "Isaac here could not get hired on the frames, not in this mill. The yard took him. Margaret says the union is for every hand who works for Aldrich, frame or yard. First time anybody in this town ever said so.",
               "We have nothing to hide but our names. Money wages. Honest prices. Children out of the frames. Write that down, if you like.",
+              "And pay no mind to Red Kelly over there, whatever he tells you. He has been burning that mill down every Friday night for ten years. He has never signed a thing, and Margaret would not have him if he did.",
               "The meeting is upstairs. Go on up and listen. Then you can decide what kind of man you are."
             ] } },
 
-        { id:'tavern_meeting', label:'The Stairs', x:0.655, y:0.55, type:'dialogue', required:false,
+        { id:'tavern_meeting', label:'The Stairs', x:0.655, y:0.55, type:'dialogue', kind:'clue', required:false,
           requires:['tavern_committee'],
           content:{ title:'Voices Upstairs', tag:'Overheard',
             desc:"You climb halfway up the narrow stairs and stop where the boards creak least. The room above is packed and quiet, listening to one voice. Margaret Burke's.",
@@ -1784,7 +1878,7 @@ const GAME_DATA = {
               "And mind who you talk to. There is a stranger in this town asking a great many questions, and a man in the mill who has been answering them."
             ] } },
 
-        { id:'tavern_egan', label:'Tom Egan', x:0.085, y:0.60, type:'dialogue', required:false,
+        { id:'tavern_egan', label:'Tom Egan', x:0.085, y:0.60, type:'dialogue', kind:'clue', required:false,
           content:{ title:'Tom Egan',
             desc:"Tom Egan from the crates sits at a table by the bar, a little more sober than this afternoon. He raises his mug when he sees you.",
             people:['Tom Egan'],
@@ -1794,29 +1888,54 @@ const GAME_DATA = {
               "I signed Margaret's card last week. What have I got to lose? They already took the job."
             ] } },
 
-        { id:'tavern_satchel', label:'The Leather Satchel', x:0.48, y:0.85, type:'document', required:false,
+        { id:'tavern_satchel', label:'The Leather Satchel', x:0.48, y:0.85, type:'document', kind:'clue', required:false,
           content:{ title:'The Leather Satchel',
             text:"A worn leather satchel sits open among the mugs. Inside is a stack of printed cards, the ink still fresh: TEXTILE WORKERS UNION, BENNINGTON LOCAL. DUES TEN CENTS A WEEK.\n\nMost of them are already signed. In a company town, a union card is a dangerous thing to own. Someone at this table is carrying forty of them." } },
 
-        { id:'tavern_noscrip', label:'No Scrip, Cash Only', x:0.13, y:0.27, type:'document', required:false,
+        { id:'tavern_noscrip', label:'No Scrip, Cash Only', x:0.13, y:0.27, type:'document', kind:'clue', required:false,
           content:{ title:'No Scrip, Cash Only',
             text:"NO SCRIP, CASH ONLY. Chalked big enough to read from the door. In a town where every wage is paid in company paper, it is close to a declaration of independence. Whatever cash the hands manage to keep from the company store, a little of it ends up here." } },
 
-        { id:'tavern_notices', label:'Notices by the Door', x:0.485, y:0.25, type:'document', required:false,
+        { id:'tavern_notices', label:'Notices by the Door', x:0.485, y:0.25, type:'document', kind:'clue', required:false,
           content:{ title:'Notices by the Door',
             text:"Papers tacked up by the door. An auction notice for a farm downstream, sold for debt, the second this year. A reward for a strayed cow. And a printed bill on mill letterhead:\n\nREWARD. TWENTY-FIVE DOLLARS for information leading to the names of persons inciting the hands of Bennington Mills to quit work. Apply at the Management Office.\n\nKessler has left it up. Everyone who walks in can see what a neighbor is worth." } },
 
-        { id:'tavern_oldtimers', label:'The Old-Timers', x:0.72, y:0.37, type:'object', required:false,
+        { id:'tavern_oldtimers', label:'The Old-Timers', x:0.72, y:0.37, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Old-Timers',
             text:"Two old men at the high table by the dartboard, too worn out for the frames and too stubborn to stay home. 'In seventy-seven we stopped every train between here and Pittsburgh,' says one. 'And in seventy-seven they shot us for it,' says the other. It is an argument they have been having for twenty years, and neither one has won it yet." } },
 
-        { id:'tavern_corner', label:'The Corner Table', x:0.92, y:0.74, type:'object', required:false,
+        { id:'tavern_corner', label:'The Corner Table', x:0.92, y:0.74, type:'object', kind:'clue', required:false,
           content:{ title:'The Corner Table',
-            text:"An old woman sits between two silent drinkers, counting coins into a careful little pile. Real money, saved a penny at a time and kept away from the company store. She counts it twice. A ticket out of Bennington costs more than she has, and she knows it, and she counts it anyway." } },
+            text:"At the end of the corner table, paying no mind to the shouting beside her, an old woman counts coins into a careful little pile. Real money, saved a penny at a time and kept away from the company store. She counts it twice. A ticket out of Bennington costs more than she has, and she knows it, and she counts it anyway." } },
 
-        { id:'tavern_portraits', label:'Behind the Bar', x:0.29, y:0.22, type:'object', required:false,
+        { id:'tavern_portraits', label:'Behind the Bar', x:0.29, y:0.22, type:'object', kind:'ambiance', required:false,
           content:{ title:'Behind the Bar',
-            text:"Behind the bar hangs a portrait of Lincoln, and below it a stern, bearded man in a cheap frame with the same nose as the man pouring the beer. Kessler's father. In every other room in Bennington, the face on the wall is George Aldrich." } }
+            text:"Behind the bar hangs a portrait of Lincoln, and below it a stern, bearded man in a cheap frame with the same nose as the man pouring the beer. Kessler's father. In every other room in Bennington, the face on the wall is George Aldrich." } },
+
+        { id:'tavern_red', label:'The Loud Man', x:0.85, y:0.60, type:'dialogue', kind:'herring', required:false,
+          debunk:"Red Kelly was the loudest mouth in Bennington, just the man Agent Bryce told you to look for. He had never signed a union card. The committee had turned him away twice, because a man who shouts in a tavern will shout to anyone.",
+          content:{ title:'Red Kelly',
+            desc:"A big red-haired man at the corner table, drinking straight from the bottle. He has been talking since you came in, and he talks louder once he sees you listening.",
+            people:['Red Kelly'],
+            lines:[
+              "You! New face! You want to know who is going to bring George Aldrich down? You are looking at him.",
+              "Somebody ought to put a match to that mill. Somebody ought to drag Aldrich out of his fine house by that silver beard. I have said it before and I will say it again.",
+              "The union? Course I am in the union. I am the union. They would be nothing without Red Kelly. Ask anybody.",
+              "Buy me another and I will give you the lot. Names, dates, all of it."
+            ] } },
+
+        { id:'tavern_paper', label:'A Newspaper on the Bar', x:0.31, y:0.47, type:'document', kind:'herring', required:false,
+          debunk:"The socialist paper on Kessler's bar was more than two years old, left behind by a peddler, and nobody at the meeting had read it. Owners liked to blame outside agitators. The hands of Bennington had reasons enough of their own.",
+          content:{ title:'A Socialist Paper',
+            text:"Folded small and left at the end of the bar: THE PEOPLE, a socialist weekly printed in New York. The front page calls on the workers of the world to take back what their hands have made.\n\nSo the radical press has found its way to Bennington. Aldrich will want to know who brought it here. The masthead is dated March, 1896." } },
+
+        { id:'tavern_darts', label:'The Dartboard', x:0.705, y:0.22, type:'object', kind:'trivial', required:false,
+          content:{ title:'The Dartboard',
+            text:"A dartboard with three darts in it, none of them anywhere near the middle. There are more holes in the wall around the board than in the board itself." } },
+
+        { id:'tavern_horses', label:'The Horse Paintings', x:0.905, y:0.17, type:'object', kind:'trivial', required:false,
+          content:{ title:'The Horse Paintings',
+            text:"Paintings of horses, every one of them running, none of them painted very well. Kessler bought the lot from a peddler for a dollar and a drink, and he still thinks he was robbed." } }
       ]
     },
 
@@ -1832,25 +1951,33 @@ const GAME_DATA = {
 
         { id:'gate_night_in', label:'Through the Gate', x:0.495, y:0.80, type:'navigation', goto:'aldrich_office_night' },
 
-        { id:'night_door', label:'The Management Door', x:0.875, y:0.80, type:'object', required:false,
+        { id:'night_door', label:'The Management Door', x:0.875, y:0.80, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Management Door',
             text:"A chain runs through the handles of the Management door, fastened with a padlock the size of your fist. Nobody comes in this way after dark. But the gate beside it has been left open a hand's width, and across the yard, at the back of the office, a door stands open on a lamp." } },
 
-        { id:'night_plaque', label:'The Plaque by Moonlight', x:0.64, y:0.68, type:'object', required:false,
+        { id:'night_plaque', label:'The Plaque by Moonlight', x:0.64, y:0.68, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Plaque by Moonlight',
             text:"The bronze plaque still shines, even by moonlight. A TOWN BUILT FOR THE WORKING FAMILY. WE RISE TOGETHER. Somebody polished it again today. It is the cleanest thing in Bennington." } },
 
-        { id:'night_stacks', label:'The Stacks at Night', x:0.62, y:0.20, type:'object', required:false,
+        { id:'night_stacks', label:'The Stacks at Night', x:0.62, y:0.20, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Stacks at Night',
             text:"The stacks pour smoke into the moonlight. The night shift is on, and the frames never stop turning. The mill never sleeps. Neither, says the open eye on the badge in your pocket, do you." } },
 
-        { id:'night_moon', label:'The Moon', x:0.405, y:0.05, type:'object', required:false,
+        { id:'night_moon', label:'The Moon', x:0.405, y:0.05, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Moon',
             text:"A full moon over the stacks, bright enough to read by. Bright enough to be seen by, too, if anyone were watching the gate." } },
 
-        { id:'night_bales', label:'Cotton Bales', x:0.24, y:0.84, type:'object', required:false,
+        { id:'night_bales', label:'Cotton Bales', x:0.24, y:0.84, type:'object', kind:'ambiance', required:false,
           content:{ title:'Cotton Bales',
-            text:"The bales are stamped with the names of Southern ports, Savannah and Galveston. Somewhere far from here, other hands picked this cotton for even less than these hands are paid to spin it. The mill is one link in a very long chain." } }
+            text:"The bales are stamped with the names of Southern ports, Savannah and Galveston. Somewhere far from here, other hands picked this cotton for even less than these hands are paid to spin it. The mill is one link in a very long chain." } },
+
+        { id:'night_lantern', label:'A Lantern in the Yard', x:0.53, y:0.56, type:'object', kind:'clue', required:false,
+          content:{ title:'A Lantern in the Yard',
+            text:"Through the bars of the gate, a lantern bobs across the yard from the back of the office toward the mill, and is gone. A man in a workman's cap, walking easy, like someone with every right to be there. Whoever he is, he did not stop to lock up behind him." } },
+
+        { id:'night_gatelamp', label:'The Gate Lamp', x:0.39, y:0.62, type:'object', kind:'trivial', required:false,
+          content:{ title:'The Gate Lamp',
+            text:"An iron lamp on the gatepost, left unlit to save oil. Tonight the moon is doing the job for free." } }
       ]
     },
 
@@ -1864,33 +1991,41 @@ const GAME_DATA = {
       hotspots: [
         { id:'office_night_exit', label:'Back to the Gate', x:0.745, y:0.52, type:'navigation', goto:'factory_gate_night' },
 
-        { id:'night_safe', label:'Inside the Safe', x:0.10, y:0.40, type:'document', required:false,
+        { id:'night_safe', label:'Inside the Safe', x:0.10, y:0.40, type:'document', kind:'clue', required:false,
           content:{ title:'Inside the Safe',
-            text:"The safe stands open, as if someone was called away and means to come back. Behind the wage books is a narrower ledger bound in red: PROFIT AND DIVIDEND.\n\nNet profit, 1895: $41,200. 1896: $46,900. 1897: $55,300. 1898, to the end of June: $31,800, a better half-year than any before it. Dividend to G. Aldrich, 1898: twice what it was in 1895.\n\n'Times are hard,' he told you. Not in this book." } },
+            text:"The safe stands open, as if someone was called away and means to come back. You never needed Aldrich's keys after all. Behind the wage books is a narrower ledger bound in red: PROFIT AND DIVIDEND.\n\nNet profit, 1895: $41,200. 1896: $46,900. 1897: $55,300. 1898, to the end of June: $31,800, a better half-year than any before it. Dividend to G. Aldrich, 1898: twice what it was in 1895.\n\n'Times are hard,' he told you. Not in this book." } },
 
-        { id:'harding_letter', label:'A Letter on the Desk', x:0.48, y:0.57, type:'document', required:false,
+        { id:'harding_letter', label:'A Letter on the Desk', x:0.48, y:0.57, type:'document', kind:'clue', required:false,
           content:{ title:'A Letter on the Desk',
             text:"A letter on agency paper, in a hand you know well.\n\nDear Mr. Aldrich, Our operative arrives on the fourteenth. He is young, but he does as he is told, and you will have his report with names inside the week. As in '94, the Agency cannot itself furnish armed men. But I again recommend the Keystone Watch Company of Pittsburgh, who will supply forty special watchmen at three dollars a man per day and ask no questions. With names in hand, I advise acting all at once, on a Monday, before the hands can meet. Your servant, Harding, Superintendent.\n\nAs in '94. So that is what happened the other times." } },
 
-        { id:'reese_note', label:'A Folded Note', x:0.255, y:0.51, type:'document', required:false,
+        { id:'reese_note', label:'A Folded Note', x:0.255, y:0.51, type:'document', kind:'clue', required:false,
           content:{ title:'A Folded Note',
             text:"A note on cheap paper, in pencil, folded small.\n\nMr. Aldrich, Sir. The Burke woman calls the meetings, Friday nights, upstairs at Kessler's. Greene and Hayes from the yard. Egan, the one you let go. The schoolteacher lends them her room to learn their letters. I will have more by Monday. Your obedient servant, W. Reese.\n\nAcross the bottom, in Aldrich's hand: Paid R. five dollars. Promise him the overseer's place.\n\nAldrich already has the names. What he wants from you is the agency's name at the bottom of the page." } },
 
-        { id:'vacate_notices', label:'Printed Forms', x:0.90, y:0.64, type:'document', required:false,
+        { id:'vacate_notices', label:'Printed Forms', x:0.90, y:0.64, type:'document', kind:'clue', required:false,
           content:{ title:'Printed Forms',
             text:"A stack of printed forms in a leather folder by the lamp, crisp from the printer:\n\nNOTICE TO QUIT. The tenant named below is hereby required to vacate the company dwelling within five days, and to leave all furnishings against any sum owing to the company store.\n\nThe blanks for the names are empty. There are a great many forms." } },
 
-        { id:'fines_book', label:'The Fines Book', x:0.33, y:0.92, type:'document', required:false,
+        { id:'fines_book', label:'The Fines Book', x:0.33, y:0.92, type:'document', kind:'clue', required:false,
           content:{ title:'The Fines Book',
-            text:"A ledger lies open on the bench, ruled for fines. Late, two minutes: ten cents. Talking: twenty-five cents. Spoiled bobbin: fifteen cents.\n\nThe fines have doubled since summer, and they fall hardest on a few names. BURKE, M., fined for talking four times this month. Fines come out of the wage before it is paid, in scrip, so the money never leaves the company at all." } },
+            text:"A ledger lies open on the bench, ruled for fines and kept in a heavy, careful hand. Late, two minutes: ten cents. Talking: twenty-five cents. Spoiled bobbin: fifteen cents. The fines have doubled since summer, and they fall hardest on a few names. BURKE, M., talking, four times this month.\n\nEvery page is initialed J.P. Pratt, the overseer. So that is what he writes in his little book: fines, not names. They come out of the wage before it is paid, in scrip, so the money never leaves the company at all." } },
 
-        { id:'time_recorder', label:'The Time Recorder', x:0.10, y:0.74, type:'object', required:false,
+        { id:'time_recorder', label:'The Time Recorder', x:0.10, y:0.74, type:'object', kind:'clue', required:false,
           content:{ title:'The Time Recorder',
             text:"A brass time recorder, the newest kind, with a numbered key for every hand. Each morning the machine stamps the minute they arrive. One minute late is a fine. The machine does not argue, and it does not listen." } },
 
-        { id:'night_lamp', label:'The Lamp', x:0.865, y:0.47, type:'object', required:false,
+        { id:'night_lamp', label:'The Lamp', x:0.865, y:0.47, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Lamp',
-            text:"An oil lamp left burning on the counter, turned low. No one leaves a lamp lit in an empty office full of paper. Whoever opened the safe tonight means to come back to it. You should not be here long." } }
+            text:"An oil lamp left burning on the counter, turned low. No one leaves a lamp lit in an empty office full of paper. Whoever opened the safe tonight means to come back to it. You should not be here long." } },
+
+        { id:'night_clock', label:'The Clock', x:0.555, y:0.24, type:'object', kind:'ambiance', required:false,
+          content:{ title:'The Clock',
+            text:"The tall clock ticks in the dark, louder than any clock has a right to. Ten minutes to eleven. You have been here long enough already." } },
+
+        { id:'night_cane', label:'The Cane', x:0.53, y:0.86, type:'object', kind:'trivial', required:false,
+          content:{ title:'The Cane',
+            text:"The silver-topped cane, lying across the stool where he left it. He must keep another at the house. Men like Aldrich generally do." } }
       ]
     }
 
@@ -1935,7 +2070,8 @@ const GAME_DATA = {
       'Otto Kessler':   { text:"Otto Kessler kept his ground. But when the county court next sat, his license was not renewed, and the court did as George Aldrich asked. Kessler's was dark by Christmas." },
       'Sammy':          { text:"Sammy was let go, to show the others. It cost his mother two dollars a week. Within the month he was back at the frames in a mill down the valley, where nobody asked his age." },
       'Walter Reese':   { text:"You named Walter Reese. Aldrich only smiled. Reese had been his man for a year. In the spring, Reese was made overseer." },
-      'Abner Cole':     { text:"Abner Cole was questioned for an hour and sent back to his counter. He had never done anything but keep the book." }
+      'Abner Cole':     { text:"Abner Cole was questioned for an hour and sent back to his counter. He had never done anything but keep the book." },
+      'Red Kelly':      { text:"Red Kelly was discharged for drunkenness, which was true, and for agitation, which was not. He had never signed a card in his life. For the rest of his days he told anyone at Kessler's who would listen that he had been fired for leading the strike, and in the end he believed it." }
     },
     fateDefault: '{name} was discharged within the week.',
     listFate: "With the list in hand, Aldrich did not have to guess. All forty-three hands on it were discharged. By the first snow most of their families were out of the cottages, and the mill was hiring new hands from the city at a lower wage.",
@@ -1978,8 +2114,8 @@ const GAME_DATA = {
     },
 
     review: [
-      { title:'Paid in Scrip, Bound by Debt', text:"Wages paid in company paper, spent at company prices, and owed back to the company before the next payday.",
-        ids:['posted_notice','wage_ledger','price_list','store_sign','store_prices','store_book','store_register','store_clerk','store_nora','store_line','tavern_noscrip','tavern_corner'] },
+      { title:'Low Pay, Paid in Scrip', text:"Wages too low to buy what the hands made, paid in company paper, spent at company prices, and owed back before the next payday.",
+        ids:['posted_notice','lunch_pails','wage_ledger','price_list','finished_cloth','store_sign','store_prices','store_book','store_register','store_scale','store_clerk','store_nora','store_line','school_stove','burke_jars','tavern_noscrip','tavern_corner'] },
       { title:'Children at the Frames', text:"Children left school at nine or ten because their families needed two dollars a week.",
         ids:['the_boy','spinning_frames','school_teacher','school_desks','school_slate'] },
       { title:'Dust, Belts, and Damp Air', text:"Lint in the lungs, unguarded machines, and air kept damp for the sake of the thread.",
@@ -1987,11 +2123,11 @@ const GAME_DATA = {
       { title:'More Work for Fewer Hands', text:"Rising quotas, new machines, cheaper materials, fines and time clocks, and men let go to pay for it all.",
         ids:['production_board','loading_dock','crate_men','dye_samples','tavern_egan','fines_book','time_recorder'] },
       { title:"One Man's Valley", text:"The land, the water, the houses, the rails, and the store all belonged to the same man.",
-        ids:['land_survey','water_rights','dam_plan','fine_house','cottages','locomotive','telephone','portrait','store_maps','store_portraits','burke_pump','tavern_kessler','tavern_notices'] },
+        ids:['company_store','kesslers','founding_plaque','aldrich','land_survey','water_rights','dam_plan','fine_house','cottages','locomotive','telephone','store_maps','burke_pump','tavern_kessler','tavern_notices'] },
       { title:'The Hands Organize', text:"Who they were, what they wanted, and where and when they met.",
-        ids:['organizer_woman','burke_table','burke_chest','burke_books','school_coats','school_portraits','tavern_committee','tavern_satchel','tavern_meeting'] },
+        ids:['rail_men','organizer_woman','burke_table','burke_chest','burke_books','school_coats','school_portraits','school_map','tavern_committee','tavern_satchel','tavern_meeting'] },
       { title:'What the Company Was Hiding', text:"Rising profits, a paid informer, eviction notices waiting for names, and the agency's quiet offer of armed men.",
-        ids:['night_safe','harding_letter','reese_note','vacate_notices'] }
+        ids:['open_safe','company_man','night_lantern','night_safe','harding_letter','reese_note','vacate_notices'] }
     ]
   }
 };
@@ -2733,9 +2869,17 @@ function benningtonClueIds() {
   const ids = [];
   Object.values(GAME_DATA.scenes).forEach(s => {
     if (s.id === 'pinkerton_office') return;
-    s.hotspots.forEach(h => { if (h.type !== 'navigation') ids.push(h.id); });
+    s.hotspots.forEach(h => { if (h.kind === 'clue') ids.push(h.id); });
   });
   return ids;
+}
+
+function discoveredHerrings() {
+  const found = [];
+  Object.values(GAME_DATA.scenes).forEach(s => s.hotspots.forEach(h => {
+    if (h.kind === 'herring' && gameState.discovered.has(h.id)) found.push(h);
+  }));
+  return found;
 }
 
 function clueTitle(id) {
@@ -2772,6 +2916,12 @@ function showReviewPage() {
       ${got.length ? `<div class="end-cat-found">${esc(got.map(clueTitle).join(' · '))}</div>` : '<div class="end-cat-none">Nothing found here.</div>'}
     </div>`;
   });
+  const herrings = discoveredHerrings();
+  if (herrings.length) {
+    html += `<div class="end-head">Dead Ends</div>`;
+    html += paras('Not every lead in Bennington went somewhere.', 'quiet');
+    herrings.forEach(h => { html += `<div class="end-item-title">${esc(h.content.title)}</div>${paras(h.debunk)}`; });
+  }
   html += `<div class="end-actions">
       <button class="end-btn-secondary" id="end-copy" onclick="copyFinalReport()">Copy Report</button>
       <button class="card-transition-btn" onclick="location.reload()">Play Again</button>
@@ -2814,7 +2964,7 @@ function fallbackCopy(text, done) {
 }
 
 // =============================================================
-// INPUT — MOUSE
+// INPUT: MOUSE
 // =============================================================
 function initInput() {
   const vp = document.getElementById('game-viewport');
@@ -2886,13 +3036,13 @@ function bindUI() {
 }
 
 // =============================================================
-// TUNE MODE  —  tap gear icon (top-left) to activate
+// TUNE MODE: tap gear icon (top-left) to activate
 // Guides you through each hotspot by name, one at a time.
 // =============================================================
 const tuneState = {
   active:  false,
   step:    0,       // index into current scene's hotspots
-  results: []       // [{id, label, x, y}] — filled as you tap
+  results: []       // [{id, label, x, y}], filled as you tap
 };
 
 function initTuneMode() {
