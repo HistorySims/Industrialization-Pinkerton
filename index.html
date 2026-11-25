@@ -246,6 +246,12 @@ html, body {
   font-family: 'Libre Baskerville', serif;
 }
 .card-line:last-of-type { margin-bottom: 0; }
+.card-speaker {
+  display: block; margin-bottom: 1px;
+  font-style: normal; font-size: 9.5px;
+  letter-spacing: 1.8px; text-transform: uppercase;
+  color: #9a7850;
+}
 .card-body {
   font-size: 13.5px; color: #3a2a1a;
   line-height: 1.82; white-space: pre-line;
@@ -1357,6 +1363,8 @@ const GAME_DATA = {
             lines:[
               "Afternoon. Don't mind us, this car has to be full before the four o'clock.",
               "Name's Isaac. This is Sol. We work the yard. Loading, hauling, whatever rolls in or out. The mill is its own world up there. Us, we keep to the rails.",
+              "You will not find a colored man inside that mill. Not on the frames, not in the card room. Nobody ever wrote that down. Nobody needed to.",
+              "The company gives the mill hands cottages. The yard gets the section house, back of the siding, eight men to a room and the same rent. You can see it from here, if you care to look.",
               "Honest work. Hard on the back, easy on the conscience.",
               "We would talk longer, but we lose the light if we stop. We are around, after dark."
             ] } },
@@ -1401,7 +1409,7 @@ const GAME_DATA = {
             knows_tavern:"Shut up tight until evening. You have no reason to come back tonight. Not yet."
           },
           content:{ title:"Kessler's",
-            text:"A plain two-story frame house out past the rail yard, beyond the company fence. It is the only building in sight with no company name painted on it. The shutters are closed. The sign over the door says KESSLER'S. It opens when the whistle blows." } },
+            text:"A plain two-story frame house out past the rail yard, just over the town line, on the far side of the company fence. It is the only building in sight with no company name painted on it. The shutters are closed. The sign over the door says KESSLER'S. It opens when the whistle blows." } },
 
         { id:'burke_house', label:"Margaret Burke's House", x:0.098, y:0.575, type:'navigation', goto:'burke_cottage',
           requires:['company_man'] },
@@ -1412,7 +1420,15 @@ const GAME_DATA = {
 
         { id:'the_hills', label:'The Hills', x:0.90, y:0.30, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Hills',
-            text:"Past the last fence the valley opens out into stubble fields and wooded hills going gold with October. From out here you can hear a cowbell somewhere, and under it, never stopping, the mill." } }
+            text:"Past the last fence the valley opens out into stubble fields and wooded hills going gold with October. From out here you can hear a cowbell somewhere, and under it, never stopping, the mill." } },
+
+        { id:'section_house', label:'The Section House', x:0.625, y:0.335, type:'object', kind:'clue', required:false,
+          content:{ title:'The Section House',
+            text:"A long frame building behind the siding, the paint weathered away to bare boards. The company lodges its yard crew here, eight men to a room, and takes the rent out of their pay the same as it does for the cottages.\n\nThe cottages have a garden apiece and a pump on every row. The section house has one pump, and the engines shunting under its windows all night. The rent is the same. Nothing else is." } },
+
+        { id:'town_line', label:'The Town Line', x:0.775, y:0.58, type:'object', kind:'clue', required:false,
+          content:{ title:'The Town Line',
+            text:"A split-rail fence runs from the end of the siding out across the stubble, and the path to Kessler's goes through a gap in it. This is where the company's ground ends, and the town line with it.\n\nOn this side, the company decides where a man buys his flour, where he sleeps, and which gate he walks through, and it decides differently for the yard than for the mill. On the far side, nobody is quite sure who decides anything. Kessler likes it that way." } }
       ],
       progression: {
         required: [],
@@ -1445,9 +1461,9 @@ const GAME_DATA = {
           content:{ title:'Notice to the Hands',
             text:"A printed notice nailed beside the gate. NOTICE TO ALL HANDS. Gates open at six, close at six. Wages paid in company scrip, redeemable at the company store. Fines levied for lateness, idle talk, and waste. By order of the management. The rules are not new, but the paper is fresh." } },
 
-        { id:'hands_coming_on', label:'The Hands Coming On', x:0.402, y:0.783, type:'object', kind:'ambiance', required:false,
+        { id:'hands_coming_on', label:'The Hands Coming On', x:0.402, y:0.783, type:'object', kind:'clue', required:false,
           content:{ title:'The Hands Coming On',
-            text:"Men file through the gate for the next shift, lunch pails swinging, boots worn soft. One of them waves at you, easy and friendly. A stranger is still a novelty here. None of them know what you are, or why you have come." } },
+            text:"Men file through the gate for the next shift, lunch pails swinging, boots worn soft. One of them waves at you, easy and friendly. A stranger is still a novelty here. None of them know what you are, or why you have come.\n\nEvery face passing under the arch is white. The yard men come and go by the siding gate, around the back of the works, and nobody here would think to remark on it." } },
 
         { id:'gate_arch', label:'The Gate', x:0.494, y:0.244, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Gate',
@@ -1505,6 +1521,7 @@ const GAME_DATA = {
               "Look, it is a good company. Aldrich built all this. The school, the houses. People forget that when they start complaining.",
               "Are there problems? Sure. Wages, hours, the dust. I am not blind. But you fix that by being useful, not by stirring people up.",
               "There is talk of organizing, and I keep my ears open. A man who helps management see trouble coming gets noticed. Gets moved up.",
+              "And you know she has the yard men signing too. The colored men. Let the spinning room hear that, and see how long her union lasts.",
               "You want the one behind it? Burke. Margaret Burke, at the cloth table. She calls the meetings. Her house is the second past the school. You make sure your boss hears it was Walter Reese who helped."
             ] } },
 
@@ -1516,6 +1533,7 @@ const GAME_DATA = {
               "You watching me work? I am quick. Mr. Pratt says I am the quickest doffer he has had. I been here since spring.",
               "It is good money. I give it to my ma. And the company gives us candy at Christmas, real candy, from the store.",
               "Mr. Pratt is fair. He only cuffs me when I earn it, when I am slow or I let a thread go. My ma says that is how you learn.",
+              "Ma says if the hands strike, the company will put colored men on the frames, and then where will we be? I don't know. Isaac from the yard showed me how to splice a rope. He's all right.",
               "A boy got his hand caught in the frame last winter. Lost two fingers. But that was his own fault, he was not paying attention. I always pay attention."
             ] } },
 
@@ -1584,6 +1602,7 @@ const GAME_DATA = {
               "I built this town. Thirty years. The school, the houses, the store, all of it, so a working family could have a decent life in one place. We rise together here. That has always been my way.",
               "Times are hard, I will not pretend otherwise. The market is cruel just now, and we have all had to tighten our belts. I ask no more of my people than I ask of myself.",
               "And still some of them whisper about unions, about strikes. After everything. It hurts me, I confess. They have been led astray by a few who do not know what they have.",
+              "I gave work to the colored men in my yard when no other mill in this valley would have them. I have never asked anything of them but loyalty. I should be sorry to learn they had forgotten it.",
               "Find me those few. Quietly. Give me their names and I will set this right, the way a father sets a house in order. No harm to anyone. You have my word.",
               "Put it in one report when you are done. Who is behind it, what they intend, where and when they gather, and why. The why most of all. I should like to understand what went wrong in my own house. Five plain points, and we can put this behind us."
             ] } },
@@ -1658,6 +1677,7 @@ const GAME_DATA = {
               "Help you, sir? You will want scrip. We take nothing else here. Company rule.",
               "Nobody really pays at this counter. They draw what they need and it goes on the book. Payday, the company takes back what is owed before the envelope is ever filled. Very simple.",
               "The prices? Freight is dear, up the valley. And the company carries every family through the lean weeks. A town merchant would not carry them a day.",
+              "The yard men come to the side window, once the line has been served. That is not my rule, sir. It was the custom before I came, and nobody has asked me to change it.",
               "Some of them grumble, I know. But I notice they all come back. Where else would they go?"
             ] } },
 
@@ -1736,7 +1756,8 @@ const GAME_DATA = {
               "You have missed them, I am afraid. Eleven today. There are desks for thirty.",
               "They come to me until they are nine or ten, and then the mill takes them. It is called the Free School, and it is free. But a boy at the frames brings home two dollars a week, and a boy at a desk brings home nothing.",
               "Sammy Doyle was the best reader I ever had. He left in the spring. He still stops at the window some evenings to tell me what he has read off the crates.",
-              "In the evenings I teach the grown hands their letters, so they can read what they are asked to sign. Mr. Aldrich does not know about that. I would be grateful if he did not hear it from you."
+              "In the evenings I teach the grown hands their letters, so they can read what they are asked to sign. Mr. Aldrich does not know about that. I would be grateful if he did not hear it from you.",
+              "Isaac Greene from the yard helps me teach the evening class. He reads better than I do. Three of the mill men stopped coming the week he started. Five stayed. Not one of them, either way, has told me why."
             ] } },
 
         { id:'school_board', label:'The Blackboard', x:0.72, y:0.24, type:'document', kind:'ambiance', required:false,
@@ -1794,11 +1815,11 @@ const GAME_DATA = {
         { id:'burke_table', label:'Papers on the Table', x:0.865, y:0.73, type:'document', kind:'clue', required:false,
           grants:['knows_tavern'],
           content:{ title:'Papers on the Table',
-            text:"Under the lamp, a sheet of foolscap in a firm, even hand, a draft with words struck out and written over:\n\nTO ALL HANDS OF BENNINGTON MILLS. A meeting, Friday night at eight, in the upstairs room at Kessler's. We will vote on our demands. Wages paid in money, not scrip. An end to fines. Store prices no higher than the county. No child at the frames under twelve.\n\nAt the bottom, underlined twice: Bring no one you would not trust with your children's bread.\n\nToday is Friday. The meeting is tonight." } },
+            text:"Under the lamp, a sheet of foolscap in a firm, even hand, a draft with words struck out and written over:\n\nTO ALL HANDS OF BENNINGTON MILLS. A meeting, Friday night at eight, in the upstairs room at Kessler's. We will vote on our demands. Wages paid in money, not scrip. An end to fines. Store prices no higher than the county. No child at the frames under twelve.\n\nA last line has been written in, struck out, and written in again: Every hand of the company, mill or yard, a member on the same terms. In the margin, in another hand: The spinning room will not stand for it. R.D. Under that, in Margaret's: Then let the spinning room say so Friday, to their faces.\n\nAt the bottom, underlined twice: Bring no one you would not trust with your children's bread.\n\nToday is Friday. The meeting is tonight." } },
 
         { id:'burke_chest', label:'The List of Names', x:0.155, y:0.80, type:'document', kind:'clue', required:false,
           content:{ title:'The List of Names',
-            text:"The chest at the foot of the bed is not locked. Under the folded quilts lies a ruled sheet of paper, creased soft from handling. Names. Forty-three of them, some signed in a good hand, some marked with an X and witnessed. Margaret Burke's is first.\n\nIt takes you a quarter of an hour to copy every name. When you fold the sheet back under the quilts, the list is in your notebook, and nothing in the room looks any different." } },
+            text:"The chest at the foot of the bed is not locked. Under the folded quilts lies a ruled sheet of paper, creased soft from handling. Names. Forty-three of them, some signed in a good hand, some marked with an X and witnessed. Margaret Burke's is first.\n\nNear the bottom come the yard men. Isaac Greene, in a careful schoolroom hand. Henry Dorsey. Solomon Hayes, his mark, witnessed by I. Greene. Two more. Someone has ruled a pencil line across the page just above their names, then rubbed it out. You can still see where it was.\n\nIt takes you a quarter of an hour to copy every name. When you fold the sheet back under the quilts, the list is in your notebook, and nothing in the room looks any different." } },
 
         { id:'burke_books', label:'The Bookshelf', x:0.19, y:0.20, type:'object', kind:'clue', required:false,
           content:{ title:'The Bookshelf',
@@ -1838,7 +1859,11 @@ const GAME_DATA = {
 
         { id:'burke_rocker', label:'The Rocking Chair', x:0.235, y:0.78, type:'object', kind:'ambiance', required:false,
           content:{ title:'The Rocking Chair',
-            text:"A rocking chair with a knitted shawl over the back. When you brush against it, it creaks, loud as a gunshot in the empty house. You stand very still and listen. Nobody comes." } }
+            text:"A rocking chair with a knitted shawl over the back. When you brush against it, it creaks, loud as a gunshot in the empty house. You stand very still and listen. Nobody comes." } },
+
+        { id:'national_letter', label:'A Letter by the Bed', x:0.383, y:0.505, type:'document', kind:'clue', required:false,
+          content:{ title:'A Letter from the National',
+            text:"On the nightstand, under the candlestick, a letter on printed union letterhead, read so often the folds have gone soft.\n\nDear Mrs. Burke, The Executive Board has your application for a charter. The Board cannot grant a charter to a local that enrolls colored members on the same roll as white. Our locals in the South would quit us to a man, and we are not strong enough to lose them. You may organize your yard hands in a separate branch, under your local's protection, if you judge it wise. Fraternally yours, the General Secretary.\n\nOn the back, in Margaret's hand, a reply begun and never finished: Dear Sir, The men of the yard were among the first to sign, and I cannot in conscience" } }
       ]
     },
 
@@ -1859,18 +1884,22 @@ const GAME_DATA = {
             lines:[
               "Cash, friend. It says so on the board. I cannot spend Aldrich's paper anywhere but Aldrich's store, and I will not buy my whiskey from George Aldrich.",
               "My father bought this ground before Aldrich ever came up the valley. Aldrich has offered for it four times. It is the one lot on the county survey without his name on it.",
+              "You will have noticed who sits with who in here. Nobody in town would sit that way, not in daylight. Out here a nickel spends the same whatever hand it comes out of. The preacher calls this place a black-and-tan. He does not mean it kindly.",
+              "The company's constable walks as far as the fence and not one step farther. Out here I keep my own peace, with an oak mallet under the bar.",
               "So they come here. Where else would they go? Every other room in this town belongs to the man they are talking about.",
               "What is said upstairs is none of my business. I do not throw out a paying customer, and I do not repeat what I hear. In your place, I would think hard before I did."
             ] } },
 
-        { id:'tavern_committee', label:'The Middle Table', x:0.47, y:0.56, type:'dialogue', kind:'clue', required:false,
-          content:{ title:'The Middle Table',
-            desc:"Four men at the middle table, mugs untouched, a leather satchel among the coins. Isaac and Sol from the rail yard are two of them. The talk stops when you pull up a chair, and old Sol Hayes looks you over for a long moment before he speaks.",
-            people:['Isaac Greene', 'Sol Hayes'],
+        { id:'tavern_committee', label:"The Yard Men's Table", x:0.47, y:0.56, type:'dialogue', kind:'clue', required:false,
+          content:{ title:"The Yard Men's Table",
+            desc:"Four men at the middle table, mugs untouched, a leather satchel among the coins. All four work the yard. The talk stops when you pull up a chair, and old Sol Hayes looks you over for a long moment before he speaks.",
+            people:['Sol Hayes'],
             lines:[
-              "Isaac told you we would be around after dark. Here we are.",
+              "Isaac told you we would be around after dark. Here we are. He is over with the Egans, minding other people's troubles. He does that.",
               "Margaret thinks you are a Pinkerton. Good boots, soft hands, a great many questions. I expect she is right. She usually is.",
-              "Isaac here could not get hired on the frames, not in this mill. The yard took him. Margaret says the union is for every hand who works for Aldrich, frame or yard. First time anybody in this town ever said so.",
+              "Every man at this table asked the mill for work and was sent to the yard. Margaret says the union is for every hand who works for Aldrich, mill or yard. First time anybody in this town ever said so. I am waiting to see if it is the last.",
+              "I was born a slave in Maryland and walked north at nineteen. I drilled at Camp William Penn and carried a rifle at Petersburg. When I came home in sixty-five, a Philadelphia streetcar would not let me ride inside, uniform and all.",
+              "In eighty-six the Knights of Labor took my dues and called me brother. By ninety there were no Knights left in this valley to call me anything. So you will forgive me if I wait to see how the vote goes.",
               "We have nothing to hide but our names. Money wages. Honest prices. Children out of the frames. Write that down, if you like.",
               "And pay no mind to Red Kelly over there, whatever he tells you. He has been burning that mill down every Friday night for ten years. He has never signed a thing, and Margaret would not have him if he did.",
               "The meeting is upstairs. Go on up and listen. Then you can decide what kind of man you are."
@@ -1879,23 +1908,28 @@ const GAME_DATA = {
         { id:'tavern_meeting', label:'The Stairs', x:0.655, y:0.55, type:'dialogue', kind:'clue', required:false,
           requires:['tavern_committee'],
           content:{ title:'Voices Upstairs', tag:'Overheard',
-            desc:"You climb halfway up the narrow stairs and stop where the boards creak least. The room above is packed and quiet, listening to one voice. Margaret Burke's.",
+            desc:"You climb halfway up the narrow stairs and stop where the boards creak least. The room above is packed, and it is not all of one mind. Mostly it listens to Margaret Burke.",
             people:['Margaret Burke'],
             lines:[
-              "Four years at the same wage, and every year a bigger bill at the store. Mr. Aldrich says times are hard. Then whose are the new frames sitting on the siding?",
-              "We are not asking for the moon. Wages in money, so we can buy where we please. An end to the fines. Store prices no higher than the county's. And no child at the frames before the age of twelve.",
-              "We put it to him in writing, signed by every hand who will sign. If he will not meet with us by the first of November, we walk out. All of us. Mill and yard together.",
-              "And mind who you talk to. There is a stranger in this town asking a great many questions, and a man in the mill who has been answering them."
+              { who:'Margaret Burke', text:"Four years at the same wage, and every year a bigger bill at the store. Mr. Aldrich says times are hard. Then whose are the new frames sitting on the siding?" },
+              { who:'Margaret Burke', text:"We are not asking for the moon. Wages in money, so we can buy where we please. An end to the fines. Store prices no higher than the county's. And no child at the frames before the age of twelve." },
+              { who:'Margaret Burke', text:"We put it to him in writing, signed by every hand who will sign. If he will not meet with us by the first of November, we walk out. All of us. Mill and yard together." },
+              { who:'A woman from the spinning room', text:"Then put the yard men in a branch of their own, Margaret, the way the National wants. Nobody here wishes them any harm. But the spinning room never signed up for a colored union." },
+              { who:'Sol Hayes', text:"I served in a branch of my own once, ma'am. The Colored Troops. We bled the same as the white regiments, and for a year they paid us less to do it." },
+              { who:'Margaret Burke', text:"They load what we make. If the yard keeps loading while we walk out, we lose. If the yard walks out with us, Mr. Aldrich loses. I am not asking anybody here to love anybody. I am asking you to count." },
+              { who:'Margaret Burke', text:"And mind who you talk to. There is a stranger in this town asking a great many questions, and a man in the mill who has been answering them." }
             ],
-            note:"You have what you came for. Your report is waiting in the Final Report tab of your notebook." } },
+            note:"The question of the yard is put over to next Friday. Chairs scrape, voices rise, and nobody sounds satisfied. You have what you came for. Your report is waiting in the Final Report tab of your notebook." } },
 
         { id:'tavern_egan', label:'Tom Egan', x:0.085, y:0.60, type:'dialogue', kind:'clue', required:false,
           content:{ title:'Tom Egan',
-            desc:"Tom Egan from the crates sits at a table by the bar, a little more sober than this afternoon. He raises his mug when he sees you.",
+            desc:"Tom Egan from the crates sits at the table by the bar with his wife, Nora, and Isaac Greene from the yard. He is a little more sober than this afternoon, and he raises his mug when he sees you.",
             people:['Tom Egan'],
             lines:[
               "You came. Good. A man ought to see this town after the whistle, when it is itself.",
               "My Nora was up at the store again today, putting flour on the book. Twenty-two dollars we owe now, and no wage coming in since the new frames. A family that owes the company cannot leave, and cannot pay. So we stay.",
+              "When our youngest took sick in August, the doctor wanted cash. Isaac lent me two dollars, real money he had been a year saving, and never once asked for it back. I have not forgot it.",
+              "Some of the boys say if the yard men are in, the company will call it a colored union and the whole county will turn on us. Maybe they are right. I don't know. I know who lent me two dollars.",
               "I signed Margaret's card last week. What have I got to lose? They already took the job."
             ] } },
 
@@ -1946,7 +1980,31 @@ const GAME_DATA = {
 
         { id:'tavern_horses', label:'The Horse Paintings', x:0.905, y:0.17, type:'object', kind:'trivial', required:false,
           content:{ title:'The Horse Paintings',
-            text:"Paintings of horses, every one of them running, none of them painted very well. Kessler bought the lot from a peddler for a dollar and a drink, and he still thinks he was robbed." } }
+            text:"Paintings of horses, every one of them running, none of them painted very well. Kessler bought the lot from a peddler for a dollar and a drink, and he still thinks he was robbed." } },
+
+        { id:'tavern_isaac', label:'Isaac Greene', x:0.245, y:0.565, type:'dialogue', kind:'clue', required:false,
+          content:{ title:'Isaac Greene',
+            desc:"Isaac Greene from the yard sits with Tom and Nora Egan at the table by the bar, a newspaper folded under his elbow. In town you have not seen a Black man share a table with a white family. Out here nobody looks twice.",
+            people:['Isaac Greene'],
+            lines:[
+              "You found Kessler's. Sit, if you like. Tom won't mind. Nora is still deciding.",
+              "I had six years of school in Virginia before I came north for the mills. Five times I asked for a place in the card room. Five times I was told the yard suited me better.",
+              "Two years ago the Supreme Court said a state may make a colored man ride in a railroad car of his own. I load railroad cars for a living, so I take an interest.",
+              "Margaret Burke asked for my name and wrote it on the same list as her own, in the same ink. That is a small thing. It is also the first time.",
+              "Sol says a white man's promise is worth what it costs him to keep. Henry says it is worth a fixer's wage, if you sell it to the company first. I say we find out when they vote. If they vote us into a branch of our own, I will still have learned something about Bennington."
+            ] } },
+
+        { id:'tavern_dorsey', label:'The Man Arguing with Sol', x:0.54, y:0.585, type:'dialogue', kind:'clue', required:false,
+          content:{ title:'Henry Dorsey',
+            desc:"The younger man across from Sol Hayes has been arguing with him, low and fast, since before you sat down. He stops when he sees you, then decides he does not care who hears.",
+            people:['Henry Dorsey'],
+            lines:[
+              "Henry Dorsey. I load the same cars as Sol and Isaac, for the same dollar. Nine times I asked for a place in the card room. Last week the superintendent came looking for me.",
+              "He says if the mill hands walk out, there is a place in the card room for any yard man who keeps working. A fixer's place, at a fixer's wage. Nine times I asked. Now they come asking me.",
+              "Sol calls that scabbing. I have never been let into a union long enough to be a scab. The railroad brotherhoods won't have us. The American Railway Union voted us out in ninety-four, Debs or no Debs. Now Margaret Burke wants my name, and half her spinning room wants me gone.",
+              "Mr. Booker Washington says our people built this country without strikes, and that is why a white man will trust us. Maybe he is right. Maybe Isaac is. My children have to eat whichever one of them it turns out to be.",
+              "I signed her list. I may stand by it. I may not. You can write down that I said so."
+            ] } }
       ]
     },
 
@@ -2012,7 +2070,7 @@ const GAME_DATA = {
 
         { id:'reese_note', label:'A Folded Note', x:0.255, y:0.51, type:'document', kind:'clue', required:false,
           content:{ title:'A Folded Note',
-            text:"A note on cheap paper, in pencil, folded small.\n\nMr. Aldrich, Sir. The Burke woman calls the meetings, Friday nights, upstairs at Kessler's. Greene and Hayes from the yard. Egan, the one you let go. The schoolteacher lends them her room to learn their letters. I will have more by Monday. Your obedient servant, W. Reese.\n\nAcross the bottom, in Aldrich's hand: Paid R. five dollars. Promise him the overseer's place.\n\nAldrich already has the names. What he wants from you is the agency's name at the bottom of the page." } },
+            text:"A note on cheap paper, in pencil, folded small.\n\nMr. Aldrich, Sir. The Burke woman calls the meetings, Friday nights, upstairs at Kessler's. Greene and Hayes from the yard. Egan, the one you let go. The schoolteacher lends them her room to learn their letters. Greene has the yard men signing. If the spinning room was to hear of it, she would lose half of them. I will have more by Monday. Your obedient servant, W. Reese.\n\nAcross the bottom, in Aldrich's hand: Paid R. five dollars. Promise him the overseer's place.\n\nAldrich already has the names. What he wants from you is the agency's name at the bottom of the page." } },
 
         { id:'vacate_notices', label:'Printed Forms', x:0.90, y:0.64, type:'document', kind:'clue', required:false,
           content:{ title:'Printed Forms',
@@ -2036,7 +2094,11 @@ const GAME_DATA = {
 
         { id:'night_cane', label:'The Cane', x:0.53, y:0.86, type:'object', kind:'trivial', required:false,
           content:{ title:'The Cane',
-            text:"The silver-topped cane, lying across the stool where he left it. He must keep another at the house. Men like Aldrich generally do." } }
+            text:"The silver-topped cane, lying across the stool where he left it. He must keep another at the house. Men like Aldrich generally do." } },
+
+        { id:'agent_letter', label:'An Envelope from Baltimore', x:0.515, y:0.67, type:'document', kind:'clue', required:false,
+          content:{ title:'A Letter from Baltimore',
+            text:"A leather letter case lies open on the desk. In it, an envelope postmarked Baltimore, slit neatly along the top.\n\nDear Mr. Aldrich, In reply to yours of the 3rd. Should your hands quit work, I can furnish one hundred colored laborers from Baltimore and Richmond inside the week, transport paid, at eighty cents a day. They are steady men, and they owe nothing to any union, for no union will have them. I would advise lodging them apart from your white hands, under guard, for their own protection as much as yours. Your obedient servant, J. T. Fowler, Labor Agent.\n\nAcross the top, in Aldrich's hand: Do not send yet. Let it be known in the spinning room that I have written. The letter may do more good than the men." } }
       ]
     }
 
@@ -2073,8 +2135,9 @@ const GAME_DATA = {
     // breaks:true means naming this person ends the strike before it starts.
     fates: {
       'Margaret Burke': { breaks:true, text:"Margaret Burke was discharged on Monday morning and served with a notice to quit the cottage. Five days later she left Bennington in a borrowed wagon with her children, the crib, and the spinning wheel. Her name went out to every mill in the valley. She never worked at a cloth table again." },
-      'Isaac Greene':   { breaks:true, text:"Isaac Greene was let go from the yard that same day. No other line in the county would take him on. He went west looking for railroad work, and nobody in Bennington heard from him again." },
-      'Sol Hayes':      { breaks:true, text:"Sol Hayes, too old to start over, took his discharge without a word and went to live with his daughter in Scranton. He lived long enough to see his grandsons carry union cards in the open." },
+      'Isaac Greene':   { breaks:true, text:"Isaac Greene was let go from the yard that same day, and his name went out to every railroad in the county. In Philadelphia the yards would hire him only to sweep, and no union in the city would honor his card. He kept it anyway, folded in his Bible." },
+      'Sol Hayes':      { breaks:true, text:"Sol Hayes took his discharge without a word and went to live with his daughter in Scranton, his Grand Army button on his coat. He did not live to see his grandsons carry union cards in the open. They did." },
+      'Henry Dorsey':   { text:"Henry Dorsey was discharged on the strength of your report, a week after the superintendent had promised him a place in the card room. He found work loading coal barges in Baltimore. He never signed anything again." },
       'Tom Egan':       { breaks:true, text:"Tom and Nora Egan were put out of their cottage with the debt still on the book. The company kept their furniture against it. They left town on foot." },
       'Nora Egan':      { text:"Nora Egan was struck off the store's credit. With Tom already out of work, the family slipped out of Bennington one night owing twenty-two dollars, which is the only way anyone ever leaves." },
       'Ellen Hale':     { text:"Ellen Hale was dismissed as unfit to instruct the young. The Aldrich Free School stayed shut until spring, and it reopened with a new teacher and no evening class." },
@@ -2085,11 +2148,17 @@ const GAME_DATA = {
       'Red Kelly':      { text:"Red Kelly was discharged for drunkenness, which was true, and for agitation, which was not. He had never signed a card in his life. For the rest of his days he told anyone at Kessler's who would listen that he had been fired for leading the strike, and in the end he believed it." }
     },
     fateDefault: '{name} was discharged within the week.',
-    listFate: "With the list in hand, Aldrich did not have to guess. All forty-three hands on it were discharged. By the first snow most of their families were out of the cottages, and the mill was hiring new hands from the city at a lower wage.",
+    listFate: "With the list in hand, Aldrich did not have to guess. All forty-three hands on it were discharged. By the first snow most of their families were out of the cottages, and the mill was hiring new hands from the city at a lower wage. The section house emptied on Monday and was full again by Saturday, with men from Baltimore at eighty cents a day.",
 
     outcome: {
-      broken: "On Monday morning, forty special watchmen stepped off the Pittsburgh train, rifles packed in their baggage. By noon the names you gave were posted on the mill gate under the word DISCHARGED. There was no strike. With the people who had held it together gone, there was nothing left to hold.\n\nIn the spring the new frames went in, and another hundred and twenty hands were let go.",
-      strike: "Aldrich wired Philadelphia that afternoon, and the agency sent another man, older, with fewer questions. He was still asking them on the first of November, when the hands of Bennington Mills put down their work and walked out together, mill and yard.\n\nThe strike lasted seven weeks. In the end Aldrich agreed to pay wages in money and to post the fines on the gate for all to see. He never recognized the union, and by spring Margaret Burke had been let go for poor work. But the scrip was gone from Bennington, and it never came back."
+      broken: "On Monday morning, forty special watchmen stepped off the Pittsburgh train, rifles packed in their baggage. By noon the names you gave were posted on the mill gate under the word DISCHARGED. There was no strike. With the people who had held it together gone, the rest came apart along the line Walter Reese had pointed out. The spinning room heard that the yard men had signed with Burke, and that colored men from Baltimore would take the frames if anyone walked out. Nobody walked out.\n\nIn the spring the new frames went in, and another hundred and twenty hands were let go.",
+      strike: "Aldrich wired Philadelphia that afternoon, and the agency sent another man, older, with fewer questions. He was still asking them on the first of November, when the hands of Bennington Mills put down their work and walked out together, mill and yard.\n\nIn the third week a train of colored laborers from Baltimore pulled onto the siding under guard. Sol Hayes and Isaac Greene walked down to meet it. Nobody knows what was said. By nightfall some of the men were back aboard and bound south, and the rest were in the section house, working the yard at eighty cents a day.\n\nThe strike lasted seven weeks. In the end Aldrich agreed to pay wages in money and to post the fines on the gate for all to see. He never recognized the union, and by spring Margaret Burke had been let go for poor work. But the scrip was gone from Bennington, and it never came back.\n\nThat winter the local voted on whether the yard men would keep their cards on the same roll as everyone else. It carried by four votes. Two years later, to keep its charter, the local moved them into a branch of their own.",
+
+      // Shown after the outcome when the player met this person and did not name them.
+      codas: [
+        { person:'Henry Dorsey', when:'strike', text:"As for Henry Dorsey, he was seen in the third week at the union hall and at the superintendent's door both. He never said which one he went through last." },
+        { person:'Henry Dorsey', when:'broken', text:"In the spring, when the new frames went in, Henry Dorsey was given his place in the card room after all, at half a fixer's wage. He took it. Some of the yard never spoke to him again, and some of them understood." }
+      ]
     },
 
     harding: {
@@ -2120,7 +2189,8 @@ const GAME_DATA = {
         { title:'Scrip and the Company Store', text:"Many mill and mining towns paid wages in scrip, good only at the company's own store. Families sank into debts they could never pay off. States passed laws to ban scrip, and courts often struck them down as interfering with workers' freedom of contract." },
         { title:'Children in the Mills', text:"In 1900, nearly one American child in five between the ages of ten and fifteen worked for wages, many of them in textile mills. Reformers fought for decades to change that. Federal law did not effectively ban child labor until 1938." },
         { title:'The Pinkertons', text:"The agency really did plant an undercover operative among the Molly Maguires in the 1870s, and its armed guards really did fight striking steelworkers at Homestead in 1892. In 1893 Congress barred the federal government from hiring Pinkerton-style agencies. Private employers kept hiring them for decades to spy on unions." },
-        { title:'Workers Organize', text:"In January 1898, thousands of cotton mill workers in New Bedford, Massachusetts, walked out rather than accept a wage cut. Strikes like theirs often failed. American workers did not win a federal guarantee of the right to organize until the Wagner Act of 1935." }
+        { title:'Workers Organize', text:"In January 1898, thousands of cotton mill workers in New Bedford, Massachusetts, walked out rather than accept a wage cut. Strikes like theirs often failed. American workers did not win a federal guarantee of the right to organize until the Wagner Act of 1935." },
+        { title:'The Color Line', text:"In 1898 the color line was still being drawn. In Plessy v. Ferguson (1896), the Supreme Court ruled that states could require railroads to seat Black passengers in separate cars. In the North, segregation was more often custom than law. Unions were divided: the Knights of Labor had admitted Black workers in the 1880s, but the railroad brotherhoods barred them, and in 1894 the American Railway Union voted to keep them out. Employers often hired Black workers to break strikes, and many took those jobs because unions had shut them out. On October 12, 1898, two days before the meeting at Kessler's, a coal company in Virden, Illinois, brought in Black miners from Alabama to replace strikers of the United Mine Workers, a union that had Black members of its own. Striking miners and company guards died in the gunfight that followed." }
       ]
     },
 
@@ -2136,7 +2206,9 @@ const GAME_DATA = {
       { title:"One Man's Valley", text:"The land, the water, the houses, the rails, and the store all belonged to the same man.",
         ids:['company_store','kesslers','founding_plaque','aldrich','land_survey','water_rights','dam_plan','fine_house','cottages','locomotive','telephone','store_maps','burke_pump','tavern_kessler','tavern_notices'] },
       { title:'The Hands Organize', text:"Who they were, what they wanted, and where and when they met.",
-        ids:['rail_men','organizer_woman','burke_table','burke_chest','burke_books','school_coats','school_portraits','school_map','tavern_committee','tavern_satchel','tavern_meeting'] },
+        ids:['organizer_woman','burke_table','burke_chest','burke_books','school_coats','school_portraits','school_map','tavern_committee','tavern_satchel','tavern_meeting'] },
+      { title:'The Color Line', text:"Who worked the mill and who worked the yard, who was let into the union and on what terms, and who meant to use the difference.",
+        ids:['rail_men','section_house','town_line','hands_coming_on','national_letter','tavern_isaac','tavern_dorsey','agent_letter'] },
       { title:'What the Company Was Hiding', text:"Rising profits, a paid informer, eviction notices waiting for names, and the agency's quiet offer of armed men.",
         ids:['open_safe','company_man','night_lantern','night_safe','harding_letter','reese_note','vacate_notices'] }
     ]
@@ -2409,8 +2481,14 @@ function openCard(id) {
   if (h.type === 'dialogue') {
     if (h.content.desc) html += `<div class="card-desc">${esc(h.content.desc)}</div>`;
     html += '<hr class="card-rule">';
+    // A line is a string, or { who, text } when the card overhears more than one speaker.
+    // The speaker's name is shown only when the voice changes.
+    let lastWho = null;
     (h.content.lines || []).forEach(l => {
-      html += `<div class="card-line">&ldquo;${esc(l)}&rdquo;</div>`;
+      const who  = l.who && l.who !== lastWho ? `<span class="card-speaker">${esc(l.who)}</span>` : '';
+      const text = typeof l === 'string' ? l : l.text;
+      lastWho = l.who || null;
+      html += `<div class="card-line">${who}&ldquo;${esc(text)}&rdquo;</div>`;
     });
   } else {
     html += '<hr class="card-rule">';
@@ -2851,6 +2929,10 @@ function showOutcomePage() {
 
   html += `<div class="end-head">Bennington</div>`;
   html += paras(r.broke ? E.outcome.broken : E.outcome.strike);
+  (E.outcome.codas || []).forEach(c => {
+    const met = Object.values(gameState.people).some(p => p.name === c.person);
+    if (met && !ending.named.has(c.person) && c.when === (r.broke ? 'broken' : 'strike')) html += paras(c.text);
+  });
   html += `<div class="end-actions"><button class="card-transition-btn" onclick="goToEpilogue()">One Week Later</button></div>`;
   showEnding(html);
 }
