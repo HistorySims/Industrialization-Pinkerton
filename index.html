@@ -95,7 +95,7 @@ html, body {
   top: 18px; left: 22px;
   z-index: 30;
   pointer-events: none;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.9), 0 0 14px rgba(0,0,0,0.85);
 }
 #loc-name {
   display: block;
@@ -110,7 +110,7 @@ html, body {
   display: block;
   font-family: 'Libre Baskerville', serif;
   font-size: 10px;
-  color: rgba(212,196,160,0.55);
+  color: rgba(212,196,160,0.78);
   letter-spacing: 1.2px;
   font-style: italic;
 }
@@ -121,7 +121,7 @@ html, body {
   font-size: 9px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(212,196,160,0.38);
+  color: rgba(212,196,160,0.66);
 }
 
 /* CHEVRONS */
@@ -566,6 +566,11 @@ html, body {
   background: rgba(38,28,16,0.96);
   border-color: rgba(212,196,160,0.45);
 }
+#nb-toggle.has-news::after {
+  content: ''; position: absolute; top: 5px; right: 5px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #c9a84c; box-shadow: 0 0 4px rgba(201,168,76,0.8);
+}
 #nb-badge {
   background: rgba(212,196,160,0.14);
   border-radius: 50%;
@@ -653,6 +658,7 @@ html, body {
   #vignette { right: 380px; }
   #card-overlay { right: 380px; }
   #scroll-wrap { left: calc(50% - 190px); }
+  #chev-right { right: 382px; }
 }
 
 /* MOBILE */
@@ -1128,6 +1134,10 @@ body.ending-mode #card-overlay { z-index: 160; }
 // =============================================================
 // GAME DATA: add future scenes here; engine reads generically
 // =============================================================
+// Developer tools: the gear (tune mode and scene jumper) and the Skip to Bennington shortcut.
+// Set to false before students play.
+const DEV_TOOLS = true;
+
 // Every non-navigation hotspot has a kind: 'clue', 'ambiance', 'trivial', or 'herring'.
 // Only clues count toward the case review; each herring carries a debunk shown there.
 const GAME_DATA = {
@@ -1303,7 +1313,7 @@ const GAME_DATA = {
           content:{ title:'Loose Change',
             text:"A dollar bill and a few coins on the side table, somebody's change from the cigar shop. It has been sitting there since yesterday. This is a detective agency. Nobody would dare." } },
 
-        { id:'skip_to_bennington', label:'Skip to Bennington', x:0.92, y:0.12, type:'navigation', goto:'town_map_day' }
+        { id:'skip_to_bennington', label:'Skip to Bennington', x:0.92, y:0.12, type:'navigation', goto:'town_map_day', dev:true }
       ],
 
       progression: {
@@ -1330,7 +1340,7 @@ const GAME_DATA = {
         { id:'town_school', label:'The Town School', x:0.204, y:0.425, type:'object', kind:'ambiance', required:false,
           goto:'school_inside', gotoText:'Come Back After the Lesson',
           content:{ title:'The Town School',
-            text:"A small white schoolhouse with a bell in its tower. Through the window you can see rows of children bent over their slates while a young woman walks the aisle, and you can just hear a voice leading them through their letters. School is in session, and this is no place for you in the middle of a lesson." } },
+            text:"A small brick schoolhouse with a bell in its tower. Through the window you can see rows of children bent over their slates while a young woman walks the aisle, and you can just hear a voice leading them through their letters. School is in session, and this is no place for you in the middle of a lesson." } },
 
         { id:'the_mill', label:'Bennington Mills', x:0.298, y:0.306, type:'object', kind:'ambiance', required:false, transition:true,
           content:{ title:'Bennington Mills',
@@ -1391,7 +1401,7 @@ const GAME_DATA = {
             knows_tavern:"Shut up tight until evening. You have no reason to come back tonight. Not yet."
           },
           content:{ title:"Kessler's",
-            text:"A plain two-story frame house out past the rail yard, beyond the company fence. It is the only building in sight with no company name painted on it. The shutters are closed. Kessler's, the men call it. It opens when the whistle blows." } },
+            text:"A plain two-story frame house out past the rail yard, beyond the company fence. It is the only building in sight with no company name painted on it. The shutters are closed. The sign over the door says KESSLER'S. It opens when the whistle blows." } },
 
         { id:'burke_house', label:"Margaret Burke's House", x:0.098, y:0.575, type:'navigation', goto:'burke_cottage',
           requires:['company_man'] },
@@ -1876,7 +1886,8 @@ const GAME_DATA = {
               "We are not asking for the moon. Wages in money, so we can buy where we please. An end to the fines. Store prices no higher than the county's. And no child at the frames before the age of twelve.",
               "We put it to him in writing, signed by every hand who will sign. If he will not meet with us by the first of November, we walk out. All of us. Mill and yard together.",
               "And mind who you talk to. There is a stranger in this town asking a great many questions, and a man in the mill who has been answering them."
-            ] } },
+            ],
+            note:"You have what you came for. Your report is waiting in the Final Report tab of your notebook." } },
 
         { id:'tavern_egan', label:'Tom Egan', x:0.085, y:0.60, type:'dialogue', kind:'clue', required:false,
           content:{ title:'Tom Egan',
@@ -2145,7 +2156,8 @@ const gameState = {
   reportFiled:  false,
   cardOpen:     false,
   notebookOpen: false,
-  notebookTab:  'notes'
+  notebookTab:  'notes',
+  reportMilestone: 0          // 1 once the report tab opens up, 2 once the report can be filed
 };
 
 // =============================================================
@@ -2158,6 +2170,9 @@ const pan = {
   moved: false,
   imgW: 0
 };
+
+// A press may drift this many pixels and still count as a click rather than a drag.
+const DRAG_THRESHOLD = 10;
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
@@ -2301,6 +2316,7 @@ function buildHotspots(scene) {
   const layer = document.getElementById('hotspot-layer');
   layer.innerHTML = '';
   scene.hotspots.forEach(h => {
+    if (h.dev && !DEV_TOOLS) return;
     const isNav = h.type === 'navigation';
     const el = document.createElement('div');
     el.className = isNav
@@ -2400,6 +2416,7 @@ function openCard(id) {
     html += '<hr class="card-rule">';
     html += `<div class="card-body">${esc(h.content.text || '')}</div>`;
   }
+  if (h.content.note) html += `<div class="card-goto-note">${esc(h.content.note)}</div>`;
 
   // Doorways only work from the scene you are standing in, and not once the report is filed.
   const canAct = local && !gameState.reportFiled;
@@ -2440,7 +2457,7 @@ function notebookBadgeCount() {
 
 function addEvidence(h, scene) {
   if (gameState.evidence.find(e => e.id === h.id)) return;
-  gameState.evidence.push({ id: h.id, title: h.label, type: h.type, sceneName: scene.name });
+  gameState.evidence.push({ id: h.id, title: h.content.title || h.label, type: h.type, sceneName: scene.name });
   document.getElementById('nb-badge').textContent = notebookBadgeCount();
   renderNotebook();
 }
@@ -2591,14 +2608,21 @@ function checkReportReady() {
                   :         'Your investigation is complete. The report goes to George Aldrich in the morning.';
 }
 
+// The gold dot marks news on the report: once when the tab opens up, again when it can be filed.
+function setReportDot(on) {
+  document.getElementById('nb-report-dot').style.display = on ? '' : 'none';
+  document.getElementById('nb-toggle').classList.toggle('has-news', on);
+}
+
 function checkReportTab() {
   const tab = document.getElementById('tab-report');
   if (!tab) return;
   const unlocked = gameState.discovered.has('aldrich');
   tab.style.display = unlocked ? '' : 'none';
-  if (unlocked && gameState.notebookTab !== 'report') {
-    const dot = document.getElementById('nb-report-dot');
-    if (dot) dot.style.display = '';
+  const milestone = !unlocked ? 0 : reportInvestigationDone() ? 2 : 1;
+  if (milestone > gameState.reportMilestone) {
+    gameState.reportMilestone = milestone;
+    if (gameState.notebookTab !== 'report') setReportDot(true);
   }
 }
 
@@ -2619,8 +2643,7 @@ function switchTab(tab) {
   if (tab === 'report') {
     notesArea.style.display  = 'none';
     reportArea.style.display = 'block';
-    const dot = document.getElementById('nb-report-dot');
-    if (dot) dot.style.display = 'none';
+    setReportDot(false);
     syncReportFields();
   } else {
     notesArea.style.display  = '';
@@ -2979,7 +3002,7 @@ function initInput() {
   window.addEventListener('mousemove', e => {
     if (!pan.dragging) return;
     const dx = e.clientX - pan.startMX;
-    if (Math.abs(dx) > 4) pan.moved = true;
+    if (Math.abs(dx) > DRAG_THRESHOLD) pan.moved = true;
     setPan(pan.startPX + dx, false);
   });
   window.addEventListener('mouseup', () => {
@@ -2999,7 +3022,7 @@ function initInput() {
   vp.addEventListener('touchmove', e => {
     if (e.touches.length !== 1) return;
     const dx = e.touches[0].clientX - tStartX;
-    if (Math.abs(dx) > 4) pan.moved = true;
+    if (Math.abs(dx) > DRAG_THRESHOLD) pan.moved = true;
     setPan(tStartP + dx, false);
   }, { passive: true });
   vp.addEventListener('touchend', () => {
@@ -3223,7 +3246,8 @@ document.addEventListener('DOMContentLoaded', () => {
   bindUI();
   initInput();
   loadScene(gameState.currentScene);
-  initTuneMode();
+  if (DEV_TOOLS) initTuneMode();
+  else document.getElementById('tune-toggle-btn').style.display = 'none';
 });
 </script>
 </body>
